@@ -11,5 +11,30 @@
 Qlkit (pronounced cool-kit) is a simple python library implementing well-know supervised and unsupervised machine learning algorithms for a gated quantum computer, build with [Qiskit](https://github.com/Qiskit/qiskit)
 
 ## Install Qlkit
+Install Qlkit running 
+```bash
+python3 setup.py install
+```
+In the near future, we will make it installable via pip.
+
+## Developement notes
+
+After cloning this repository, create a virtual environment
+
+```bash
+python3 -m venv .venv
+```
+
+and activate it
+
+```bash
+source .venv/bin/activate 
+```
+
+now you can install the requirements
+
+```bash
+pip install -r requirements.txt
+```
 
 
