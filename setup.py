@@ -12,7 +12,7 @@ setuptools.setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mspronesti/qlskit",
+    url="https://github.com/mspronesti/qlkit",
     packages=setuptools.find_packages(),
     install_requires=[
         "numpy",
