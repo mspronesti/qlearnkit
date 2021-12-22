@@ -41,8 +41,9 @@ class AmplitudeEncoding(EncodingMap):
         Returns:
             (np.array) encoded quantum state
         """
-        x = np.asarray(x)
-        norm = np.linalg.norm(x)
+        if isinstance(x, list):
+            x = np.asarray(x)
 
+        norm = np.linalg.norm(x)
         return x / norm if norm != 0 else x
 

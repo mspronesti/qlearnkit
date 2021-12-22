@@ -13,8 +13,9 @@ class BasisEncoding(EncodingMap):
 
         Returns:
             the quantum encoding circuit
+
         Note:
-              all data values must be either 1s or 0s
+              All data values must be either 1s or 0s
         """
         if isinstance(x, list):
             x = np.array(x)
@@ -38,5 +39,4 @@ class BasisEncoding(EncodingMap):
         return len(x)
 
     def state_vector(self, x):
-        # TODO: to be implemented
-        pass
+        return ''.join(str(s) for s in x)

@@ -5,11 +5,7 @@ import numpy as np
 class EncodingMap(ABC):
     """
     Abstract Base class for qlkit encoding maps
-    This class and its derivatives are base on the following paper
-    by Israel F. Araujo, Daniel K. Park, Francesco Petruccione and
-    Adenilton J. da Silva:    https://arxiv.org/pdf/2008.01511.pdf
     """
-
     def __init__(self):
         pass
 
