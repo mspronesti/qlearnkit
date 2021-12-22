@@ -1,4 +1,3 @@
-import qiskit
 from qiskit.providers import BaseBackend
 from qiskit.result import Result
 from qlkit.algorithms import QuantumClassifier
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class QKNeighborsClassifier(QuantumClassifier):
-    """
+    r"""
     The Quantum K-Nearest Neighbors algorithm for classification
 
     Note:
@@ -23,6 +22,10 @@ class QKNeighborsClassifier(QuantumClassifier):
         Classify data using the Iris dataset.
 
         ..  jupyter-execute::
+
+            import qiskit
+            from qiskit.providers import BaseBackend
+            import numpy as np
             from qlkit.algorithms import QKNeighborsClassifier
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
@@ -146,14 +149,14 @@ class QKNeighborsClassifier(QuantumClassifier):
 
         for i in range(test_size):
             shift = i * train_size
-            fidelities[i] = all_fidelities[shift:train_size + shift]
+            fidelities[i] = all_fidelities[shift:train_size+shift]
 
         return fidelities
 
     def _majority_voting(self,
                          y_train: np.ndarray,
                          fidelities: np.ndarray) -> np.ndarray:
-        """
+        r"""
         Performs the classical majority vote procedure of the
         K-Nearest Neighbors classifier with the :math:`k` nearest to
         determine class
@@ -216,7 +219,7 @@ class QKNeighborsClassifier(QuantumClassifier):
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
         """Predict the labels of the provided data."""
-        # construct
+        #  construct
         #  |-> results
         #  |-> fidelities
         #  |-> vote
@@ -224,32 +227,3 @@ class QKNeighborsClassifier(QuantumClassifier):
         fidelities = self._get_fidelities(results, len(X_test))
         return self._majority_voting(self.y_train, fidelities)
 
-
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from qlkit.encodings import AmplitudeEncoding
-
-# preparing the parameters for the algorithm
-encoding_map = AmplitudeEncoding()
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
-
-qknn = QKNeighborsClassifier(
-    n_neighbors=3,
-    encoding_map=encoding_map,
-    backend=backend
-)
-
-X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
-y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
-qknn.fit(X_train, y_train)
-
-prediction = qknn.predict(X_test)
-print(prediction)
-print(y_test)
-
-print("Test Accuracy: {}".format(
-    sum([1 if p == t else 0 for p, t in zip(prediction, y_test)]) / len(prediction)
-))

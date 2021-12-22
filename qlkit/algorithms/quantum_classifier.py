@@ -1,15 +1,14 @@
 import logging
 import time
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 import numpy as np
 from abc import abstractmethod
 import qiskit
+from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, BaseBackend
-from qiskit.qobj import Qobj
 from qiskit.result import Result
 from sklearn.base import ClassifierMixin, TransformerMixin
-
 
 logger = logging.getLogger(__name__)
 
@@ -54,9 +53,6 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         self.y_train = np.asarray([])
         self.qcircuits = None
 
-    def fit_transform(self, X, y=None, **fit_params):
-        return X
-
     @abstractmethod
     def fit(self,
             X_train: np.ndarray,
@@ -88,7 +84,7 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
     @abstractmethod
     def _create_circuits(self,
                          X_train: np.ndarray,
-                         X_test: np.ndarray):
+                         X_test: np.ndarray) -> Union[QuantumCircuit, List[QuantumCircuit]]:
         """
         Creates the quantum circuit(s) to perform
         the classification process
@@ -100,7 +96,36 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         """
         raise NotImplementedError("Must have implemented this.")
 
-    def execute(self, X_test) -> Union[Optional[Result]]:
+    @staticmethod
+    def parallel_construct_circuits(construct_circuit_task: callable,
+                                    X_test: np.ndarray,
+                                    task_args: list = None) -> List[QuantumCircuit]:
+        """
+        Wrapper helper to qiskit parallel_map used to parallely construct
+        circuits if the algorithm allows it. See qiskit parallel_map
+        for more
+
+        Args:
+            construct_circuit_task:
+                the task constructing a single
+                quantum circuit
+            X_test:
+                the test dataset
+            task_args:
+                the other (optional) parameters of the task
+
+        Returns:
+            The result list contains the value of
+                ``construct_circuit_task(X_test, *task_args)`` for
+                    each value in ``X_test``.
+
+        """
+        from qiskit.tools import parallel_map
+        return parallel_map(construct_circuit_task,
+                            X_test,
+                            task_args=task_args)
+
+    def execute(self, X_test) -> Union[Optional[Result], None]:
         """
         Executes the given quantum circuit
         Args:
@@ -119,7 +144,8 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
             self.qcircuits,
             self.backend,
             optimization_level=self.optimization_level,
-            shots=self.shots
+            shots=self.shots,
+            scheduling_method='asap'
         )
 
         job.result()
@@ -141,4 +167,3 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         else:
             logger.error("Job not completed, errors occurred. Job status is: {}".format(job.status))
             return None
-
