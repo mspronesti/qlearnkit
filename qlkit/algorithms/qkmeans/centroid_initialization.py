@@ -3,14 +3,14 @@ import numpy as np
 
 
 def random(X: np.ndarray,
-           k: int,
+           n_clusters: int,
            random_state: int = 42) -> np.ndarray:
     """
     Create random cluster centroids.
     Args:
         X:
             The dataset to be used for centroid initialization.
-        k:
+        n_clusters:
             The desired number of clusters for which centroids are required.
         random_state:
             Determines random number generation for centroid initialization.
@@ -21,7 +21,7 @@ def random(X: np.ndarray,
     centroids = []
     m = np.shape(X)[0]
 
-    for _ in range(k):
+    for _ in range(n_clusters):
         r = np.random.randint(0, m - 1)
         centroids.append(X[r])
 

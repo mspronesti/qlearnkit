@@ -6,7 +6,6 @@ from qlkit.algorithms.quantum_classifier import QuantumClassifier
 from qlkit.algorithms.qkmeans.centroid_initialization import random, qkmeans_plus_plus, naive_sharding
 from qlkit.algorithms.qkmeans.qkmeans_circuit import *
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -23,9 +22,13 @@ class QKMeans(QuantumClassifier):
         Classify data using the Iris dataset.
 
         ..  jupyter-execute::
+            import numpy as np
+            import qiskit
+            from qiskit.providers import BaseBackend
             from qlkit.algorithms.qkmeans.qkmeans import QKMeans
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
+            from matplotlib import pyplot as plt
 
             # preparing the parameters for the algorithm
             backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
@@ -40,18 +43,29 @@ class QKMeans(QuantumClassifier):
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+            # Perform quantum kmeans clustering
             qkmeans.fit(X_train, y_train)
 
+            # Plot the results
+            colors = ['blue', 'orange', 'green']
+            for i in range(X_train.shape[0]):
+                plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.clusters[i]])
+            plt.scatter(qkmeans.centroids[:, 0], qkmeans.centroids[:, 1], marker='*', c='g', s=150)
+            plt.show()
+
+            # Predict new points
             prediction = qkmeans.predict(X_test)
             print(prediction)
+
     """
 
     def __init__(self,
                  n_clusters: int = 8,
-                 init: str = "qkmeans++",
+                 init="qkmeans++",
                  n_init: int = 1,
                  max_iter: int = 300,
-                 tol: float = 1e-1,
+                 tol: float = 1e-4,
                  random_state: int = 42,
                  backend: BaseBackend = BaseBackend,
                  shots: int = 1024,
@@ -89,14 +103,14 @@ class QKMeans(QuantumClassifier):
                 If None or invalid value, level 1 will be chosen as default.
         """
         super().__init__(None, backend, shots, optimization_level)
-        self.num_clusters = n_clusters
+        self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
         self.tol = tol
         self.n_init = n_init
         self.y_train = None
         self.X_train = None
-        self.num_clusters = n_clusters
+        self.n_clusters = n_clusters
         self.random_state = random_state
         self.centroids = None
         self.clusters = None
@@ -121,11 +135,11 @@ class QKMeans(QuantumClassifier):
                 Determines random number generation for centroid initialization.
         """
         if init == "random":
-            self.centroids = random(X, self.num_clusters, random_state)
+            self.centroids = random(X, self.n_clusters, random_state)
         elif init == "qkmeans++":
-            self.centroids = qkmeans_plus_plus(X, self.num_clusters, random_state)
+            self.centroids = qkmeans_plus_plus(X, self.n_clusters, random_state)
         elif init == "naive":
-            self.centroids = naive_sharding(X, self.num_clusters)
+            self.centroids = naive_sharding(X, self.n_clusters)
         else:
             self.centroids = init
 
@@ -134,7 +148,7 @@ class QKMeans(QuantumClassifier):
         Reassign centroid value to be the calculated mean value for each cluster.
         If a cluster is empty the corresponding centroid remains the same.
         """
-        for i in range(self.num_clusters):
+        for i in range(self.n_clusters):
             if np.sum(self.clusters == i) != 0:
                 self.centroids[i] = np.mean(self.X_train[self.clusters == i], axis=0)
 
@@ -160,10 +174,10 @@ class QKMeans(QuantumClassifier):
         Returns:
             The computed distance.
         """
-        distance_centroids = [0] * self.num_clusters
+        distance_centroids = [0] * self.n_clusters
         x = 1
-        for i in range(0, self.num_clusters):
-            binary = format(x, "b").zfill(self.num_clusters)
+        for i in range(0, self.n_clusters):
+            binary = format(x, "b").zfill(self.n_clusters)
             distance_centroids[i] = counts[binary] if binary in counts else 0
             x = x << 1
         return distance_centroids
@@ -191,7 +205,7 @@ class QKMeans(QuantumClassifier):
         circuits = parallel_map(
             construct_circuit,
             X_test,
-            task_args=[self.centroids, self.num_clusters]
+            task_args=[self.centroids, self.n_clusters]
         )
         logger.info("Done.")
         return circuits
@@ -219,7 +233,6 @@ class QKMeans(QuantumClassifier):
             centroids_old = deepcopy(self.centroids)
             self._recompute_centroids()
             error = np.linalg.norm(self.centroids - centroids_old)
-            print(error)
             it = it + 1
 
     def predict(self,

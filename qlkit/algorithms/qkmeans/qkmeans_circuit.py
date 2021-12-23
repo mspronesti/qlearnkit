@@ -17,7 +17,7 @@ def _map_function(x):
 
 def _map_features(input_point,
                   centroids,
-                  k: int): 
+                  n_centroids: int):
     """
     Map the input point and the centroids to .. math:: \theta and .. math:: \phi values
     via the :func:`_map_function` method.
@@ -26,7 +26,7 @@ def _map_features(input_point,
             Input point to map.
         centroids:
             Array of points to map.
-        k:
+        n_centroids:
             Number of centroids.
     Returns:
         Tuple containing input point and centroids mapped.
@@ -35,7 +35,7 @@ def _map_features(input_point,
     theta_centroids_list = []
     phi_input = _map_function(input_point[0])
     theta_input = _map_function(input_point[1])
-    for i in range(0, k):
+    for i in range(0, n_centroids):
         phi_centroids_list.append(_map_function(centroids[i][0]))
         theta_centroids_list.append(_map_function(centroids[i][1]))
     return phi_input, theta_input, phi_centroids_list, theta_centroids_list
