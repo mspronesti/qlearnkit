@@ -6,8 +6,8 @@ import sklearn.exceptions
 from qiskit.utils import QuantumInstance
 from qiskit.providers import BaseBackend
 from qiskit_machine_learning.kernels import QuantumKernel
-from qlkit.base.qsvclassifier import QuantumClassifier
 from qiskit.circuit.library import NLocal, ZZFeatureMap
+from qlkit.algorithms import QuantumClassifier
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,8 @@ class QSVClassifier(QuantumClassifier):
                  backend: BaseBackend,
                  gamma=1,
                  shots: int = 1024,
-                 optimization_level: int = 1):
+                 optimization_level: int = 1,
+                 seed=None):
         r"""
         Args:
             encoding_map:
@@ -87,6 +88,7 @@ class QSVClassifier(QuantumClassifier):
         self.alpha = None
         self.bias = None
         self.n_classes = None
+        self.seed = seed
 
 
     def fit(self, X, y):
@@ -177,7 +179,9 @@ class QSVClassifier(QuantumClassifier):
 
         q_instance = QuantumInstance(self.backend,
                                      shots=self.shots,
-                                     optimization_level=self.optimization_level)
+                                     optimization_level=self.optimization_level,
+                                     seed_simulator=self.seed,
+                                     seed_transpiler=self.seed)
         q_kernel = QuantumKernel(feature_map=self.encoding_map,
                                  quantum_instance=q_instance)
         total_kernel_matrix = q_kernel.evaluate(x_vec=X_train, y_vec=X_total)

@@ -3,7 +3,11 @@ import pytest
 import numpy as np
 import qiskit
 from qiskit.circuit.library import ZZFeatureMap
+from qiskit.utils import algorithm_globals
 from qlkit.algorithms import QSVClassifier
+
+seed = 42
+algorithm_globals.random_seed = seed
 
 def test_qsvc_binary():
     backend = qiskit.BasicAer.get_backend('qasm_simulator')
@@ -13,6 +17,7 @@ def test_qsvc_binary():
     qsvc = QSVClassifier(
         backend=backend,
         encoding_map=encoding_map,
+        seed=seed
     )
 
     train_data = [
@@ -45,6 +50,7 @@ def test_qsvc_multiclass():
     qsvc = QSVClassifier(
         backend=backend,
         encoding_map=encoding_map,
+        seed=seed
     )
 
     train_data = [
@@ -75,6 +81,7 @@ def test_qsvc_text_labels():
     qsvc = QSVClassifier(
         backend=backend,
         encoding_map=encoding_map,
+        seed=seed
     )
 
     train_data = [
