@@ -20,9 +20,11 @@ class AmplitudeEncoding(EncodingMap):
         r"""
         Retrieves the number of needed qubits
         for the amplitude encoding, which is nothing
-        but .. math:: \ceil{log_2(\#x)}
+        but :math:`\lceil log_2{x}\rceil`
+
         Args:
-            x: the vector the be encoded
+            x: the vector to be encoded
+
         Returns:
            the number of required qubits
         """
@@ -35,9 +37,12 @@ class AmplitudeEncoding(EncodingMap):
         as follows:
         given a quantum state :math:`\psi`, it processes the data
         such that
-        .. math:: \langle \psi | \psi \rangle = 1,
+
+        .. math::\langle\psi|\psi\rangle = 1,
+
         Args:
             x: the classical data
+
         Returns:
             (np.array) encoded quantum state
         """

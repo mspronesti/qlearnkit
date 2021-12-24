@@ -58,9 +58,11 @@
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the number of needed qubits</span>
 <span class="sd">        for the amplitude encoding, which is nothing</span>
-<span class="sd">        but .. math:: \ceil{log_2(\#x)}</span>
+<span class="sd">        but :math:`\lceil log_2{x}\rceil`</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            x: the vector the be encoded</span>
+<span class="sd">            x: the vector to be encoded</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">           the number of required qubits</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -73,9 +75,12 @@
 <span class="sd">        as follows:</span>
 <span class="sd">        given a quantum state :math:`\psi`, it processes the data</span>
 <span class="sd">        such that</span>
-<span class="sd">        .. math:: \langle \psi | \psi \rangle = 1,</span>
+
+<span class="sd">        .. math::\langle\psi|\psi\rangle = 1,</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            x: the classical data</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            (np.array) encoded quantum state</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -60,11 +60,13 @@
 <span class="sig-name descname"><span class="pre">n_qubits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlkit/encodings/amplitude_encoding.html#AmplitudeEncoding.n_qubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlkit.encodings.amplitude_encoding.AmplitudeEncoding.n_qubits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the number of needed qubits
 for the amplitude encoding, which is nothing
-but .. math:: ceil{log_2(#x)}
-:param x: the vector the be encoded</p>
+but <span class="math notranslate nohighlight">\(\lceil log_2{x}\rceil\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the number of required qubits</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the vector to be encoded</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the number of required qubits</p>
 </dd>
 </dl>
 </dd></dl>
@@ -75,12 +77,13 @@ but .. math:: ceil{log_2(#x)}
 <dd><p>The encoding of a state via amplitude encoding operates
 as follows:
 given a quantum state <span class="math notranslate nohighlight">\(\psi\)</span>, it processes the data
-such that
-.. math:: langle psi | psi rangle = 1,
-:param x: the classical data</p>
+such that</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(np.array) encoded quantum state</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the classical data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(np.array) encoded quantum state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -249,11 +252,13 @@ Basis Encoding
 <span class="sig-name descname"><span class="pre">n_qubits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlkit/encodings/amplitude_encoding.html#AmplitudeEncoding.n_qubits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlkit.encodings.AmplitudeEncoding.n_qubits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the number of needed qubits
 for the amplitude encoding, which is nothing
-but .. math:: ceil{log_2(#x)}
-:param x: the vector the be encoded</p>
+but <span class="math notranslate nohighlight">\(\lceil log_2{x}\rceil\)</span></p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the number of required qubits</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the vector to be encoded</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the number of required qubits</p>
 </dd>
 </dl>
 </dd></dl>
@@ -264,12 +269,13 @@ but .. math:: ceil{log_2(#x)}
 <dd><p>The encoding of a state via amplitude encoding operates
 as follows:
 given a quantum state <span class="math notranslate nohighlight">\(\psi\)</span>, it processes the data
-such that
-.. math:: langle psi | psi rangle = 1,
-:param x: the classical data</p>
+such that</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(np.array) encoded quantum state</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the classical data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(np.array) encoded quantum state</p>
 </dd>
 </dl>
 </dd></dl>
