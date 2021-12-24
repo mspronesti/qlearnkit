@@ -45,7 +45,7 @@ class QKNeighborsClassifier(QuantumClassifier):
             X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2 ])
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
             qknn.fit(X_train, y_train)
 
             prediction = qknn.predict(X_test)
@@ -66,9 +66,9 @@ class QKNeighborsClassifier(QuantumClassifier):
                  optimization_level: int = 1):
         """
         encoding_map:
-                        map to classical data to quantum states.
-                        This class does not impose any constraint on it. It
-                        can either be a custom encoding map or a qiskit FeatureMap
+                map to classical data to quantum states.
+                This class does not impose any constraint on it. It
+                can either be a custom encoding map or a qiskit FeatureMap
             backend:
                 the qiskit backend to do the compilation & computation on
             shots:
@@ -136,20 +136,18 @@ class QKNeighborsClassifier(QuantumClassifier):
             numpy ndarray of all fidelities
         """
         train_size = self.X_train.shape[0]
-        all_counts = results.get_counts()
+        all_counts = results.get_counts()  # List[Dict(str, int)]
 
         fidelities = np.empty(
             shape=(test_size, train_size)
         )
 
-        all_fidelities = list()
-        for counts in all_counts:
+        for i, (counts) in enumerate(all_counts):
             fidelity = self._compute_fidelity(counts)
-            all_fidelities.append(fidelity)
-
-        for i in range(test_size):
-            shift = i * train_size
-            fidelities[i] = all_fidelities[shift:train_size+shift]
+            # the i-th subarray of the ndarray `fidelities` contains
+            # the values that we will use for the majority voting to
+            # predict the label of the i-th test input data
+            fidelities[i // train_size][i % train_size] = fidelity
 
         return fidelities
 
@@ -204,14 +202,26 @@ class QKNeighborsClassifier(QuantumClassifier):
             X_test: the unclassified input data
 
         """
-        logger.info("Starting circuits construction ...")
+        logger.info("Starting parallel circuits construction ...")
 
         X_test = self.encoding_map.encode_dataset(X_test)
-        circuits = [
+
+        circuits = []
+        for i, xtest in enumerate(X_test):
+            # computing distance of xtest with respect to
+            # each point in X_train
+            circuits_line = self.parallel_construct_circuits(
+                construct_circuit,
+                X_train,
+                task_args=[xtest, "swap_test_circuit_{}".format(i)]
+            )
+            circuits = circuits + circuits_line
+
+        """circuits = [
             construct_circuit(xt, xtr)
             for xt in X_test
             for xtr in X_train
-        ]
+        ]"""
 
         logger.info("Done.")
         return circuits
@@ -225,5 +235,6 @@ class QKNeighborsClassifier(QuantumClassifier):
         #  |-> vote
         results = self.execute(X_test)
         fidelities = self._get_fidelities(results, len(X_test))
+
         return self._majority_voting(self.y_train, fidelities)
 

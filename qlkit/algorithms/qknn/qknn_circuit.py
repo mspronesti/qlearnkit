@@ -7,21 +7,23 @@ logger = logging.getLogger(__name__)
 
 
 def construct_circuit(state_vector_1: np.ndarray,
-                      state_vector_2: np.ndarray) -> QuantumCircuit:
+                      state_vector_2: np.ndarray,
+                      name: str = None) -> QuantumCircuit:
     r"""
     Constructs a slightly modified swap test circuit employing a Toffoli
     swap
 
-    Circuit:
-                     ┌───┐                 ┌───┐ ░ ┌─┐
-        q1_0: ───────┤ H ├──────────────■──┤ H ├─░─┤M├
-              ┌──────┴───┴──────┐┌───┐  │  ├───┤ ░ └╥┘
-        q1_1: ┤ Initialize(1,0) ├┤ X ├──■──┤ X ├─░──╫─
-              ├─────────────────┤└─┬─┘┌─┴─┐└─┬─┘ ░  ║
-        q1_2: ┤ Initialize(0,1) ├──■──┤ X ├──■───░──╫─
-              └─────────────────┘     └───┘      ░  ║
-        c1: 1/══════════════════════════════════════╩═
-                                                    0
+    .. parsed-literal::
+
+                         ┌───┐                 ┌───┐ ░ ┌─┐
+            q1_0: ───────┤ H ├──────────────■──┤ H ├─░─┤M├
+                  ┌──────┴───┴──────┐┌───┐  │  ├───┤ ░ └╥┘
+            q1_1: ┤ Initialize(1,0) ├┤ X ├──■──┤ X ├─░──╫─
+                  ├─────────────────┤└─┬─┘┌─┴─┐└─┬─┘ ░  ║
+            q1_2: ┤ Initialize(0,1) ├──■──┤ X ├──■───░──╫─
+                  └─────────────────┘     └───┘      ░  ║
+            c1: 1/══════════════════════════════════════╩═
+                                                        0
 
     where state_vector_1 = [1,0], state_vector_2 = [0, 1]
 
@@ -33,6 +35,7 @@ def construct_circuit(state_vector_1: np.ndarray,
     Args:
         state_vector_1: first state
         state_vector_2: second state
+        name: the (optional) name of the circuit
 
     Returns:
         swap test circuit
@@ -51,7 +54,7 @@ def construct_circuit(state_vector_1: np.ndarray,
 
     q = QuantumRegister(2 * size + 1)
     c = ClassicalRegister(1)
-    swaptest = QuantumCircuit(q, c)
+    swaptest = QuantumCircuit(q, c, name=name)
 
     swaptest.repeat(1)
     swaptest.initialize(state_vector_1, range(1, size + 1))
