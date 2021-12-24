@@ -7,6 +7,7 @@ def random(X: np.ndarray,
            random_state: int = 42) -> np.ndarray:
     """
     Create random cluster centroids.
+
     Args:
         X:
             The dataset to be used for centroid initialization.
@@ -14,6 +15,7 @@ def random(X: np.ndarray,
             The desired number of clusters for which centroids are required.
         random_state:
             Determines random number generation for centroid initialization.
+
     Returns:
         Collection of k centroids as a numpy ndarray.
     """
@@ -33,6 +35,7 @@ def qkmeans_plus_plus(X: np.ndarray,
                       random_state: int = 42) -> np.ndarray:
     """
     Create cluster centroids using the k-means++ algorithm.
+
     Args:
         X:
             The dataset to be used for centroid initialization.
@@ -40,6 +43,7 @@ def qkmeans_plus_plus(X: np.ndarray,
             The desired number of clusters for which centroids are required.
         random_state:
             Determines random number generation for centroid initialization.
+
     Returns:
         Collection of k centroids as a numpy ndarray.
     """
@@ -65,20 +69,16 @@ def naive_sharding(X: np.ndarray,
                    k: int) -> np.ndarray:
     """
     Create cluster centroids using deterministic naive sharding algorithm.
+
     Args:
         X:
             The dataset to be used for centroid initialization.
         k:
             The desired number of clusters for which centroids are required.
+
     Returns:
         Collection of k centroids as a numpy ndarray.
     """
-    def _get_mean(sums, step_):
-        """
-        Vectorizable ufunc for getting means of summed shard columns.
-        """
-        return sums / step_
-
     n = np.shape(X)[1]
     m = np.shape(X)[0]
     centroids = np.zeros((k, n))
@@ -88,7 +88,7 @@ def naive_sharding(X: np.ndarray,
     ds.sort(axis=0)
 
     step = floor(m / k)
-    vfunc = np.vectorize(_get_mean)
+    vfunc = np.vectorize(lambda sums, step_: sums/step_)
 
     for j in range(k):
         if j == k - 1:

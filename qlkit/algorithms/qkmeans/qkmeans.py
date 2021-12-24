@@ -1,7 +1,6 @@
 from copy import deepcopy
-from typing import List, Dict
+from typing import List, Dict, Union
 from qiskit.providers import BaseBackend
-from qiskit.tools import parallel_map
 from qlkit.algorithms.quantum_classifier import QuantumClassifier
 from qlkit.algorithms.qkmeans.centroid_initialization import random, qkmeans_plus_plus, naive_sharding
 from qlkit.algorithms.qkmeans.qkmeans_circuit import *
@@ -22,6 +21,7 @@ class QKMeans(QuantumClassifier):
         Classify data using the Iris dataset.
 
         ..  jupyter-execute::
+
             import numpy as np
             import qiskit
             from qiskit.providers import BaseBackend
@@ -42,7 +42,7 @@ class QKMeans(QuantumClassifier):
             X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
 
             # Perform quantum kmeans clustering
             qkmeans.fit(X_train, y_train)
@@ -62,7 +62,7 @@ class QKMeans(QuantumClassifier):
 
     def __init__(self,
                  n_clusters: int = 8,
-                 init="qkmeans++",
+                 init: Union[str, np.ndarray] = "qkmeans++",
                  n_init: int = 1,
                  max_iter: int = 300,
                  tol: float = 1e-4,
@@ -158,19 +158,23 @@ class QKMeans(QuantumClassifier):
         Compute distance, without explicitly measure it, of a point with respect
         to all the centroids using a dictionary of counts,
         which refers to the following circuit:
-                    ┌───┐                   ┌───┐
-            |0anc>: ┤ H ├────────────■──────┤ H ├────────M
-                    └───┘            |      └───┘
-                    ┌───┐   ┌────┐   |
-            |0>: ───┤ H ├───┤ U3 ├───X──────────
-                    └───┘   └────┘   |
-                    ┌───┐   ┌────┐   |
-            |0>: ───┤ H ├───┤ U3 ├───X──────────
-                    └───┘   └────┘
+
+        .. parsed-literal::
+
+                        ┌───┐                   ┌───┐
+                |0anc>: ┤ H ├────────────■──────┤ H ├────────M
+                        └───┘            |      └───┘
+                        ┌───┐   ┌────┐   |
+                |0>: ───┤ H ├───┤ U3 ├───X──────────
+                        └───┘   └────┘   |
+                        ┌───┐   ┌────┐   |
+                |0>: ───┤ H ├───┤ U3 ├───X──────────
+                        └───┘   └────┘
 
         Args:
             counts:
                 Counts resulting after the simulation.
+
         Returns:
             The computed distance.
         """
@@ -189,9 +193,11 @@ class QKMeans(QuantumClassifier):
         Creates the circuits to be executed on
         the gated quantum computer for the classification
         process
+
         Args:
             X_train: The training data.
             X_test: The unclassified input data.
+
         Returns:
             List of quantum circuits created.
         """
@@ -202,11 +208,12 @@ class QKMeans(QuantumClassifier):
             circuits.append(construct_circuit(xt, self.centroids, self.num_clusters))
 
         '''
-        circuits = parallel_map(
+        circuits = self.parallel_construct_circuits(
             construct_circuit,
             X_test,
             task_args=[self.centroids, self.n_clusters]
         )
+
         logger.info("Done.")
         return circuits
 
@@ -217,6 +224,7 @@ class QKMeans(QuantumClassifier):
         Fits the model using X as training dataset
         and y as training labels. For the qkmeans algorithm y is ignored.
         The fit model creates clusters from the training dataset given as input
+
         Args:
             X: training dataset
             y: training labels
@@ -238,9 +246,11 @@ class QKMeans(QuantumClassifier):
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
         """Predict the labels of the provided data.
+
         Args:
             X_test:
                 New data to predict.
+
         Returns:
             Index of the cluster each sample belongs to.
         """

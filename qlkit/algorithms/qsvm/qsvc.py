@@ -1,7 +1,7 @@
 import logging
+from abc import ABC
 from typing import Optional
 import numpy as np
-import qiskit
 import sklearn.exceptions
 from qiskit.utils import QuantumInstance
 from qiskit.providers import BaseBackend
@@ -11,21 +11,23 @@ from qlkit.algorithms import QuantumClassifier
 
 logger = logging.getLogger(__name__)
 
-class QSVClassifier(QuantumClassifier):
+
+class QSVClassifier(QuantumClassifier, ABC):
     r"""
     The Quantum Support Vector Machine algorithm for classification.
     Maps datapoints to quantum states using a FeatureMap or similar
     QuantumCircuit.
-
-    Note:
-        The naming conventions follow the KNeighborsClassifier from
-        sklearn.neighbors
 
     Example:
 
         Classify data using the Iris dataset.
 
         ..  jupyter-execute::
+
+            import qiskit
+            import numpy as np
+            from qlkit.algorithms import QSVClassifier
+            from qiskit.providers import BaseBackend
             from qiskit.circuit.library import ZZFeatureMap
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
@@ -44,20 +46,21 @@ class QSVClassifier(QuantumClassifier):
             X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
             qsvc.fit(X_train, y_train)
 
             print("Test Accuracy: {}".format(
                 qsvc.score(X_test, y_test)
             ))
     """
+
     def __init__(self,
                  encoding_map: Optional[NLocal],
                  backend: BaseBackend,
-                 gamma=1,
+                 gamma: float = 1.,
                  shots: int = 1024,
                  optimization_level: int = 1,
-                 seed=None):
+                 seed: int = None):
         r"""
         Args:
             encoding_map:
@@ -80,7 +83,7 @@ class QSVClassifier(QuantumClassifier):
         """
         encoding_map = encoding_map if encoding_map else ZZFeatureMap(2)
         super().__init__(encoding_map, backend, shots, optimization_level)
-        #TODO: include 'auto' and 'scale' options for gamma
+        # TODO: include 'auto' and 'scale' options for gamma
         self.gamma = gamma
         self.train_kernel_matrix = None
         self.label_class_dict = None
@@ -90,9 +93,8 @@ class QSVClassifier(QuantumClassifier):
         self.n_classes = None
         self.seed = seed
 
-
     def fit(self, X, y):
-        r"""
+        """
         Fits the model using X as training dataset
         and y as training labels. The actual computation
         is done at the predict stage to allow running
@@ -114,54 +116,41 @@ class QSVClassifier(QuantumClassifier):
         self.y_train = np.asarray(y)
         self.n_classes = np.unique(y).size
 
-        self.label_class_dict, self.class_label_dict = self._create_label_class_dicts(self.y_train)
+        self.label_class_dict, self.class_label_dict = QSVClassifier._create_label_class_dicts(self.y_train)
 
         # Prepares an array of [+1,-1] values for each class
         # and organizes them in a matrix per the svm formulation.
         # This matrix notation will be useful later on to avoid nested for loops.
         classes_array = np.array([np.vectorize(self.label_class_dict.get)(self.y_train)])
         classes_array = classes_array.T
-        classes_matrix = np.equal( classes_array,
-                                   np.arange(self.n_classes) * np.ones((classes_array.size,self.n_classes)))
+        classes_matrix = np.equal(classes_array,
+                                  np.arange(self.n_classes) * np.ones((classes_array.size, self.n_classes)))
 
-        self.classes_train = classes_matrix*2-1
+        self.classes_train = classes_matrix * 2 - 1
         logger.info("setting training data: ")
         for _X, _y in zip(X, y):
             logger.info("%s: %s", _X, _y)
 
-
-
-    def _create_label_class_dicts(self,labels):
-        r"""
+    @staticmethod
+    def _create_label_class_dicts(labels):
+        """
         Creates dictionaries to convert from labels
         to classes used by svm. Classes are the integer values in range [0, 1, ..., n_classes]
 
         Args:
             labels: labels for which the dictionaries will be created
+
         Returns:
             dictionaries to convert from the user labels to the internal
             representation and vice versa
         """
         unique_labels = np.unique(labels)
-        label_class_dict = {unique_labels[i] : i for i in range(unique_labels.size)}
-        class_label_dict = {c : unique_labels[c] for c in range(unique_labels.size)}
-        return label_class_dict,class_label_dict
+        label_class_dict = {unique_labels[i]: i for i in range(unique_labels.size)}
+        class_label_dict = {c: unique_labels[c] for c in range(unique_labels.size)}
+        return label_class_dict, class_label_dict
 
-
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray):
-        r"""
-        Unused in QSVClassifier
-
-        Args:
-            X_train:
-            X_test:
+    def _compute_kernel_matrices(self, X_train, X_test):
         """
-        return
-
-    def _compute_kernel_matrices(self,X_train,X_test):
-        r"""
         Computes the kernel matrices of distances between each training datapoint
         and between training and test datapoints.
         Takes advantage of quantum circuits for faster computation.
@@ -172,10 +161,10 @@ class QSVClassifier(QuantumClassifier):
         """
         n_train = self.X_train.shape[0]
 
-        #TODO: add logic to handle already trained svm
+        # TODO: add logic to handle already trained svm
 
         # Train and test data stacked together to run backend only once
-        X_total = np.vstack([self.X_train,X_test])
+        X_total = np.vstack([self.X_train, X_test])
 
         q_instance = QuantumInstance(self.backend,
                                      shots=self.shots,
@@ -193,10 +182,10 @@ class QSVClassifier(QuantumClassifier):
 
         return train_kernel_matrix, test_kernel_matrix
 
-    #TODO: _compute_alpha method to divide _compute_predictions in two
+    # TODO: _compute_alpha method to divide _compute_predictions in two
 
-    def _compute_predictions(self,train_kernel_matrix,test_kernel_matrix):
-        r"""
+    def _compute_predictions(self, train_kernel_matrix, test_kernel_matrix):
+        """
         Uses kernel matrices to find n_classes dividing hyperplanes,
         following a one-to-rest approach. Based on Least Squares
         Support Vector Machine formulation. Actually solves n_classes
@@ -205,6 +194,7 @@ class QSVClassifier(QuantumClassifier):
         Args:
             train_kernel_matrix: matrix of distances between training datapoints
             test_kernel_matrix: matrix of distances between training and test datapoints
+
         Returns:
             numpy ndarray of predicted classes. Uses the internal representation
         """
@@ -226,57 +216,40 @@ class QSVClassifier(QuantumClassifier):
         # to solving n_classes distinct binary problems.
         X = np.linalg.solve(A, B)
         self.bias = X[0, :]
-        self.alpha = X[1:,:]
-        
+        self.alpha = X[1:, :]
+
         # Predict
-        prediction_classes = np.argmax(test_kernel_matrix @ self.alpha + self.bias,axis=1)
+        prediction_classes = np.argmax(test_kernel_matrix @ self.alpha + self.bias, axis=1)
         return prediction_classes
 
     def predict(self,
-                X_test: np.ndarray,
-                async_: bool = False
-                ) -> np.ndarray:
-        r"""
+                X_test: np.ndarray) -> np.ndarray:
+        """
         Solves a Least Squares problem to predict value of input data.
         Uses a one-to-rest approach and thus needs to run the algorithm
         n_classes different times
 
         Args:
             X_test: the test data
-            async_: unused
+
         Returns:
             numpy ndarray of predicted labels
         """
         if self.X_train is None:
-            raise sklearn.exceptions.NotFittedError("This QSVClassifier instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator.")
+            raise sklearn.exceptions.NotFittedError(
+                "This QSVClassifier instance is not fitted yet. "
+                "Call 'fit' with appropriate arguments before using "
+                "this estimator.")
 
         logger.info("Computing kernel matrices...")
-        self.train_kernel_matrix, self.test_kernel_matrix = self._compute_kernel_matrices(self.X_train,X_test)
+        self.train_kernel_matrix, self.test_kernel_matrix = self._compute_kernel_matrices(self.X_train, X_test)
         logger.info("Done.")
 
         logger.info("Computing predictions...")
-        classes_predict = self._compute_predictions(self.train_kernel_matrix,self.test_kernel_matrix)
+        classes_predict = self._compute_predictions(self.train_kernel_matrix, self.test_kernel_matrix)
 
         # Converts back from internal numerical classes used in SVM
         # to user provided labels.
         y_predict = np.vectorize(self.class_label_dict.get)(classes_predict)
         logger.info("Done.")
         return y_predict
-
-    def score(self, X_test, y_test):
-        r"""
-        Return the mean accuracy on the given test data and labels.
-
-        In multi-label classification, this is the subset accuracy
-        which is a harsh metric since you require for each sample that
-        each label set be correctly predicted.
-
-        Args:
-            X_test: the test data
-            y_test: the test labels
-        Returns:
-            accuracy score for the given data
-        """
-        #TODO: add check to make sure algorithm is trained
-        y_predict = self.predict(X_test)
-        return sum(y_test==y_predict)/len(y_test)

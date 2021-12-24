@@ -8,9 +8,12 @@ logger = logging.getLogger(__name__)
 
 def _map_function(x):
     r"""
-    We map data feature values to .. math:: \theta and .. math:: \phi values using this equation:
-    .. math:: \phi = (x + 1) \frac{\pi}{2},
-    where .. math:: \phi is the phase and .. math:: \theta the angle
+    We map data feature values to :math:`\theta` and :math:`\phi` values using
+    the following eqaution:
+
+    .. math:: \phi = (x + 1) \frac{\pi}{2}
+
+    where :math:`\phi` is the phase and :math:`\theta` the angle
     """
     return (x + 1) * np.pi / 2
 
@@ -18,9 +21,10 @@ def _map_function(x):
 def _map_features(input_point,
                   centroids,
                   n_centroids: int):
-    """
-    Map the input point and the centroids to .. math:: \theta and .. math:: \phi values
+    r"""
+    Map the input point and the centroids to :math:`\theta` and :math:`\phi` values
     via the :func:`_map_function` method.
+
     Args:
         input_point:
             Input point to map.
@@ -49,6 +53,9 @@ def construct_circuit(input_point: np.ndarray,
     Encode data points using U3 gate.
     Perform controlled swap to entangle the state with the ancillary qubit
     Apply another Hadamard gate to the ancillary qubit.
+
+    .. parsed-literal::
+
                     ┌───┐                   ┌───┐
             |0anc>: ┤ H ├────────────■──────┤ H ├────────M
                     └───┘            |      └───┘
@@ -66,6 +73,7 @@ def construct_circuit(input_point: np.ndarray,
             the distance to.
         k:
             Number of centroids.
+
     Returns:
         The quantum circuit created.
     """
