@@ -9,6 +9,7 @@ from qlkit.algorithms import QSVClassifier
 seed = 42
 algorithm_globals.random_seed = seed
 
+
 def test_qsvc_binary():
     backend = qiskit.BasicAer.get_backend('qasm_simulator')
     encoding_map = ZZFeatureMap(2)
@@ -64,14 +65,15 @@ def test_qsvc_multiclass():
         2
     ]
     test_data = [
-        [16,15],
+        [16, 15],
         [6, 0],
-        [-6,-6]
+        [-6, -6]
     ]
 
     qsvc.fit(train_data, train_labels)
     qsvc_prediction = qsvc.predict(test_data)
     np.testing.assert_array_equal(qsvc_prediction, [0, 1, 2])
+
 
 def test_qsvc_text_labels():
     backend = qiskit.BasicAer.get_backend('qasm_simulator')
@@ -95,9 +97,9 @@ def test_qsvc_text_labels():
         'C'
     ]
     test_data = [
-        [16,15],
+        [16, 15],
         [6, 0],
-        [-6,-6]
+        [-6, -6]
     ]
 
     qsvc.fit(train_data, train_labels)

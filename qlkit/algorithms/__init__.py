@@ -6,6 +6,6 @@ from qlkit.algorithms.qkmeans import QKMeans
 __all__ = [
     "QuantumClassifier",
     "QKNeighborsClassifier",
-    "QSVClassifier"
+    "QSVClassifier",
     "QKMeans"
 ]
