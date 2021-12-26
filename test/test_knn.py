@@ -1,18 +1,27 @@
 import numpy as np
-import qiskit
-
 from qlkit.algorithms import QKNeighborsClassifier
 from qlkit.encodings import AmplitudeEncoding
 
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
+
+seed = 42
+algorithm_globals.random_seed = seed
+
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
+
 
 def test_qknn():
-    backend = qiskit.BasicAer.get_backend('qasm_simulator')
     encoding_map = AmplitudeEncoding()
 
     # initialising the qknn model
     qknn = QKNeighborsClassifier(
         n_neighbors=3,
-        backend=backend,
+        quantum_instance=quantum_instance,
         encoding_map=encoding_map
     )
 

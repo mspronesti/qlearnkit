@@ -44,26 +44,28 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="construct_circuit"><a class="viewcode-back" href="../../../../qlkit.algorithms.qknn.html#qlkit.algorithms.qknn.qknn_circuit.construct_circuit">[docs]</a><span class="k">def</span> <span class="nf">construct_circuit</span><span class="p">(</span><span class="n">state_vector_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                      <span class="n">state_vector_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<div class="viewcode-block" id="construct_circuit"><a class="viewcode-back" href="../../../../qlkit.algorithms.qknn.html#qlkit.algorithms.qknn.qknn_circuit.construct_circuit">[docs]</a><span class="k">def</span> <span class="nf">construct_circuit</span><span class="p">(</span><span class="n">feature_vector_1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                      <span class="n">feature_vector_2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                      <span class="n">encoding_map</span><span class="p">,</span>
                       <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Constructs a slightly modified swap test circuit employing a Toffoli</span>
-<span class="sd">    swap</span>
+<span class="sd">    Constructs a swap test circuit employing a controlled</span>
+<span class="sd">    swap:</span>
 
 <span class="sd">    .. parsed-literal::</span>
 
-<span class="sd">                         ┌───┐                 ┌───┐ ░ ┌─┐</span>
-<span class="sd">            q1_0: ───────┤ H ├──────────────■──┤ H ├─░─┤M├</span>
-<span class="sd">                  ┌──────┴───┴──────┐┌───┐  │  ├───┤ ░ └╥┘</span>
-<span class="sd">            q1_1: ┤ Initialize(1,0) ├┤ X ├──■──┤ X ├─░──╫─</span>
-<span class="sd">                  ├─────────────────┤└─┬─┘┌─┴─┐└─┬─┘ ░  ║</span>
-<span class="sd">            q1_2: ┤ Initialize(0,1) ├──■──┤ X ├──■───░──╫─</span>
-<span class="sd">                  └─────────────────┘     └───┘      ░  ║</span>
-<span class="sd">            c1: 1/══════════════════════════════════════╩═</span>
-<span class="sd">                                                        0</span>
+<span class="sd">                     ┌───┐       ┌───┐┌─┐</span>
+<span class="sd">            q_0: ────┤ H ├─────■─┤ H ├┤M├</span>
+<span class="sd">                 ┌───┴───┴───┐ │ └───┘└╥┘</span>
+<span class="sd">            q_1: ┤ circuit-0 ├─X───────╫─</span>
+<span class="sd">                 ├───────────┤ │       ║</span>
+<span class="sd">            q_2: ┤ circuit-1 ├─X───────╫─</span>
+<span class="sd">                 └───────────┘         ║</span>
+<span class="sd">            c: 1/══════════════════════╩═</span>
+<span class="sd">                                       0</span>
 
-<span class="sd">    where state_vector_1 = [1,0], state_vector_2 = [0, 1]</span>
+
+<span class="sd">    where feature_vector_1 = [1,0], feature_vector_2 = [0, 1]</span>
 
 <span class="sd">    A swap test circuit allows to measure the fidelity between two quantum</span>
 <span class="sd">    states, which can be interpreted as a distance measure of some sort.</span>
@@ -71,45 +73,55 @@
 <span class="sd">    it measures how symmetric the state :math:`|\alpha\rangle \otimes |\beta\rangle` is</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        state_vector_1: first state</span>
-<span class="sd">        state_vector_2: second state</span>
-<span class="sd">        name: the (optional) name of the circuit</span>
+<span class="sd">        feature_vector_1:</span>
+<span class="sd">            first feature vector</span>
+<span class="sd">        feature_vector_2:</span>
+<span class="sd">            second feature vector</span>
+<span class="sd">        encoding_map:</span>
+<span class="sd">            the mapping to quantum state to</span>
+<span class="sd">            extract a :class:`~qiskit.QuantumCircuit`</span>
+<span class="sd">        name:</span>
+<span class="sd">            the (optional) name of the circuit</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        swap test circuit</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        state vectors must be normalized</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_vector_1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_vector_2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_vector_1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_vector_2</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input state vectors must have same length to&quot;</span>
                          <span class="s2">&quot;perform swap test. Lengths were:&quot;</span>
-                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">state_vector_1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">state_vector_2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_vector_1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_vector_2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">state_vector_1</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">encoding_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;encoding map must be specified to construct&quot;</span>
+                         <span class="s2">&quot;swap test circuit&quot;</span><span class="p">)</span>
 
-    <span class="n">q</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">ClassicalRegister</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">swaptest</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">qc_1</span> <span class="o">=</span> <span class="n">encoding_map</span><span class="o">.</span><span class="n">circuit</span><span class="p">(</span><span class="n">feature_vector_1</span><span class="p">)</span>
+    <span class="n">qc_2</span> <span class="o">=</span> <span class="n">encoding_map</span><span class="o">.</span><span class="n">circuit</span><span class="p">(</span><span class="n">feature_vector_2</span><span class="p">)</span>
 
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">state_vector_1</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">state_vector_2</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">n_total</span> <span class="o">=</span> <span class="n">qc_1</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">+</span> <span class="n">qc_2</span><span class="o">.</span><span class="n">num_qubits</span>
+    <span class="n">range_qc1</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qc_1</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)]</span>
+    <span class="n">range_qc2</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">qc_1</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qc_2</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)]</span>
 
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">swaptest</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-        <span class="n">swaptest</span><span class="o">.</span><span class="n">toffoli</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">size</span><span class="p">)</span>
-        <span class="n">swaptest</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="c1"># Constructing the swap test circuit</span>
+    <span class="n">qc_swap</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_total</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">qc_swap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qc_1</span><span class="p">,</span> <span class="n">range_qc1</span><span class="p">)</span>
+    <span class="n">qc_swap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qc_2</span><span class="p">,</span> <span class="n">range_qc2</span><span class="p">)</span>
 
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
+    <span class="c1"># Swap Test</span>
 
-    <span class="n">swaptest</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">swaptest</span></div>
+    <span class="c1"># first apply hadamard</span>
+    <span class="n">qc_swap</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># then perform controlled swaps</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">range_qc1</span><span class="p">):</span>
+        <span class="n">qc_swap</span><span class="o">.</span><span class="n">cswap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">qubit</span><span class="p">,</span> <span class="n">range_qc2</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+    <span class="c1"># eventually reapply hadamard</span>
+    <span class="n">qc_swap</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
+    <span class="c1"># Measurement on the auxiliary qubit</span>
+    <span class="n">qc_swap</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">qc_swap</span></div>
 </pre></div>
 
           </div>

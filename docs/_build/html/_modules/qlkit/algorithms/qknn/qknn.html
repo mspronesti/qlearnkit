@@ -36,13 +36,16 @@
           <div class="body" role="main">
             
   <h1>Source code for qlkit.algorithms.qknn.qknn</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span>
 <span class="kn">from</span> <span class="nn">qiskit.result</span> <span class="kn">import</span> <span class="n">Result</span>
 <span class="kn">from</span> <span class="nn">qlkit.algorithms</span> <span class="kn">import</span> <span class="n">QuantumClassifier</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">qlkit.algorithms.qknn.qknn_circuit</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">qlkit.encodings</span> <span class="kn">import</span> <span class="n">EncodingMap</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -61,67 +64,67 @@
 
 <span class="sd">        ..  jupyter-execute::</span>
 
-<span class="sd">            import qiskit</span>
-<span class="sd">            from qiskit.providers import BaseBackend</span>
 <span class="sd">            import numpy as np</span>
 <span class="sd">            from qlkit.algorithms import QKNeighborsClassifier</span>
+<span class="sd">            from qlkit.encodings import AmplitudeEncoding</span>
+<span class="sd">            from qiskit import BasicAer</span>
+<span class="sd">            from qiskit.utils import QuantumInstance, algorithm_globals</span>
 <span class="sd">            from sklearn.datasets import load_iris</span>
 <span class="sd">            from sklearn.model_selection import train_test_split</span>
-<span class="sd">            from qlkit.encodings import AmplitudeEncoding</span>
 
-<span class="sd">            # preparing the parameters for the algorithm</span>
+<span class="sd">            seed = 42</span>
+<span class="sd">            algorithm_globals.random_seed = seed</span>
+
+<span class="sd">            quantum_instance = QuantumInstance(BasicAer.get_backend(&#39;qasm_simulator&#39;),</span>
+<span class="sd">                                               shots=1024,</span>
+<span class="sd">                                               optimization_level=1,</span>
+<span class="sd">                                               seed_simulator=seed,</span>
+<span class="sd">                                               seed_transpiler=seed)</span>
+
 <span class="sd">            encoding_map = AmplitudeEncoding()</span>
-<span class="sd">            backend: BaseBackend = qiskit.Aer.get_backend(&#39;qasm_simulator&#39;)</span>
+
+<span class="sd">            # Use iris data set for training and test data</span>
+<span class="sd">            X, y = load_iris(return_X_y=True)</span>
+
+<span class="sd">            num_features = 2</span>
+<span class="sd">            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])</span>
+<span class="sd">            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])</span>
 
 <span class="sd">            qknn = QKNeighborsClassifier(</span>
 <span class="sd">                n_neighbors=3,</span>
-<span class="sd">                encoding_map=encoding_map,</span>
-<span class="sd">                backend=backend</span>
+<span class="sd">                quantum_instance=quantum_instance,</span>
+<span class="sd">                encoding_map=encoding_map</span>
 <span class="sd">            )</span>
 
-<span class="sd">            X, y = load_iris(return_X_y=True)</span>
-<span class="sd">            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2 ])</span>
-<span class="sd">            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])</span>
-
-<span class="sd">            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)</span>
+<span class="sd">            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)</span>
 <span class="sd">            qknn.fit(X_train, y_train)</span>
 
-<span class="sd">            prediction = qknn.predict(X_test)</span>
-<span class="sd">            print(prediction)</span>
-<span class="sd">            print(y_test)</span>
-
-<span class="sd">            print(&quot;Test Accuracy: {}&quot;.format(</span>
-<span class="sd">                sum([1 if p == t else 0 for p, t in zip(prediction, y_test)]) / len(prediction)</span>
-<span class="sd">            ))</span>
+<span class="sd">            print(f&quot;Testing accuracy: &quot;</span>
+<span class="sd">                  f&quot;{qknn.score(X_test, y_test):0.2f}&quot;)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">n_neighbors</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">encoding_map</span><span class="p">,</span>
-                 <span class="n">backend</span><span class="p">:</span> <span class="n">BaseBackend</span><span class="p">,</span>
-                 <span class="n">shots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
-                 <span class="n">optimization_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+                 <span class="n">encoding_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EncodingMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        encoding_map:</span>
+<span class="sd">        Creates a QKNeighborsClassifier Object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_neighbors:</span>
+<span class="sd">                number of neighbors participating in the</span>
+<span class="sd">                majority vote</span>
+<span class="sd">            encoding_map:</span>
 <span class="sd">                map to classical data to quantum states.</span>
-<span class="sd">                This class does not impose any constraint on it. It</span>
-<span class="sd">                can either be a custom encoding map or a qiskit FeatureMap</span>
-<span class="sd">            backend:</span>
-<span class="sd">                the qiskit backend to do the compilation &amp; computation on</span>
-<span class="sd">            shots:</span>
-<span class="sd">                number of repetitions of each circuit, for sampling. Default: 1024</span>
-<span class="sd">            optimization_level:</span>
-<span class="sd">                level of optimization to perform on the circuits.</span>
-<span class="sd">                Higher levels generate more optimized circuits,</span>
-<span class="sd">                at the expense of longer transpilation time.</span>
-<span class="sd">                        0: no optimization</span>
-<span class="sd">                        1: light optimization</span>
-<span class="sd">                        2: heavy optimization</span>
-<span class="sd">                        3: even heavier optimization</span>
-<span class="sd">                If None or invalid value, level 1 will be chosen as default.</span>
+<span class="sd">                This class does not impose any constraint on it.</span>
+<span class="sd">            quantum_instance:</span>
+<span class="sd">                the quantum instance to set. Can be a</span>
+<span class="sd">                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`</span>
+<span class="sd">                or a :class:`~qiskit.providers.BaseBackend`</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="p">,</span> <span class="n">optimization_level</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">quantum_instance</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="n">n_neighbors</span>
 
 <div class="viewcode-block" id="QKNeighborsClassifier.fit"><a class="viewcode-back" href="../../../../qlkit.algorithms.qknn.html#qlkit.algorithms.QKNeighborsClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -133,8 +136,9 @@
 <span class="sd">            y: training labels</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding_map</span><span class="o">.</span><span class="n">encode_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;setting training data: &quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_X</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">_X</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span></div>
@@ -158,7 +162,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">counts_0</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">counts_1</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">counts_0</span> <span class="o">-</span> <span class="n">counts_1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">shots</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">counts_0</span> <span class="o">-</span> <span class="n">counts_1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantum_instance</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">shots</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_get_fidelities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">results</span><span class="p">:</span> <span class="n">Result</span><span class="p">,</span>
@@ -242,8 +246,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting parallel circuits construction ...&quot;</span><span class="p">)</span>
 
-        <span class="n">X_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding_map</span><span class="o">.</span><span class="n">encode_dataset</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
         <span class="n">circuits</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">xtest</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
             <span class="c1"># computing distance of xtest with respect to</span>
@@ -251,7 +253,9 @@
             <span class="n">circuits_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_construct_circuits</span><span class="p">(</span>
                 <span class="n">construct_circuit</span><span class="p">,</span>
                 <span class="n">X_train</span><span class="p">,</span>
-                <span class="n">task_args</span><span class="o">=</span><span class="p">[</span><span class="n">xtest</span><span class="p">,</span> <span class="s2">&quot;swap_test_circuit_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+                <span class="n">task_args</span><span class="o">=</span><span class="p">[</span><span class="n">xtest</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_encoding_map</span><span class="p">,</span>
+                           <span class="s2">&quot;swap_test_qc_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
             <span class="p">)</span>
             <span class="n">circuits</span> <span class="o">=</span> <span class="n">circuits</span> <span class="o">+</span> <span class="n">circuits_line</span>
 
@@ -267,6 +271,11 @@
 <div class="viewcode-block" id="QKNeighborsClassifier.predict"><a class="viewcode-back" href="../../../../qlkit.algorithms.qknn.html#qlkit.algorithms.QKNeighborsClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">X_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Predict the labels of the provided data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
+                <span class="s2">&quot;This QKNeighborsClassifier instance is not fitted yet. &quot;</span>
+                <span class="s2">&quot;Call &#39;fit&#39; with appropriate arguments before using &quot;</span>
+                <span class="s2">&quot;this estimator.&quot;</span><span class="p">)</span>
         <span class="c1">#  construct</span>
         <span class="c1">#  |-&gt; results</span>
         <span class="c1">#  |-&gt; fidelities</span>
@@ -275,7 +284,6 @@
         <span class="n">fidelities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fidelities</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_majority_voting</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="n">fidelities</span><span class="p">)</span></div></div>
-
 </pre></div>
 
           </div>

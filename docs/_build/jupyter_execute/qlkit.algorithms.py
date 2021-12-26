@@ -5,28 +5,34 @@
 
 
 import numpy as np
-import qiskit
-from qiskit.providers import BaseBackend
-from qlkit.algorithms.qkmeans.qkmeans import QKMeans
+import matplotlib.pyplot as plt
+from qlkit.algorithms import QKMeans
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
 
-# preparing the parameters for the algorithm
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+seed = 42
+algorithm_globals.random_seed = seed
 
-qkmeans = QKMeans(
-        n_clusters=3,
-        backend=backend
-        )
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
 
+# Use iris data set for training and test data
 X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
 y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+qkmeans = QKMeans(n_clusters=3,
+                  quantum_instance=quantum_instance
+)
 
-# Perform quantum kmeans clustering
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qkmeans.fit(X_train, y_train)
 
 # Plot the results
@@ -44,69 +50,83 @@ print(prediction)
 # In[2]:
 
 
-import qiskit
-from qiskit.providers import BaseBackend
 import numpy as np
 from qlkit.algorithms import QKNeighborsClassifier
+from qlkit.encodings import AmplitudeEncoding
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from qlkit.encodings import AmplitudeEncoding
 
-# preparing the parameters for the algorithm
+seed = 42
+algorithm_globals.random_seed = seed
+
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
+
 encoding_map = AmplitudeEncoding()
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+
+# Use iris data set for training and test data
+X, y = load_iris(return_X_y=True)
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
 qknn = QKNeighborsClassifier(
     n_neighbors=3,
-    encoding_map=encoding_map,
-    backend=backend
+    quantum_instance=quantum_instance,
+    encoding_map=encoding_map
 )
 
-X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2 ])
-y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qknn.fit(X_train, y_train)
 
-prediction = qknn.predict(X_test)
-print(prediction)
-print(y_test)
-
-print("Test Accuracy: {}".format(
-    sum([1 if p == t else 0 for p, t in zip(prediction, y_test)]) / len(prediction)
-))
+print(f"Testing accuracy: "
+      f"{qknn.score(X_test, y_test):0.2f}")
 
 
 # In[3]:
 
 
-import qiskit
 import numpy as np
 from qlkit.algorithms import QSVClassifier
-from qiskit.providers import BaseBackend
-from qiskit.circuit.library import ZZFeatureMap
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+from qiskit.circuit.library import ZZFeatureMap
 
-# preparing the parameters for the algorithm
+seed = 42
+algorithm_globals.random_seed = seed
+
+quantum_instance = QuantumInstance(BasicAer.get_backend('statevector_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
+
+# Use iris data set for training and test data
+X, y = load_iris(return_X_y=True)
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
+
 encoding_map = ZZFeatureMap(2)
-backend: BaseBackend = qiskit.Aer.get_backend('aer_simulator_statevector')
 
 qsvc = QSVClassifier(
     encoding_map=encoding_map,
-    backend=backend
+    quantum_instance=quantum_instance
 )
 
-X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
-y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+# use iris dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qsvc.fit(X_train, y_train)
 
-print("Test Accuracy: {}".format(
-    qsvc.score(X_test, y_test)
-))
+print(f"Testing accuracy: "
+      f"{qsvc.score(X_test, y_test):0.2f}")
 

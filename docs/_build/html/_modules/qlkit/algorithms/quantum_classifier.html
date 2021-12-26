@@ -37,59 +37,43 @@
             
   <h1>Source code for qlkit.algorithms.quantum_classifier</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">import</span> <span class="nn">qiskit</span>
 <span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
-<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">JobStatus</span><span class="p">,</span> <span class="n">BaseBackend</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span>
 <span class="kn">from</span> <span class="nn">qiskit.result</span> <span class="kn">import</span> <span class="n">Result</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">ClassifierMixin</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span>
+<span class="kn">from</span> <span class="nn">qiskit.exceptions</span> <span class="kn">import</span> <span class="n">QiskitError</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="QuantumClassifier"><a class="viewcode-back" href="../../../qlkit.algorithms.html#qlkit.algorithms.quantum_classifier.QuantumClassifier">[docs]</a><span class="k">class</span> <span class="nc">QuantumClassifier</span><span class="p">(</span><span class="n">ClassifierMixin</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">encoding_map</span><span class="p">,</span>
-                 <span class="n">backend</span><span class="p">:</span> <span class="n">BaseBackend</span><span class="p">,</span>
-                 <span class="n">shots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
-                 <span class="n">optimization_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+                 <span class="n">encoding_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+                 <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            encoding_map:</span>
-<span class="sd">                        map to classical data to quantum states.</span>
-<span class="sd">                        This class does not impose any constraint on it. It</span>
-<span class="sd">                        can either be a custom encoding map or a qiskit FeatureMap</span>
-<span class="sd">            backend:</span>
-<span class="sd">                the qiskit backend to do the compilation &amp; computation on</span>
-<span class="sd">            shots:</span>
-<span class="sd">                number of repetitions of each circuit, for sampling. Default: 1024</span>
-<span class="sd">            optimization_level:</span>
-<span class="sd">                level of optimization to perform on the circuits.</span>
-<span class="sd">                Higher levels generate more optimized circuits,</span>
-<span class="sd">                at the expense of longer transpilation time.</span>
-<span class="sd">                        0: no optimization</span>
-<span class="sd">                        1: light optimization</span>
-<span class="sd">                        2: heavy optimization</span>
-<span class="sd">                        3: even heavier optimization</span>
-<span class="sd">                If None or invalid value, level 1 will be chosen as default.</span>
-<span class="sd">                Notice: a high optimization level requires way more time of</span>
-<span class="sd">                        computation</span>
+<span class="sd">                map to classical data to quantum states.</span>
+<span class="sd">                This class does not impose any constraint on it. It</span>
+<span class="sd">                can either be a custom encoding map or a qiskit FeatureMap</span>
+<span class="sd">            quantum_instance:</span>
+<span class="sd">                the quantum instance to set. Can be a</span>
+<span class="sd">                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`</span>
+<span class="sd">                or a :class:`~qiskit.providers.BaseBackend`</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">encoding_map</span> <span class="o">=</span> <span class="n">encoding_map</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shots</span> <span class="o">=</span> <span class="n">shots</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">optimization_level</span> <span class="o">=</span> <span class="n">optimization_level</span> \
-            <span class="k">if</span> <span class="n">optimization_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qcircuits</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encoding_map</span> <span class="o">=</span> <span class="n">encoding_map</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_quantum_instance</span><span class="p">(</span><span class="n">quantum_instance</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QuantumClassifier.fit"><a class="viewcode-back" href="../../../qlkit.algorithms.html#qlkit.algorithms.quantum_classifier.QuantumClassifier.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -135,7 +119,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must have implemented this.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QuantumClassifier.parallel_construct_circuits"><a class="viewcode-back" href="../../../qlkit.algorithms.html#qlkit.algorithms.quantum_classifier.QuantumClassifier.parallel_construct_circuits">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">parallel_construct_circuits</span><span class="p">(</span><span class="n">construct_circuit_task</span><span class="p">:</span> <span class="n">callable</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">parallel_construct_circuits</span><span class="p">(</span><span class="n">construct_circuit_task</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
                                     <span class="n">X_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                                     <span class="n">task_args</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumCircuit</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -163,6 +147,43 @@
                             <span class="n">X_test</span><span class="p">,</span>
                             <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">)</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">quantum_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumInstance</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the quantum instance to evaluate the circuit.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantum_instance</span>
+
+    <span class="nd">@quantum_instance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">quantum_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]):</span>
+        <span class="sd">&quot;&quot;&quot;Quantum Instance setter&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_quantum_instance</span><span class="p">(</span><span class="n">quantum_instance</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_quantum_instance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal method to set a quantum instance according to its type</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            quantum_instance: the quantum instance to set. Can be a</span>
+<span class="sd">                `QuantumInstance`, a `Backend` or a `BaseBackend`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quantum_instance</span><span class="p">,</span> <span class="p">(</span><span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">)):</span>
+            <span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">quantum_instance</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quantum_instance</span> <span class="o">=</span> <span class="n">quantum_instance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">encoding_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the Encoding Map&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoding_map</span>
+
+    <span class="nd">@encoding_map</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">encoding_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding_map</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Encoding Map setter&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encoding_map</span> <span class="o">=</span> <span class="n">encoding_map</span>
+
 <div class="viewcode-block" id="QuantumClassifier.execute"><a class="viewcode-back" href="../../../qlkit.algorithms.html#qlkit.algorithms.quantum_classifier.QuantumClassifier.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Result</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Executes the given quantum circuit</span>
@@ -173,38 +194,17 @@
 <span class="sd">            the execution results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Executing circuits...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantum_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QiskitError</span><span class="p">(</span><span class="s2">&quot;Circuits execution requires a quantum instance&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">qcircuits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_circuits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
 
         <span class="c1"># Instead of transpiling and assembling the quantum object</span>
-        <span class="c1"># and running the backend, we call qiskit.execute that does</span>
-        <span class="c1"># it at once a very efficient way</span>
-        <span class="n">job</span> <span class="o">=</span> <span class="n">qiskit</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">qcircuits</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">,</span>
-            <span class="n">optimization_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimization_level</span><span class="p">,</span>
-            <span class="n">shots</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shots</span><span class="p">,</span>
-            <span class="n">scheduling_method</span><span class="o">=</span><span class="s1">&#39;asap&#39;</span>
-        <span class="p">)</span>
-
-        <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">DONE</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">CANCELLED</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Job cancelled...&quot;</span><span class="p">)</span>
-                <span class="k">break</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Waiting for job to complete...&quot;</span><span class="p">)</span>
-            <span class="c1"># this is not optimized</span>
-            <span class="c1"># a condition variable would do this</span>
-            <span class="c1"># in an actual efficient way, but we don&#39;t</span>
-            <span class="c1"># have control on the job, then we can&#39;t explicitly</span>
-            <span class="c1"># call the &quot;cv.signal&quot; method</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">DONE</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Job completed!&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Job not completed, errors occurred. Job status is: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span></div></div>
+        <span class="c1"># and running the backend, we call execute from the quantum</span>
+        <span class="c1"># instance that does it at once a very efficient way</span>
+        <span class="c1"># please notice: this execution is parallelized</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantum_instance</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qcircuits</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 </pre></div>
 
           </div>

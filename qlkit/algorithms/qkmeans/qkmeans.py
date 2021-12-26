@@ -1,9 +1,12 @@
 from copy import deepcopy
-from typing import List, Dict, Union
-from qiskit.providers import BaseBackend
+from typing import List, Dict, Union, Optional
+from qiskit.providers import BaseBackend, Backend
+from qiskit.utils import QuantumInstance
+
 from qlkit.algorithms.quantum_classifier import QuantumClassifier
 from qlkit.algorithms.qkmeans.centroid_initialization import random, qkmeans_plus_plus, naive_sharding
 from qlkit.algorithms.qkmeans.qkmeans_circuit import *
+from sklearn.exceptions import NotFittedError
 
 logger = logging.getLogger(__name__)
 
@@ -23,28 +26,34 @@ class QKMeans(QuantumClassifier):
         ..  jupyter-execute::
 
             import numpy as np
-            import qiskit
-            from qiskit.providers import BaseBackend
-            from qlkit.algorithms.qkmeans.qkmeans import QKMeans
+            import matplotlib.pyplot as plt
+            from qlkit.algorithms import QKMeans
+            from qiskit import BasicAer
+            from qiskit.utils import QuantumInstance, algorithm_globals
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
-            from matplotlib import pyplot as plt
 
-            # preparing the parameters for the algorithm
-            backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+            seed = 42
+            algorithm_globals.random_seed = seed
 
-            qkmeans = QKMeans(
-                    n_clusters=3,
-                    backend=backend
-                    )
+            quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                               shots=1024,
+                                               optimization_level=1,
+                                               seed_simulator=seed,
+                                               seed_transpiler=seed)
 
+            # Use iris data set for training and test data
             X, y = load_iris(return_X_y=True)
-            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
+
+            num_features = 2
+            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+            qkmeans = QKMeans(n_clusters=3,
+                              quantum_instance=quantum_instance
+            )
 
-            # Perform quantum kmeans clustering
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
             qkmeans.fit(X_train, y_train)
 
             # Plot the results
@@ -59,22 +68,24 @@ class QKMeans(QuantumClassifier):
             print(prediction)
 
     """
-
     def __init__(self,
                  n_clusters: int = 8,
+                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
                  init: Union[str, np.ndarray] = "qkmeans++",
                  n_init: int = 1,
                  max_iter: int = 300,
                  tol: float = 1e-4,
-                 random_state: int = 42,
-                 backend: BaseBackend = BaseBackend,
-                 shots: int = 1024,
-                 optimization_level: int = 1):
+                 random_state: int = 42
+                 ):
         """
         Args:
             n_clusters:
                 The number of clusters to form as well as the number of
                 centroids to generate.
+            quantum_instance:
+                the quantum instance to set. Can be a
+                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+                or a :class:`~qiskit.providers.BaseBackend`
             init:
                 Method of initialization of centroids.
             n_init:
@@ -88,21 +99,9 @@ class QKMeans(QuantumClassifier):
                 of two consecutive iterations to declare convergence.
             random_state:
                 Determines random number generation for centroid initialization.
-            backend:
-                The qiskit backend to do the compilation & computation on.
-            shots:
-                Number of repetitions of each circuit, for sampling. Default: 1024
-            optimization_level:
-                Level of optimization to perform on the circuits.
-                Higher levels generate more optimized circuits,
-                at the expense of longer transpilation time.
-                        0: no optimization
-                        1: light optimization
-                        2: heavy optimization
-                        3: even heavier optimization
-                If None or invalid value, level 1 will be chosen as default.
+
         """
-        super().__init__(None, backend, shots, optimization_level)
+        super().__init__(quantum_instance=quantum_instance)
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
@@ -254,6 +253,12 @@ class QKMeans(QuantumClassifier):
         Returns:
             Index of the cluster each sample belongs to.
         """
+        if self.X_train is None:
+            raise NotFittedError(
+                "This QKMeans instance is not fitted yet. "
+                "Call 'fit' with appropriate arguments before using "
+                "this estimator.")
+
         results = self.execute(X_test)
         distances = np.array(list(map(lambda x: self._compute_distances_centroids(x), results.get_counts())))
         predicted_labels = np.argmin(distances, axis=1)

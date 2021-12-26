@@ -1,24 +1,29 @@
 import pytest
 
 import numpy as np
-import qiskit
 from qiskit.circuit.library import ZZFeatureMap
-from qiskit.utils import algorithm_globals
 from qlkit.algorithms import QSVClassifier
+
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 
 seed = 42
 algorithm_globals.random_seed = seed
 
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
+
 
 def test_qsvc_binary():
-    backend = qiskit.BasicAer.get_backend('qasm_simulator')
     encoding_map = ZZFeatureMap(2)
 
     # initialising the qsvc model
     qsvc = QSVClassifier(
-        backend=backend,
-        encoding_map=encoding_map,
-        seed=seed
+        quantum_instance=quantum_instance,
+        encoding_map=encoding_map
     )
 
     train_data = [
@@ -44,14 +49,12 @@ def test_qsvc_binary():
 
 
 def test_qsvc_multiclass():
-    backend = qiskit.BasicAer.get_backend('qasm_simulator')
     encoding_map = ZZFeatureMap(2)
 
     # initialising the qsvc model
     qsvc = QSVClassifier(
-        backend=backend,
+        quantum_instance=quantum_instance,
         encoding_map=encoding_map,
-        seed=seed
     )
 
     train_data = [
@@ -76,14 +79,12 @@ def test_qsvc_multiclass():
 
 
 def test_qsvc_text_labels():
-    backend = qiskit.BasicAer.get_backend('qasm_simulator')
     encoding_map = ZZFeatureMap(2)
 
     # initialising the qsvc model
     qsvc = QSVClassifier(
-        backend=backend,
-        encoding_map=encoding_map,
-        seed=seed
+        quantum_instance=quantum_instance,
+        encoding_map=encoding_map
     )
 
     train_data = [

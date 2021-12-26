@@ -38,11 +38,11 @@
   <h1>Source code for qlkit.algorithms.qsvm.qsvc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">sklearn.exceptions</span>
+<span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
 <span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span>
-<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span>
 <span class="kn">from</span> <span class="nn">qiskit_machine_learning.kernels</span> <span class="kn">import</span> <span class="n">QuantumKernel</span>
 <span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">NLocal</span><span class="p">,</span> <span class="n">ZZFeatureMap</span>
 <span class="kn">from</span> <span class="nn">qlkit.algorithms</span> <span class="kn">import</span> <span class="n">QuantumClassifier</span>
@@ -62,65 +62,65 @@
 
 <span class="sd">        ..  jupyter-execute::</span>
 
-<span class="sd">            import qiskit</span>
 <span class="sd">            import numpy as np</span>
 <span class="sd">            from qlkit.algorithms import QSVClassifier</span>
-<span class="sd">            from qiskit.providers import BaseBackend</span>
-<span class="sd">            from qiskit.circuit.library import ZZFeatureMap</span>
+<span class="sd">            from qiskit import BasicAer</span>
+<span class="sd">            from qiskit.utils import QuantumInstance, algorithm_globals</span>
 <span class="sd">            from sklearn.datasets import load_iris</span>
 <span class="sd">            from sklearn.model_selection import train_test_split</span>
-<span class="sd">            import matplotlib.pyplot as plt</span>
+<span class="sd">            from qiskit.circuit.library import ZZFeatureMap</span>
 
-<span class="sd">            # preparing the parameters for the algorithm</span>
+<span class="sd">            seed = 42</span>
+<span class="sd">            algorithm_globals.random_seed = seed</span>
+
+<span class="sd">            quantum_instance = QuantumInstance(BasicAer.get_backend(&#39;statevector_simulator&#39;),</span>
+<span class="sd">                                               shots=1024,</span>
+<span class="sd">                                               optimization_level=1,</span>
+<span class="sd">                                               seed_simulator=seed,</span>
+<span class="sd">                                               seed_transpiler=seed)</span>
+
+<span class="sd">            # Use iris data set for training and test data</span>
+<span class="sd">            X, y = load_iris(return_X_y=True)</span>
+
+<span class="sd">            num_features = 2</span>
+<span class="sd">            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])</span>
+<span class="sd">            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])</span>
+
 <span class="sd">            encoding_map = ZZFeatureMap(2)</span>
-<span class="sd">            backend: BaseBackend = qiskit.Aer.get_backend(&#39;aer_simulator_statevector&#39;)</span>
 
 <span class="sd">            qsvc = QSVClassifier(</span>
 <span class="sd">                encoding_map=encoding_map,</span>
-<span class="sd">                backend=backend</span>
+<span class="sd">                quantum_instance=quantum_instance</span>
 <span class="sd">            )</span>
 
-<span class="sd">            X, y = load_iris(return_X_y=True)</span>
-<span class="sd">            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])</span>
-<span class="sd">            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])</span>
-
-<span class="sd">            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)</span>
+<span class="sd">            # use iris dataset</span>
+<span class="sd">            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)</span>
 <span class="sd">            qsvc.fit(X_train, y_train)</span>
 
-<span class="sd">            print(&quot;Test Accuracy: {}&quot;.format(</span>
-<span class="sd">                qsvc.score(X_test, y_test)</span>
-<span class="sd">            ))</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            print(f&quot;Testing accuracy: &quot;</span>
+<span class="sd">                  f&quot;{qsvc.score(X_test, y_test):0.2f}&quot;)</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">encoding_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NLocal</span><span class="p">],</span>
-                 <span class="n">backend</span><span class="p">:</span> <span class="n">BaseBackend</span><span class="p">,</span>
-                 <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
-                 <span class="n">shots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
-                 <span class="n">optimization_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                 <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+                 <span class="n">encoding_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NLocal</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Quantum Support Vector Classifier</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            encoding_map:</span>
-<span class="sd">                map to classical data to quantum states. Default: ZZFeatureMap</span>
-<span class="sd">            backend:</span>
-<span class="sd">                the qiskit backend to do the compilation &amp; computation on</span>
+<span class="sd">                map to classical data to quantum states.</span>
+<span class="sd">                Default: :class:`~qiskit_machine_learning.circuit.library.ZZFeatureMap`</span>
+<span class="sd">            quantum_instance:</span>
+<span class="sd">                the quantum instance to set. Can be a</span>
+<span class="sd">                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`</span>
+<span class="sd">                or a :class:`~qiskit.providers.BaseBackend`</span>
 <span class="sd">            gamma:</span>
 <span class="sd">                regularization parameter</span>
-<span class="sd">            shots:</span>
-<span class="sd">                number of repetitions of each circuit, for sampling. Default: 1024</span>
-<span class="sd">            optimization_level:</span>
-<span class="sd">                level of optimization to perform on the circuits.</span>
-<span class="sd">                Higher levels generate more optimized circuits,</span>
-<span class="sd">                at the expense of longer transpilation time.</span>
-<span class="sd">                        0: no optimization</span>
-<span class="sd">                        1: light optimization</span>
-<span class="sd">                        2: heavy optimization</span>
-<span class="sd">                        3: even heavier optimization</span>
-<span class="sd">                If None, level 1 will be chosen as default.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">encoding_map</span> <span class="o">=</span> <span class="n">encoding_map</span> <span class="k">if</span> <span class="n">encoding_map</span> <span class="k">else</span> <span class="n">ZZFeatureMap</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="p">,</span> <span class="n">optimization_level</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">quantum_instance</span><span class="p">)</span>
         <span class="c1"># TODO: include &#39;auto&#39; and &#39;scale&#39; options for gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_kernel_matrix</span> <span class="o">=</span> <span class="kc">None</span>
@@ -129,7 +129,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
 
 <div class="viewcode-block" id="QSVClassifier.fit"><a class="viewcode-back" href="../../../../qlkit.algorithms.qsvm.html#qlkit.algorithms.QSVClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -204,13 +203,8 @@
         <span class="c1"># Train and test data stacked together to run backend only once</span>
         <span class="n">X_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">])</span>
 
-        <span class="n">q_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">,</span>
-                                     <span class="n">shots</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shots</span><span class="p">,</span>
-                                     <span class="n">optimization_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimization_level</span><span class="p">,</span>
-                                     <span class="n">seed_simulator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
-                                     <span class="n">seed_transpiler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
-        <span class="n">q_kernel</span> <span class="o">=</span> <span class="n">QuantumKernel</span><span class="p">(</span><span class="n">feature_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding_map</span><span class="p">,</span>
-                                 <span class="n">quantum_instance</span><span class="o">=</span><span class="n">q_instance</span><span class="p">)</span>
+        <span class="n">q_kernel</span> <span class="o">=</span> <span class="n">QuantumKernel</span><span class="p">(</span><span class="n">feature_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding_map</span><span class="p">,</span>
+                                 <span class="n">quantum_instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quantum_instance</span><span class="p">)</span>
         <span class="n">total_kernel_matrix</span> <span class="o">=</span> <span class="n">q_kernel</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x_vec</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_vec</span><span class="o">=</span><span class="n">X_total</span><span class="p">)</span>
 
         <span class="c1"># Splitting the total matrix into training and test part</span>
@@ -274,7 +268,7 @@
 <span class="sd">            numpy ndarray of predicted labels</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">NotFittedError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
                 <span class="s2">&quot;This QSVClassifier instance is not fitted yet. &quot;</span>
                 <span class="s2">&quot;Call &#39;fit&#39; with appropriate arguments before using &quot;</span>
                 <span class="s2">&quot;this estimator.&quot;</span><span class="p">)</span>

@@ -1,57 +1,41 @@
 import logging
-import time
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Callable
 
 import numpy as np
 from abc import abstractmethod
-import qiskit
 from qiskit import QuantumCircuit
-from qiskit.providers import JobStatus, BaseBackend
+from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
 from sklearn.base import ClassifierMixin, TransformerMixin
+from qiskit.utils import QuantumInstance
+from qiskit.exceptions import QiskitError
 
 logger = logging.getLogger(__name__)
 
 
 class QuantumClassifier(ClassifierMixin, TransformerMixin):
     def __init__(self,
-                 encoding_map,
-                 backend: BaseBackend,
-                 shots: int = 1024,
-                 optimization_level: int = 1):
+                 encoding_map=None,
+                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None
+                 ):
         """
-
         Args:
             encoding_map:
-                        map to classical data to quantum states.
-                        This class does not impose any constraint on it. It
-                        can either be a custom encoding map or a qiskit FeatureMap
-            backend:
-                the qiskit backend to do the compilation & computation on
-            shots:
-                number of repetitions of each circuit, for sampling. Default: 1024
-            optimization_level:
-                level of optimization to perform on the circuits.
-                Higher levels generate more optimized circuits,
-                at the expense of longer transpilation time.
-                        0: no optimization
-                        1: light optimization
-                        2: heavy optimization
-                        3: even heavier optimization
-                If None or invalid value, level 1 will be chosen as default.
-                Notice: a high optimization level requires way more time of
-                        computation
+                map to classical data to quantum states.
+                This class does not impose any constraint on it. It
+                can either be a custom encoding map or a qiskit FeatureMap
+            quantum_instance:
+                the quantum instance to set. Can be a
+                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+                or a :class:`~qiskit.providers.BaseBackend`
+
         """
-        self.encoding_map = encoding_map
-        self.backend = backend
-        self.shots = shots
-
-        self.optimization_level = optimization_level \
-            if optimization_level in range(0, 4) else 1
-
         self.X_train = np.asarray([])
         self.y_train = np.asarray([])
         self.qcircuits = None
+        self._encoding_map = encoding_map
+
+        self._set_quantum_instance(quantum_instance)
 
     @abstractmethod
     def fit(self,
@@ -97,7 +81,7 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         raise NotImplementedError("Must have implemented this.")
 
     @staticmethod
-    def parallel_construct_circuits(construct_circuit_task: callable,
+    def parallel_construct_circuits(construct_circuit_task: Callable,
                                     X_test: np.ndarray,
                                     task_args: list = None) -> List[QuantumCircuit]:
         """
@@ -125,6 +109,43 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
                             X_test,
                             task_args=task_args)
 
+    @property
+    def quantum_instance(self) -> QuantumInstance:
+        """Returns the quantum instance to evaluate the circuit."""
+        return self._quantum_instance
+
+    @quantum_instance.setter
+    def quantum_instance(self,
+                         quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]):
+        """Quantum Instance setter"""
+        self._set_quantum_instance(quantum_instance)
+
+    def _set_quantum_instance(
+            self,
+            quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]):
+        """
+        Internal method to set a quantum instance according to its type
+
+        Args:
+            quantum_instance: the quantum instance to set. Can be a
+                `QuantumInstance`, a `Backend` or a `BaseBackend`
+
+        """
+        if isinstance(quantum_instance, (BaseBackend, Backend)):
+            quantum_instance = QuantumInstance(quantum_instance)
+
+        self._quantum_instance = quantum_instance
+
+    @property
+    def encoding_map(self):
+        """Returns the Encoding Map"""
+        return self._encoding_map
+
+    @encoding_map.setter
+    def encoding_map(self, encoding_map):
+        """Encoding Map setter"""
+        self._encoding_map = encoding_map
+
     def execute(self, X_test) -> Union[Optional[Result], None]:
         """
         Executes the given quantum circuit
@@ -135,35 +156,14 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
             the execution results
         """
         logger.info("Executing circuits...")
+        if self._quantum_instance is None:
+            raise QiskitError("Circuits execution requires a quantum instance")
+
         self.qcircuits = self._create_circuits(self.X_train, X_test)
 
         # Instead of transpiling and assembling the quantum object
-        # and running the backend, we call qiskit.execute that does
-        # it at once a very efficient way
-        job = qiskit.execute(
-            self.qcircuits,
-            self.backend,
-            optimization_level=self.optimization_level,
-            shots=self.shots,
-            scheduling_method='asap'
-        )
-
-        job.result()
-        while not job.status() == JobStatus.DONE:
-            if job.status() == JobStatus.CANCELLED:
-                logger.info("Job cancelled...")
-                break
-            logger.info("Waiting for job to complete...")
-            # this is not optimized
-            # a condition variable would do this
-            # in an actual efficient way, but we don't
-            # have control on the job, then we can't explicitly
-            # call the "cv.signal" method
-            time.sleep(5)
-
-        if job.status() == JobStatus.DONE:
-            logger.info("Job completed!")
-            return job.result()
-        else:
-            logger.error("Job not completed, errors occurred. Job status is: {}".format(job.status))
-            return None
+        # and running the backend, we call execute from the quantum
+        # instance that does it at once a very efficient way
+        # please notice: this execution is parallelized
+        result = self._quantum_instance.execute(self.qcircuits)
+        return result

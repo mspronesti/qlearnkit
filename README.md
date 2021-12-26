@@ -22,34 +22,43 @@ Let's try an experiment using the KNN Classifier algorithm to train and test sam
 data set to see how accurately the test set can be classified.
 
 ```python
-import qiskit
-from qiskit.providers import BaseBackend
 import numpy as np
 from qlkit.algorithms import QKNeighborsClassifier
+from qlkit.encodings import AmplitudeEncoding
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from qlkit.encodings import AmplitudeEncoding
 
-# preparing the parameters for the algorithm
+seed = 42
+algorithm_globals.random_seed = seed
+
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
+
 encoding_map = AmplitudeEncoding()
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+
+# Use iris data set for training and test data
+X, y = load_iris(return_X_y=True)
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
 qknn = QKNeighborsClassifier(
     n_neighbors=3,
-    encoding_map=encoding_map,
-    backend=backend
+    quantum_instance=quantum_instance,
+    encoding_map=encoding_map
 )
 
-X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
-y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qknn.fit(X_train, y_train)
 
-print("Test Accuracy: {}".format(
-    qknn.score(X_test, y_test)
-))
+print(f"Testing accuracy: "
+      f"{qknn.score(X_test, y_test):0.2f}")
 ```
 
 ## Developement notes

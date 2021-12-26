@@ -1,4 +1,4 @@
-qiskit==0.33.1
+qiskit==0.34.0
 qiskit-aer==0.9.1
 qiskit-ibmq-provider==0.18.2
 qiskit-ignis==0.7.0

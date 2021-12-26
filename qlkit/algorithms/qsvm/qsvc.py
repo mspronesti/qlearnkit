@@ -1,10 +1,10 @@
 import logging
 from abc import ABC
-from typing import Optional
+from typing import Optional, Union
 import numpy as np
-import sklearn.exceptions
+from sklearn.exceptions import NotFittedError
 from qiskit.utils import QuantumInstance
-from qiskit.providers import BaseBackend
+from qiskit.providers import BaseBackend, Backend
 from qiskit_machine_learning.kernels import QuantumKernel
 from qiskit.circuit.library import NLocal, ZZFeatureMap
 from qlkit.algorithms import QuantumClassifier
@@ -24,65 +24,65 @@ class QSVClassifier(QuantumClassifier, ABC):
 
         ..  jupyter-execute::
 
-            import qiskit
             import numpy as np
             from qlkit.algorithms import QSVClassifier
-            from qiskit.providers import BaseBackend
-            from qiskit.circuit.library import ZZFeatureMap
+            from qiskit import BasicAer
+            from qiskit.utils import QuantumInstance, algorithm_globals
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
-            import matplotlib.pyplot as plt
+            from qiskit.circuit.library import ZZFeatureMap
 
-            # preparing the parameters for the algorithm
+            seed = 42
+            algorithm_globals.random_seed = seed
+
+            quantum_instance = QuantumInstance(BasicAer.get_backend('statevector_simulator'),
+                                               shots=1024,
+                                               optimization_level=1,
+                                               seed_simulator=seed,
+                                               seed_transpiler=seed)
+
+            # Use iris data set for training and test data
+            X, y = load_iris(return_X_y=True)
+
+            num_features = 2
+            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
+
             encoding_map = ZZFeatureMap(2)
-            backend: BaseBackend = qiskit.Aer.get_backend('aer_simulator_statevector')
 
             qsvc = QSVClassifier(
                 encoding_map=encoding_map,
-                backend=backend
+                quantum_instance=quantum_instance
             )
 
-            X, y = load_iris(return_X_y=True)
-            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
-            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+            # use iris dataset
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
             qsvc.fit(X_train, y_train)
 
-            print("Test Accuracy: {}".format(
-                qsvc.score(X_test, y_test)
-            ))
-    """
+            print(f"Testing accuracy: "
+                  f"{qsvc.score(X_test, y_test):0.2f}")
 
+    """
     def __init__(self,
-                 encoding_map: Optional[NLocal],
-                 backend: BaseBackend,
-                 gamma: float = 1.,
-                 shots: int = 1024,
-                 optimization_level: int = 1,
-                 seed: int = None):
-        r"""
+                 encoding_map: Optional[NLocal] = None,
+                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+                 gamma: float = 1.):
+        """
+        Creates a Quantum Support Vector Classifier
+
         Args:
             encoding_map:
-                map to classical data to quantum states. Default: ZZFeatureMap
-            backend:
-                the qiskit backend to do the compilation & computation on
+                map to classical data to quantum states.
+                Default: :class:`~qiskit_machine_learning.circuit.library.ZZFeatureMap`
+            quantum_instance:
+                the quantum instance to set. Can be a
+                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+                or a :class:`~qiskit.providers.BaseBackend`
             gamma:
                 regularization parameter
-            shots:
-                number of repetitions of each circuit, for sampling. Default: 1024
-            optimization_level:
-                level of optimization to perform on the circuits.
-                Higher levels generate more optimized circuits,
-                at the expense of longer transpilation time.
-                        0: no optimization
-                        1: light optimization
-                        2: heavy optimization
-                        3: even heavier optimization
-                If None, level 1 will be chosen as default.
         """
         encoding_map = encoding_map if encoding_map else ZZFeatureMap(2)
-        super().__init__(encoding_map, backend, shots, optimization_level)
+        super().__init__(encoding_map, quantum_instance)
         # TODO: include 'auto' and 'scale' options for gamma
         self.gamma = gamma
         self.train_kernel_matrix = None
@@ -91,7 +91,6 @@ class QSVClassifier(QuantumClassifier, ABC):
         self.alpha = None
         self.bias = None
         self.n_classes = None
-        self.seed = seed
 
     def fit(self, X, y):
         """
@@ -166,13 +165,8 @@ class QSVClassifier(QuantumClassifier, ABC):
         # Train and test data stacked together to run backend only once
         X_total = np.vstack([self.X_train, X_test])
 
-        q_instance = QuantumInstance(self.backend,
-                                     shots=self.shots,
-                                     optimization_level=self.optimization_level,
-                                     seed_simulator=self.seed,
-                                     seed_transpiler=self.seed)
-        q_kernel = QuantumKernel(feature_map=self.encoding_map,
-                                 quantum_instance=q_instance)
+        q_kernel = QuantumKernel(feature_map=self._encoding_map,
+                                 quantum_instance=self.quantum_instance)
         total_kernel_matrix = q_kernel.evaluate(x_vec=X_train, y_vec=X_total)
 
         # Splitting the total matrix into training and test part
@@ -236,7 +230,7 @@ class QSVClassifier(QuantumClassifier, ABC):
             numpy ndarray of predicted labels
         """
         if self.X_train is None:
-            raise sklearn.exceptions.NotFittedError(
+            raise NotFittedError(
                 "This QSVClassifier instance is not fitted yet. "
                 "Call 'fit' with appropriate arguments before using "
                 "this estimator.")

@@ -5,28 +5,34 @@
 
 
 import numpy as np
-import qiskit
-from qiskit.providers import BaseBackend
-from qlkit.algorithms.qkmeans.qkmeans import QKMeans
+import matplotlib.pyplot as plt
+from qlkit.algorithms import QKMeans
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
 
-# preparing the parameters for the algorithm
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+seed = 42
+algorithm_globals.random_seed = seed
 
-qkmeans = QKMeans(
-        n_clusters=3,
-        backend=backend
-        )
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
 
+# Use iris data set for training and test data
 X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
 y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+qkmeans = QKMeans(n_clusters=3,
+                  quantum_instance=quantum_instance
+)
 
-# Perform quantum kmeans clustering
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qkmeans.fit(X_train, y_train)
 
 # Plot the results
@@ -45,28 +51,34 @@ print(prediction)
 
 
 import numpy as np
-import qiskit
-from qiskit.providers import BaseBackend
-from qlkit.algorithms.qkmeans.qkmeans import QKMeans
+import matplotlib.pyplot as plt
+from qlkit.algorithms import QKMeans
+from qiskit import BasicAer
+from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
 
-# preparing the parameters for the algorithm
-backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+seed = 42
+algorithm_globals.random_seed = seed
 
-qkmeans = QKMeans(
-        n_clusters=3,
-        backend=backend
-        )
+quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                   shots=1024,
+                                   optimization_level=1,
+                                   seed_simulator=seed,
+                                   seed_transpiler=seed)
 
+# Use iris data set for training and test data
 X, y = load_iris(return_X_y=True)
-X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
+
+num_features = 2
+X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
 y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+qkmeans = QKMeans(n_clusters=3,
+                  quantum_instance=quantum_instance
+)
 
-# Perform quantum kmeans clustering
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
 qkmeans.fit(X_train, y_train)
 
 # Plot the results
