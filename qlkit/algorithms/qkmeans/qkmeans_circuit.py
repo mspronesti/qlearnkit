@@ -100,8 +100,8 @@ def construct_circuit(input_point: np.ndarray,
         qc.h(qreg_centroid[i])
 
         # Encode new point and centroid
-        qc.u3(theta_input, phi_input, 0, qreg_input[i])
-        qc.u3(theta_centroids_list[i], phi_centroids_list[i], 0, qreg_centroid[i])
+        qc.u(theta_input, phi_input, 0, qreg_input[i])
+        qc.u(theta_centroids_list[i], phi_centroids_list[i], 0, qreg_centroid[i])
 
         # Perform controlled swap
         qc.cswap(qreg_psi[i], qreg_input[i], qreg_centroid[i])

@@ -27,7 +27,7 @@ class QKMeans(QuantumClassifier):
 
             import numpy as np
             import matplotlib.pyplot as plt
-            from qlkit.algorithms import QKMeans
+            from qlkit.algorithms.qkmeans.qkmeans import QKMeans
             from qiskit import BasicAer
             from qiskit.utils import QuantumInstance, algorithm_globals
             from sklearn.datasets import load_iris
