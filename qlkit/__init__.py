@@ -1,3 +1,5 @@
-import qlkit.knn as knn
-import qlkit.svm as svm
-import qlkit.kmeans as kmeans
+import qlkit.algorithms as algorithms
+import qlkit.encodings as encodings
+import logging
+
+logger = logging.getLogger(__name__)
