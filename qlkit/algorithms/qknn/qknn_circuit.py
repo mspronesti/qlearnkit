@@ -6,26 +6,28 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 logger = logging.getLogger(__name__)
 
 
-def construct_circuit(state_vector_1: np.ndarray,
-                      state_vector_2: np.ndarray,
+def construct_circuit(feature_vector_1: np.ndarray,
+                      feature_vector_2: np.ndarray,
+                      encoding_map,
                       name: str = None) -> QuantumCircuit:
     r"""
-    Constructs a slightly modified swap test circuit employing a Toffoli
-    swap
+    Constructs a swap test circuit employing a controlled
+    swap:
 
     .. parsed-literal::
 
-                         ┌───┐                 ┌───┐ ░ ┌─┐
-            q1_0: ───────┤ H ├──────────────■──┤ H ├─░─┤M├
-                  ┌──────┴───┴──────┐┌───┐  │  ├───┤ ░ └╥┘
-            q1_1: ┤ Initialize(1,0) ├┤ X ├──■──┤ X ├─░──╫─
-                  ├─────────────────┤└─┬─┘┌─┴─┐└─┬─┘ ░  ║
-            q1_2: ┤ Initialize(0,1) ├──■──┤ X ├──■───░──╫─
-                  └─────────────────┘     └───┘      ░  ║
-            c1: 1/══════════════════════════════════════╩═
-                                                        0
+                     ┌───┐       ┌───┐┌─┐
+            q_0: ────┤ H ├─────■─┤ H ├┤M├
+                 ┌───┴───┴───┐ │ └───┘└╥┘
+            q_1: ┤ circuit-0 ├─X───────╫─
+                 ├───────────┤ │       ║
+            q_2: ┤ circuit-1 ├─X───────╫─
+                 └───────────┘         ║
+            c: 1/══════════════════════╩═
+                                       0
 
-    where state_vector_1 = [1,0], state_vector_2 = [0, 1]
+
+    where feature_vector_1 = [1,0], feature_vector_2 = [0, 1]
 
     A swap test circuit allows to measure the fidelity between two quantum
     states, which can be interpreted as a distance measure of some sort.
@@ -33,42 +35,52 @@ def construct_circuit(state_vector_1: np.ndarray,
     it measures how symmetric the state :math:`|\alpha\rangle \otimes |\beta\rangle` is
 
     Args:
-        state_vector_1: first state
-        state_vector_2: second state
-        name: the (optional) name of the circuit
+        feature_vector_1:
+            first feature vector
+        feature_vector_2:
+            second feature vector
+        encoding_map:
+            the mapping to quantum state to
+            extract a :class:`~qiskit.QuantumCircuit`
+        name:
+            the (optional) name of the circuit
 
     Returns:
         swap test circuit
 
-    Note:
-        state vectors must be normalized
-
     """
-    if len(state_vector_1) != len(state_vector_2):
+    if len(feature_vector_1) != len(feature_vector_2):
         raise ValueError("Input state vectors must have same length to"
                          "perform swap test. Lengths were:"
-                         f"{len(state_vector_1)}"
-                         f"{len(state_vector_2)}")
+                         f"{len(feature_vector_1)}"
+                         f"{len(feature_vector_2)}")
 
-    size = int(np.log2(len(state_vector_1)))
+    if encoding_map is None:
+        raise ValueError("encoding map must be specified to construct"
+                         "swap test circuit")
 
-    q = QuantumRegister(2 * size + 1)
-    c = ClassicalRegister(1)
-    swaptest = QuantumCircuit(q, c, name=name)
+    qc_1 = encoding_map.circuit(feature_vector_1)
+    qc_2 = encoding_map.circuit(feature_vector_2)
 
-    swaptest.repeat(1)
-    swaptest.initialize(state_vector_1, range(1, size + 1))
-    swaptest.initialize(state_vector_2, range(size + 1, 2 * size + 1))
+    n_total = qc_1.num_qubits + qc_2.num_qubits
+    range_qc1 = [i + 1 for i in range(qc_1.num_qubits)]
+    range_qc2 = [i + qc_1.num_qubits + 1 for i in range(qc_2.num_qubits)]
 
-    swaptest.h(0)
-    for i in range(1, size + 1):
-        swaptest.cx(i + size, i)
-        swaptest.toffoli(0, i, i + size)
-        swaptest.cx(i + size, i)
+    # Constructing the swap test circuit
+    qc_swap = QuantumCircuit(n_total + 1, 1, name=name)
+    qc_swap.append(qc_1, range_qc1)
+    qc_swap.append(qc_2, range_qc2)
 
-    swaptest.h(0)
-    swaptest.barrier()
+    # Swap Test
 
-    swaptest.measure(range(1), range(1))
-    return swaptest
+    # first apply hadamard
+    qc_swap.h(0)
+    # then perform controlled swaps
+    for index, qubit in enumerate(range_qc1):
+        qc_swap.cswap(0, qubit, range_qc2[index])
+    # eventually reapply hadamard
+    qc_swap.h(0)
 
+    # Measurement on the auxiliary qubit
+    qc_swap.measure(0, 0)
+    return qc_swap

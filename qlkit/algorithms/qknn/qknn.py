@@ -1,10 +1,13 @@
-from qiskit.providers import BaseBackend
+from sklearn.exceptions import NotFittedError
+from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
 from qlkit.algorithms import QuantumClassifier
-
-from typing import Dict, List
+from qiskit.utils import QuantumInstance
+from typing import Dict, List, Optional, Union
 from qlkit.algorithms.qknn.qknn_circuit import *
 import collections
+
+from qlkit.encodings import EncodingMap
 
 logger = logging.getLogger(__name__)
 
@@ -23,67 +26,67 @@ class QKNeighborsClassifier(QuantumClassifier):
 
         ..  jupyter-execute::
 
-            import qiskit
-            from qiskit.providers import BaseBackend
             import numpy as np
             from qlkit.algorithms import QKNeighborsClassifier
+            from qlkit.encodings import AmplitudeEncoding
+            from qiskit import BasicAer
+            from qiskit.utils import QuantumInstance, algorithm_globals
             from sklearn.datasets import load_iris
             from sklearn.model_selection import train_test_split
-            from qlkit.encodings import AmplitudeEncoding
 
-            # preparing the parameters for the algorithm
+            seed = 42
+            algorithm_globals.random_seed = seed
+
+            quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
+                                               shots=1024,
+                                               optimization_level=1,
+                                               seed_simulator=seed,
+                                               seed_transpiler=seed)
+
             encoding_map = AmplitudeEncoding()
-            backend: BaseBackend = qiskit.Aer.get_backend('qasm_simulator')
+
+            # Use iris data set for training and test data
+            X, y = load_iris(return_X_y=True)
+
+            num_features = 2
+            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
             qknn = QKNeighborsClassifier(
                 n_neighbors=3,
-                encoding_map=encoding_map,
-                backend=backend
+                quantum_instance=quantum_instance,
+                encoding_map=encoding_map
             )
 
-            X, y = load_iris(return_X_y=True)
-            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2 ])
-            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
             qknn.fit(X_train, y_train)
 
-            prediction = qknn.predict(X_test)
-            print(prediction)
-            print(y_test)
-
-            print("Test Accuracy: {}".format(
-                sum([1 if p == t else 0 for p, t in zip(prediction, y_test)]) / len(prediction)
-            ))
+            print(f"Testing accuracy: "
+                  f"{qknn.score(X_test, y_test):0.2f}")
 
     """
 
     def __init__(self,
                  n_neighbors: int,
-                 encoding_map,
-                 backend: BaseBackend,
-                 shots: int = 1024,
-                 optimization_level: int = 1):
+                 encoding_map: Optional[EncodingMap] = None,
+                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None):
         """
-        encoding_map:
+        Creates a QKNeighborsClassifier Object
+
+        Args:
+            n_neighbors:
+                number of neighbors participating in the
+                majority vote
+            encoding_map:
                 map to classical data to quantum states.
-                This class does not impose any constraint on it. It
-                can either be a custom encoding map or a qiskit FeatureMap
-            backend:
-                the qiskit backend to do the compilation & computation on
-            shots:
-                number of repetitions of each circuit, for sampling. Default: 1024
-            optimization_level:
-                level of optimization to perform on the circuits.
-                Higher levels generate more optimized circuits,
-                at the expense of longer transpilation time.
-                        0: no optimization
-                        1: light optimization
-                        2: heavy optimization
-                        3: even heavier optimization
-                If None or invalid value, level 1 will be chosen as default.
+                This class does not impose any constraint on it.
+            quantum_instance:
+                the quantum instance to set. Can be a
+                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+                or a :class:`~qiskit.providers.BaseBackend`
+
         """
-        super().__init__(encoding_map, backend, shots, optimization_level)
+        super().__init__(encoding_map, quantum_instance)
         self.n_neighbors = n_neighbors
 
     def fit(self, X, y):
@@ -95,8 +98,9 @@ class QKNeighborsClassifier(QuantumClassifier):
             y: training labels
 
         """
-        self.X_train = np.asarray(self.encoding_map.encode_dataset(X))
+        self.X_train = np.asarray(X)
         self.y_train = np.asarray(y)
+
         logger.info("setting training data: ")
         for _X, _y in zip(X, y):
             logger.info("%s: %s", _X, _y)
@@ -120,7 +124,7 @@ class QKNeighborsClassifier(QuantumClassifier):
         """
         counts_0 = counts.get('0', 0)
         counts_1 = counts.get('1', 0)
-        return np.sqrt(np.abs((counts_0 - counts_1) / self.shots))
+        return np.sqrt(np.abs((counts_0 - counts_1) / self._quantum_instance.run_config.shots))
 
     def _get_fidelities(self,
                         results: Result,
@@ -204,8 +208,6 @@ class QKNeighborsClassifier(QuantumClassifier):
         """
         logger.info("Starting parallel circuits construction ...")
 
-        X_test = self.encoding_map.encode_dataset(X_test)
-
         circuits = []
         for i, xtest in enumerate(X_test):
             # computing distance of xtest with respect to
@@ -213,7 +215,9 @@ class QKNeighborsClassifier(QuantumClassifier):
             circuits_line = self.parallel_construct_circuits(
                 construct_circuit,
                 X_train,
-                task_args=[xtest, "swap_test_circuit_{}".format(i)]
+                task_args=[xtest,
+                           self._encoding_map,
+                           "swap_test_qc_{}".format(i)]
             )
             circuits = circuits + circuits_line
 
@@ -229,6 +233,11 @@ class QKNeighborsClassifier(QuantumClassifier):
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
         """Predict the labels of the provided data."""
+        if self.X_train is None:
+            raise NotFittedError(
+                "This QKNeighborsClassifier instance is not fitted yet. "
+                "Call 'fit' with appropriate arguments before using "
+                "this estimator.")
         #  construct
         #  |-> results
         #  |-> fidelities
@@ -237,4 +246,3 @@ class QKNeighborsClassifier(QuantumClassifier):
         fidelities = self._get_fidelities(results, len(X_test))
 
         return self._majority_voting(self.y_train, fidelities)
-
