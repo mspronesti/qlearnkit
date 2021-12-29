@@ -1,7 +1,6 @@
 qiskit==0.34.0
 qiskit-aer==0.10.1
 qiskit-ibmq-provider==0.18.3
-qiskit-ignis==0.7.0
 qiskit-terra==0.19.1
 qiskit-machine-learning==0.2.1
 scikit-learn==1.0.2
