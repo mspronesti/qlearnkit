@@ -1,5 +1,7 @@
 from copy import deepcopy
 from typing import List, Dict, Union, Optional
+
+from qiskit.result import Result
 from qiskit.providers import BaseBackend, Backend
 from qiskit.utils import QuantumInstance
 
@@ -185,26 +187,41 @@ class QKMeans(QuantumClassifier):
             x = x << 1
         return distance_centroids
 
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray) -> List[QuantumCircuit]:
+    def _get_distances_centroids(self,
+                                 results: Result) -> np.ndarray:
+        """
+        Retrieves distances from counts via :func:`_compute_distances_centroids`
+
+        Args:
+            results: :class:`~qiskit.Result` object of execution results
+
+        Returns:
+            np.ndarray of distances
+        """
+        counts = results.get_counts()
+        # compute distance from centroids using counts
+        distances_list = list(map(lambda count: self._compute_distances_centroids(count), counts))
+
+        return np.asarray(distances_list)
+
+    def _construct_circuits(self,
+                            X_test: np.ndarray) -> List[QuantumCircuit]:
         """
         Creates the circuits to be executed on
         the gated quantum computer for the classification
         process
 
         Args:
-            X_train: The training data.
             X_test: The unclassified input data.
 
         Returns:
-            List of quantum circuits created.
+            List of quantum circuits created for the computation
         """
         logger.info("Starting circuits construction ...")
         '''
         circuits = []
         for xt in X_test:
-            circuits.append(construct_circuit(xt, self.centroids, self.num_clusters))
+            circuits.append(construct_circuit(xt, self.centroids, self.n_clusters))
 
         '''
         circuits = self.parallel_construct_circuits(
@@ -218,7 +235,7 @@ class QKMeans(QuantumClassifier):
 
     def fit(self,
             X: np.ndarray,
-            y: np.ndarray):
+            y: np.ndarray = None):
         """
         Fits the model using X as training dataset
         and y as training labels. For the qkmeans algorithm y is ignored.
@@ -226,19 +243,33 @@ class QKMeans(QuantumClassifier):
 
         Args:
             X: training dataset
-            y: training labels
+            y: Ignored.
+               Kept here for API consistency
         """
         self.X_train = np.asarray(X)
         self._init_centroid(self.X_train, self.init, self.random_state)
         self.clusters = np.zeros(self.X_train.shape[0])
         error = np.inf
         it = 0
+
+        # while error not below tolerance, reiterate the
+        # centroid computation for a maximum of `max_iter` times
         while error > self.tol and it < self.max_iter:
-            results = self.execute(self.X_train)
-            distances = np.array(list(map(lambda x: self._compute_distances_centroids(x), results.get_counts())))
+            # construct circuits using training data
+            # notice: the construction uses the centroids
+            # which are recomputed after every iteration
+            circuits = self._construct_circuits(self.X_train)
+
+            # executing and computing distances from centroids
+            results = self.execute(circuits)
+            distances = self._get_distances_centroids(results)
+
+            # assigning clusters and recomputing centroids
             self.clusters = np.argmin(distances, axis=1)
             centroids_old = deepcopy(self.centroids)
             self._recompute_centroids()
+
+            # evaluating error and updating iteration count
             error = np.linalg.norm(self.centroids - centroids_old)
             it = it + 1
 
@@ -259,7 +290,9 @@ class QKMeans(QuantumClassifier):
                 "Call 'fit' with appropriate arguments before using "
                 "this estimator.")
 
-        results = self.execute(X_test)
-        distances = np.array(list(map(lambda x: self._compute_distances_centroids(x), results.get_counts())))
+        circuits = self._construct_circuits(X_test)
+        results = self.execute(circuits)
+        distances = self._get_distances_centroids(results)
+
         predicted_labels = np.argmin(distances, axis=1)
         return predicted_labels

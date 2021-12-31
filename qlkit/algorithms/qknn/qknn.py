@@ -193,16 +193,14 @@ class QKNeighborsClassifier(QuantumClassifier):
 
         return predicted_labels
 
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray) -> List[QuantumCircuit]:
+    def _construct_circuits(self,
+                            X_test: np.ndarray) -> List[QuantumCircuit]:
         """
         Creates the circuits to be executed on
         the gated quantum computer for the classification
         process
 
         Args:
-            X_train: the training data
             X_test: the unclassified input data
 
         """
@@ -214,7 +212,7 @@ class QKNeighborsClassifier(QuantumClassifier):
             # each point in X_train
             circuits_line = self.parallel_construct_circuits(
                 construct_circuit,
-                X_train,
+                self.X_train,
                 task_args=[xtest,
                            self._encoding_map,
                            "swap_test_qc_{}".format(i)]
@@ -242,7 +240,8 @@ class QKNeighborsClassifier(QuantumClassifier):
         #  |-> results
         #  |-> fidelities
         #  |-> vote
-        results = self.execute(X_test)
+        circuits = self._construct_circuits(X_test)
+        results = self.execute(circuits)
         fidelities = self._get_fidelities(results, len(X_test))
 
         return self._majority_voting(self.y_train, fidelities)

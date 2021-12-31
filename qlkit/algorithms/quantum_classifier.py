@@ -21,18 +21,17 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         """
         Args:
             encoding_map:
-                map to classical data to quantum states.
+                Map to classical data to quantum states.
                 This class does not impose any constraint on it. It
                 can either be a custom encoding map or a qiskit FeatureMap
             quantum_instance:
-                the quantum instance to set. Can be a
+                The quantum instance to set. Can be a
                 :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
                 or a :class:`~qiskit.providers.BaseBackend`
 
         """
         self.X_train = np.asarray([])
         self.y_train = np.asarray([])
-        self.qcircuits = None
         self._encoding_map = encoding_map
 
         self._set_quantum_instance(quantum_instance)
@@ -66,9 +65,8 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         raise NotImplementedError("Must have implemented this.")
 
     @abstractmethod
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray) -> Union[QuantumCircuit, List[QuantumCircuit]]:
+    def _construct_circuits(self,
+                            X_test: np.ndarray) -> Union[QuantumCircuit, List[QuantumCircuit]]:
         """
         Creates the quantum circuit(s) to perform
         the classification process
@@ -76,7 +74,9 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
             X_test: input data to be classified
 
         Returns:
-            quantum circuits
+            a :class:`~qiskit.QuantumCircuit` or a list of this
+            type containing the circuits to be run for the
+            quantum computations
         """
         raise NotImplementedError("Must have implemented this.")
 
@@ -127,8 +127,9 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         Internal method to set a quantum instance according to its type
 
         Args:
-            quantum_instance: the quantum instance to set. Can be a
-                `QuantumInstance`, a `Backend` or a `BaseBackend`
+            The quantum instance to set. Can be a
+            :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+            or a :class:`~qiskit.providers.BaseBackend`
 
         """
         if isinstance(quantum_instance, (BaseBackend, Backend)):
@@ -146,11 +147,14 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         """Encoding Map setter"""
         self._encoding_map = encoding_map
 
-    def execute(self, X_test) -> Union[Optional[Result], None]:
+    def execute(self,
+                qcircuits: Union[QuantumCircuit, List[QuantumCircuit]]) -> Union[Optional[Result], None]:
         """
         Executes the given quantum circuit
         Args:
-            X_test: the unclassified input data
+            qcircuits:
+                a :class:`~qiskit.QuantumCircuit` or a list of
+                this type to be executed
 
         Returns:
             the execution results
@@ -159,11 +163,9 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         if self._quantum_instance is None:
             raise QiskitError("Circuits execution requires a quantum instance")
 
-        self.qcircuits = self._create_circuits(self.X_train, X_test)
-
         # Instead of transpiling and assembling the quantum object
         # and running the backend, we call execute from the quantum
         # instance that does it at once a very efficient way
         # please notice: this execution is parallelized
-        result = self._quantum_instance.execute(self.qcircuits)
+        result = self._quantum_instance.execute(qcircuits)
         return result
