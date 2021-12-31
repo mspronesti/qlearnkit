@@ -1,15 +1,17 @@
 import sklearn.datasets as skdatasets
-from .dataset_utils import features_labels_from_data
+from .dataset_helper import features_labels_from_data
 from typing import Optional, Union
 
 
 def load_wine(train_size: Optional[Union[float, int]] = None,
               test_size: Optional[Union[float, int]] = None,
               n_features: Optional[int] = None,
+              *,
+              use_pca: Optional[bool] = False,
               return_bunch: Optional[bool] = False):
     """
-    This script loads wine dataset from sklearn and splits it according to the
-    required train size, test size and number of features
+    This script loads wine dataset from sklearn and splits it according to
+    the required train size, test size and number of features
 
     Args:
         test_size :
@@ -29,6 +31,10 @@ def load_wine(train_size: Optional[Union[float, int]] = None,
         n_features:
             number of desired features
 
+        use_pca:
+            whether to use PCA for dimensionality reduction or not
+            default False
+
         return_bunch:
             whether to return a :class:`~sklearn.utils.Bunch`
                     (similar to a dictionary) or not
@@ -41,5 +47,7 @@ def load_wine(train_size: Optional[Union[float, int]] = None,
     X, y = skdatasets.load_wine(return_X_y=True)
 
     return features_labels_from_data(
-        X, y, train_size, test_size, n_features, return_bunch
+        X, y, train_size, test_size, n_features,
+        use_pca=use_pca,
+        return_bunch=return_bunch
     )
