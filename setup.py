@@ -1,23 +1,29 @@
+import os
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+# loading requirements from textfile
+with open("requirements.txt") as f:
+    requirements = f.read().splitlines()
+
+# loading long description from readme
+with open("README.md", "r") as f:
+    long_description = f.read()
+
+# loading version number from path
+VERSION_PATH = os.path.join(os.path.dirname(__file__), "qlkit", "VERSION.txt")
+with open(VERSION_PATH, "r") as version_file:
+    version = version_file.read().strip()
 
 setuptools.setup(
     name="qlkit",
-    version="0.1",
-    author=["Massimiliano Pronesti",
-            "Federico Tiblias",
-            "Giulio Corallo"
-    ],
+    version=version,
+    author="Massimiliano Pronesti, "
+           "Federico Tiblias, "
+           "Giulio Corallo",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/mspronesti/qlkit",
     packages=setuptools.find_packages(),
-    install_requires=[
-        "numpy",
-        "scipy",
-        "qiskit"
-    ],
-    python_requires='>=3.6'
+    install_requires=requirements,
+    python_requires='>=3.7'
 )
