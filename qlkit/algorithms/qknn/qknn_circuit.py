@@ -1,7 +1,8 @@
 import logging
 import numpy as np
 
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit import QuantumCircuit
+from qlkit.circuits import SwaptestCircuit
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ def construct_circuit(feature_vector_1: np.ndarray,
                       name: str = None) -> QuantumCircuit:
     r"""
     Constructs a swap test circuit employing a controlled
-    swap:
+    swap. For instance
 
     .. parsed-literal::
 
@@ -62,25 +63,5 @@ def construct_circuit(feature_vector_1: np.ndarray,
     qc_1 = encoding_map.circuit(feature_vector_1)
     qc_2 = encoding_map.circuit(feature_vector_2)
 
-    n_total = qc_1.num_qubits + qc_2.num_qubits
-    range_qc1 = [i + 1 for i in range(qc_1.num_qubits)]
-    range_qc2 = [i + qc_1.num_qubits + 1 for i in range(qc_2.num_qubits)]
-
-    # Constructing the swap test circuit
-    qc_swap = QuantumCircuit(n_total + 1, 1, name=name)
-    qc_swap.append(qc_1, range_qc1)
-    qc_swap.append(qc_2, range_qc2)
-
-    # Swap Test
-
-    # first apply hadamard
-    qc_swap.h(0)
-    # then perform controlled swaps
-    for index, qubit in enumerate(range_qc1):
-        qc_swap.cswap(0, qubit, range_qc2[index])
-    # eventually reapply hadamard
-    qc_swap.h(0)
-
-    # Measurement on the auxiliary qubit
-    qc_swap.measure(0, 0)
+    qc_swap = SwaptestCircuit(qc_1, qc_2, name=name)
     return qc_swap

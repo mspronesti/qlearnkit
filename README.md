@@ -22,13 +22,12 @@ Let's try an experiment using the KNN Classifier algorithm to train and test sam
 data set to see how accurately the test set can be classified.
 
 ```python
-import numpy as np
 from qlkit.algorithms import QKNeighborsClassifier
 from qlkit.encodings import AmplitudeEncoding
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance, algorithm_globals
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
+
+from qlkit.datasets import load_iris
 
 seed = 42
 algorithm_globals.random_seed = seed
@@ -41,20 +40,19 @@ quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
 
 encoding_map = AmplitudeEncoding()
 
-# Use iris data set for training and test data
-X, y = load_iris(return_X_y=True)
-
-num_features = 2
-X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
-y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
-
 qknn = QKNeighborsClassifier(
     n_neighbors=3,
     quantum_instance=quantum_instance,
     encoding_map=encoding_map
 )
+# Use iris data set for training and test data
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
+train_size = 32
+test_size = 8
+num_features = 4 # all features
+ 
+
+X_train, X_test, y_train, y_test = load_iris(train_size, test_size, num_features)
 qknn.fit(X_train, y_train)
 
 print(f"Testing accuracy: "

@@ -1,10 +1,11 @@
 from sklearn.exceptions import NotFittedError
 from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
-from qlkit.algorithms import QuantumClassifier
+from qlkit.algorithms import QuantumEstimator
 from qiskit.utils import QuantumInstance
 from typing import Dict, List, Optional, Union
 from qlkit.algorithms.qknn.qknn_circuit import *
+from sklearn.base import ClassifierMixin
 import collections
 
 from qlkit.encodings import EncodingMap
@@ -12,7 +13,7 @@ from qlkit.encodings import EncodingMap
 logger = logging.getLogger(__name__)
 
 
-class QKNeighborsClassifier(QuantumClassifier):
+class QKNeighborsClassifier(ClassifierMixin, QuantumEstimator):
     r"""
     The Quantum K-Nearest Neighbors algorithm for classification
 
@@ -65,10 +66,9 @@ class QKNeighborsClassifier(QuantumClassifier):
                   f"{qknn.score(X_test, y_test):0.2f}")
 
     """
-
     def __init__(self,
-                 n_neighbors: int,
-                 encoding_map: Optional[EncodingMap] = None,
+                 n_neighbors: int = 3,
+                 encoding_map: EncodingMap = None,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None):
         """
         Creates a QKNeighborsClassifier Object
@@ -193,16 +193,14 @@ class QKNeighborsClassifier(QuantumClassifier):
 
         return predicted_labels
 
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray) -> List[QuantumCircuit]:
+    def _construct_circuits(self,
+                            X_test: np.ndarray) -> List[QuantumCircuit]:
         """
         Creates the circuits to be executed on
         the gated quantum computer for the classification
         process
 
         Args:
-            X_train: the training data
             X_test: the unclassified input data
 
         """
@@ -214,7 +212,7 @@ class QKNeighborsClassifier(QuantumClassifier):
             # each point in X_train
             circuits_line = self.parallel_construct_circuits(
                 construct_circuit,
-                X_train,
+                self.X_train,
                 task_args=[xtest,
                            self._encoding_map,
                            "swap_test_qc_{}".format(i)]
@@ -242,7 +240,8 @@ class QKNeighborsClassifier(QuantumClassifier):
         #  |-> results
         #  |-> fidelities
         #  |-> vote
-        results = self.execute(X_test)
+        circuits = self._construct_circuits(X_test)
+        results = self.execute(circuits)
         fidelities = self._get_fidelities(results, len(X_test))
 
         return self._majority_voting(self.y_train, fidelities)

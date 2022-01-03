@@ -34,5 +34,5 @@ def test_qkmeans():
     predictions = qkmeans.predict(train_data)
 
     # Check if clustering was performed well
-    accuracy = sum([1 if p == t else 0 for p, t in zip(predictions, qkmeans.clusters)]) / len(predictions)
+    accuracy = sum([1 if p == t else 0 for p, t in zip(predictions, qkmeans.labels_)]) / len(predictions)
     assert accuracy > 0.98

@@ -1,9 +1,13 @@
 from copy import deepcopy
 from typing import List, Dict, Union, Optional
+
+from qiskit.result import Result
 from qiskit.providers import BaseBackend, Backend
 from qiskit.utils import QuantumInstance
 
-from qlkit.algorithms.quantum_classifier import QuantumClassifier
+from qlkit.algorithms.quantum_estimator import QuantumEstimator
+from sklearn.base import ClusterMixin
+
 from qlkit.algorithms.qkmeans.centroid_initialization import random, qkmeans_plus_plus, naive_sharding
 from qlkit.algorithms.qkmeans.qkmeans_circuit import *
 from sklearn.exceptions import NotFittedError
@@ -11,7 +15,7 @@ from sklearn.exceptions import NotFittedError
 logger = logging.getLogger(__name__)
 
 
-class QKMeans(QuantumClassifier):
+class QKMeans(ClusterMixin, QuantumEstimator):
     """
     The Quantum K-Means algorithm for classification
 
@@ -54,12 +58,12 @@ class QKMeans(QuantumClassifier):
             )
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
-            qkmeans.fit(X_train, y_train)
+            qkmeans.fit(X_train)
 
             # Plot the results
             colors = ['blue', 'orange', 'green']
             for i in range(X_train.shape[0]):
-                plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.clusters[i]])
+                plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.labels_[i]])
             plt.scatter(qkmeans.centroids[:, 0], qkmeans.centroids[:, 1], marker='*', c='g', s=150)
             plt.show()
 
@@ -69,7 +73,7 @@ class QKMeans(QuantumClassifier):
 
     """
     def __init__(self,
-                 n_clusters: int = 8,
+                 n_clusters: int = 6,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
                  init: Union[str, np.ndarray] = "qkmeans++",
                  n_init: int = 1,
@@ -112,7 +116,10 @@ class QKMeans(QuantumClassifier):
         self.n_clusters = n_clusters
         self.random_state = random_state
         self.centroids = None
-        self.clusters = None
+        # do not rename : this name is needed for
+        # `fit_transform` inherited method from
+        # `ClusterMixin` base class
+        self.labels_ = None
 
     def _init_centroid(self,
                        X: np.ndarray,
@@ -148,8 +155,8 @@ class QKMeans(QuantumClassifier):
         If a cluster is empty the corresponding centroid remains the same.
         """
         for i in range(self.n_clusters):
-            if np.sum(self.clusters == i) != 0:
-                self.centroids[i] = np.mean(self.X_train[self.clusters == i], axis=0)
+            if np.sum(self.labels_ == i) != 0:
+                self.centroids[i] = np.mean(self.X_train[self.labels_ == i], axis=0)
 
     def _compute_distances_centroids(self,
                                      counts: Dict[str, int]) -> List[int]:
@@ -185,26 +192,41 @@ class QKMeans(QuantumClassifier):
             x = x << 1
         return distance_centroids
 
-    def _create_circuits(self,
-                         X_train: np.ndarray,
-                         X_test: np.ndarray) -> List[QuantumCircuit]:
+    def _get_distances_centroids(self,
+                                 results: Result) -> np.ndarray:
+        """
+        Retrieves distances from counts via :func:`_compute_distances_centroids`
+
+        Args:
+            results: :class:`~qiskit.Result` object of execution results
+
+        Returns:
+            np.ndarray of distances
+        """
+        counts = results.get_counts()
+        # compute distance from centroids using counts
+        distances_list = list(map(lambda count: self._compute_distances_centroids(count), counts))
+
+        return np.asarray(distances_list)
+
+    def _construct_circuits(self,
+                            X_test: np.ndarray) -> List[QuantumCircuit]:
         """
         Creates the circuits to be executed on
         the gated quantum computer for the classification
         process
 
         Args:
-            X_train: The training data.
             X_test: The unclassified input data.
 
         Returns:
-            List of quantum circuits created.
+            List of quantum circuits created for the computation
         """
         logger.info("Starting circuits construction ...")
         '''
         circuits = []
         for xt in X_test:
-            circuits.append(construct_circuit(xt, self.centroids, self.num_clusters))
+            circuits.append(construct_circuit(xt, self.centroids, self.n_clusters))
 
         '''
         circuits = self.parallel_construct_circuits(
@@ -218,7 +240,7 @@ class QKMeans(QuantumClassifier):
 
     def fit(self,
             X: np.ndarray,
-            y: np.ndarray):
+            y: np.ndarray = None):
         """
         Fits the model using X as training dataset
         and y as training labels. For the qkmeans algorithm y is ignored.
@@ -226,21 +248,40 @@ class QKMeans(QuantumClassifier):
 
         Args:
             X: training dataset
-            y: training labels
+            y: Ignored.
+               Kept here for API consistency
+
+        Returns:
+            trained QKMeans object
         """
         self.X_train = np.asarray(X)
         self._init_centroid(self.X_train, self.init, self.random_state)
-        self.clusters = np.zeros(self.X_train.shape[0])
+        self.labels_ = np.zeros(self.X_train.shape[0])
         error = np.inf
         it = 0
+
+        # while error not below tolerance, reiterate the
+        # centroid computation for a maximum of `max_iter` times
         while error > self.tol and it < self.max_iter:
-            results = self.execute(self.X_train)
-            distances = np.array(list(map(lambda x: self._compute_distances_centroids(x), results.get_counts())))
-            self.clusters = np.argmin(distances, axis=1)
+            # construct circuits using training data
+            # notice: the construction uses the centroids
+            # which are recomputed after every iteration
+            circuits = self._construct_circuits(self.X_train)
+
+            # executing and computing distances from centroids
+            results = self.execute(circuits)
+            distances = self._get_distances_centroids(results)
+
+            # assigning clusters and recomputing centroids
+            self.labels_ = np.argmin(distances, axis=1)
             centroids_old = deepcopy(self.centroids)
             self._recompute_centroids()
+
+            # evaluating error and updating iteration count
             error = np.linalg.norm(self.centroids - centroids_old)
             it = it + 1
+
+        return self
 
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
@@ -253,13 +294,37 @@ class QKMeans(QuantumClassifier):
         Returns:
             Index of the cluster each sample belongs to.
         """
-        if self.X_train is None:
+        if self.labels_ is None:
             raise NotFittedError(
                 "This QKMeans instance is not fitted yet. "
                 "Call 'fit' with appropriate arguments before using "
                 "this estimator.")
 
-        results = self.execute(X_test)
-        distances = np.array(list(map(lambda x: self._compute_distances_centroids(x), results.get_counts())))
+        circuits = self._construct_circuits(X_test)
+        results = self.execute(circuits)
+        distances = self._get_distances_centroids(results)
+
         predicted_labels = np.argmin(distances, axis=1)
         return predicted_labels
+
+    def score(self,
+              X: np.ndarray,
+              y: np.ndarray = None,
+              sample_weight: Optional[np.ndarray] = None) -> float:
+        """
+        Returns Mean Silhouette Coefficient for all samples.
+        Args:
+            X:  array of features
+
+            y: Ignored.
+               Not used, present here for API consistency by convention.
+
+            sample_weight: Ignored.
+                Not used, present here for API consistency by convention.
+
+        Returns:
+            Mean Silhouette Coefficient for all samples.
+        """
+        from sklearn.metrics import silhouette_score
+        predicted_labels = self.predict(X)
+        return silhouette_score(X, predicted_labels)
