@@ -8,6 +8,8 @@ Subpackages
    :maxdepth: 4
 
    qlkit.algorithms
+   qlkit.circuits
+   qlkit.datasets
    qlkit.encodings
 
 Module contents

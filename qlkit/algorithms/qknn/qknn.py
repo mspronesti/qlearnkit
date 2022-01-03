@@ -1,10 +1,11 @@
 from sklearn.exceptions import NotFittedError
 from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
-from qlkit.algorithms import QuantumClassifier
+from qlkit.algorithms import QuantumEstimator
 from qiskit.utils import QuantumInstance
 from typing import Dict, List, Optional, Union
 from qlkit.algorithms.qknn.qknn_circuit import *
+from sklearn.base import ClassifierMixin
 import collections
 
 from qlkit.encodings import EncodingMap
@@ -12,7 +13,7 @@ from qlkit.encodings import EncodingMap
 logger = logging.getLogger(__name__)
 
 
-class QKNeighborsClassifier(QuantumClassifier):
+class QKNeighborsClassifier(ClassifierMixin, QuantumEstimator):
     r"""
     The Quantum K-Nearest Neighbors algorithm for classification
 
@@ -65,10 +66,9 @@ class QKNeighborsClassifier(QuantumClassifier):
                   f"{qknn.score(X_test, y_test):0.2f}")
 
     """
-
     def __init__(self,
-                 n_neighbors: int,
-                 encoding_map: Optional[EncodingMap] = None,
+                 n_neighbors: int = 3,
+                 encoding_map: EncodingMap = None,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None):
         """
         Creates a QKNeighborsClassifier Object

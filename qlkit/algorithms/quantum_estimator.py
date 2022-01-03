@@ -6,14 +6,14 @@ from abc import abstractmethod
 from qiskit import QuantumCircuit
 from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
-from sklearn.base import ClassifierMixin, TransformerMixin
+from sklearn.base import TransformerMixin
 from qiskit.utils import QuantumInstance
 from qiskit.exceptions import QiskitError
 
 logger = logging.getLogger(__name__)
 
 
-class QuantumClassifier(ClassifierMixin, TransformerMixin):
+class QuantumEstimator(TransformerMixin):
     def __init__(self,
                  encoding_map=None,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None
@@ -61,22 +61,6 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
 
         Returns:
             the labels associated to X_test
-        """
-        raise NotImplementedError("Must have implemented this.")
-
-    @abstractmethod
-    def _construct_circuits(self,
-                            X_test: np.ndarray) -> Union[QuantumCircuit, List[QuantumCircuit]]:
-        """
-        Creates the quantum circuit(s) to perform
-        the classification process
-        Args:
-            X_test: input data to be classified
-
-        Returns:
-            a :class:`~qiskit.QuantumCircuit` or a list of this
-            type containing the circuits to be run for the
-            quantum computations
         """
         raise NotImplementedError("Must have implemented this.")
 
@@ -169,3 +153,26 @@ class QuantumClassifier(ClassifierMixin, TransformerMixin):
         # please notice: this execution is parallelized
         result = self._quantum_instance.execute(qcircuits)
         return result
+
+    @abstractmethod
+    def score(self,
+              X: np.ndarray,
+              y: np.ndarray,
+              sample_weight: Optional[np.ndarray] = None) -> float:
+        """
+        Returns a score of this model given samples and true values for the samples.
+        In case of clustering, the `y` parameter is typically ignored
+
+        Args:
+            X: array-like of shape (n_samples, n_features)
+
+            y: array-like of labels of shape (n_samples,)
+
+            sample_weight: array-like of shape (n_samples,), default=None
+                The weights for each observation in X. If None, all observations
+                are assigned equal weight.
+
+        Returns:
+            a float score of the model.
+        """
+        raise NotImplementedError("You should have implemented this.")

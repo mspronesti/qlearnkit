@@ -14,10 +14,10 @@ Subpackages
 Submodules
 ----------
 
-qlkit.algorithms.quantum\_classifier module
--------------------------------------------
+qlkit.algorithms.quantum\_estimator module
+------------------------------------------
 
-.. automodule:: qlkit.algorithms.quantum_classifier
+.. automodule:: qlkit.algorithms.quantum_estimator
    :members:
    :undoc-members:
    :show-inheritance:

@@ -6,7 +6,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from qlkit.algorithms import QKMeans
+from qlkit.algorithms.qkmeans.qkmeans import QKMeans
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
@@ -33,12 +33,12 @@ qkmeans = QKMeans(n_clusters=3,
 )
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
-qkmeans.fit(X_train, y_train)
+qkmeans.fit(X_train)
 
 # Plot the results
 colors = ['blue', 'orange', 'green']
 for i in range(X_train.shape[0]):
-    plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.clusters[i]])
+    plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.labels_[i]])
 plt.scatter(qkmeans.centroids[:, 0], qkmeans.centroids[:, 1], marker='*', c='g', s=150)
 plt.show()
 
@@ -52,7 +52,7 @@ print(prediction)
 
 import numpy as np
 import matplotlib.pyplot as plt
-from qlkit.algorithms import QKMeans
+from qlkit.algorithms.qkmeans.qkmeans import QKMeans
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance, algorithm_globals
 from sklearn.datasets import load_iris
@@ -79,12 +79,12 @@ qkmeans = QKMeans(n_clusters=3,
 )
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)
-qkmeans.fit(X_train, y_train)
+qkmeans.fit(X_train)
 
 # Plot the results
 colors = ['blue', 'orange', 'green']
 for i in range(X_train.shape[0]):
-    plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.clusters[i]])
+    plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.labels_[i]])
 plt.scatter(qkmeans.centroids[:, 0], qkmeans.centroids[:, 1], marker='*', c='g', s=150)
 plt.show()
 

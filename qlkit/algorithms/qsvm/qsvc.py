@@ -1,18 +1,18 @@
 import logging
-from abc import ABC
 from typing import Optional, Union
 import numpy as np
+from sklearn.base import ClassifierMixin
 from sklearn.exceptions import NotFittedError
 from qiskit.utils import QuantumInstance
 from qiskit.providers import BaseBackend, Backend
 from qiskit_machine_learning.kernels import QuantumKernel
 from qiskit.circuit.library import NLocal, ZZFeatureMap
-from qlkit.algorithms import QuantumClassifier
+from qlkit.algorithms import QuantumEstimator
 
 logger = logging.getLogger(__name__)
 
 
-class QSVClassifier(QuantumClassifier, ABC):
+class QSVClassifier(ClassifierMixin, QuantumEstimator):
     r"""
     The Quantum Support Vector Machine algorithm for classification.
     Maps datapoints to quantum states using a FeatureMap or similar
