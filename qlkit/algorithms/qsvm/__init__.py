@@ -1,5 +1,5 @@
-from qlkit.algorithms.qsvm.qsvc import QSVClassifier
+from .qsvc import QSVClassifier
 
 __all__ = [
-    'QSVClassifier'
+    "QSVClassifier"
 ]

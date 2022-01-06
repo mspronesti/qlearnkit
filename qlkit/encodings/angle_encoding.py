@@ -1,4 +1,5 @@
-from qlkit.encodings.encoding_map import EncodingMap
+from .encoding_map import EncodingMap
+
 from qiskit import QuantumCircuit
 from qiskit.circuit.library.standard_gates import RXGate, RYGate, RZGate
 import numpy as np

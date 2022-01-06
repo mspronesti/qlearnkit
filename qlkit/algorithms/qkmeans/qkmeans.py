@@ -5,12 +5,13 @@ from qiskit.result import Result
 from qiskit.providers import BaseBackend, Backend
 from qiskit.utils import QuantumInstance
 
-from qlkit.algorithms.quantum_estimator import QuantumEstimator
+from sklearn.exceptions import NotFittedError
 from sklearn.base import ClusterMixin
 
-from qlkit.algorithms.qkmeans.centroid_initialization import random, qkmeans_plus_plus, naive_sharding
-from qlkit.algorithms.qkmeans.qkmeans_circuit import *
-from sklearn.exceptions import NotFittedError
+from ..quantum_estimator import QuantumEstimator
+from .centroid_initialization import random, qkmeans_plus_plus, naive_sharding
+from .qkmeans_circuit import *
+
 
 logger = logging.getLogger(__name__)
 

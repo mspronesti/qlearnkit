@@ -1,5 +1,5 @@
-from qlkit.algorithms.qkmeans.qkmeans import QKMeans
+from .qkmeans import QKMeans
 
 __all__ = [
-    'QKMeans'
+    "QKMeans"
 ]

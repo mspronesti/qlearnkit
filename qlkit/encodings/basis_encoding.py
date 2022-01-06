@@ -1,4 +1,4 @@
-from qlkit.encodings.encoding_map import EncodingMap
+from .encoding_map import EncodingMap
 from qiskit import QuantumCircuit
 import numpy as np
 

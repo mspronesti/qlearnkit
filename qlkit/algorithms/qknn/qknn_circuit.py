@@ -2,7 +2,7 @@ import logging
 import numpy as np
 
 from qiskit import QuantumCircuit
-from qlkit.circuits import SwaptestCircuit
+from ...circuits import SwaptestCircuit
 
 logger = logging.getLogger(__name__)
 

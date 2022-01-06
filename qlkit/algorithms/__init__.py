@@ -1,7 +1,7 @@
-from qlkit.algorithms.quantum_estimator import QuantumEstimator
-from qlkit.algorithms.qknn.qknn import QKNeighborsClassifier
-from qlkit.algorithms.qsvm import QSVClassifier
-from qlkit.algorithms.qkmeans import QKMeans
+from .quantum_estimator import QuantumEstimator
+from .qknn import QKNeighborsClassifier
+from .qsvm import QSVClassifier
+from .qkmeans import QKMeans
 
 __all__ = [
     "QuantumEstimator",

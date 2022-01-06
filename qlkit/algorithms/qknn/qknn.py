@@ -1,14 +1,17 @@
 from sklearn.exceptions import NotFittedError
+
 from qiskit.providers import BaseBackend, Backend
 from qiskit.result import Result
 from qlkit.algorithms import QuantumEstimator
 from qiskit.utils import QuantumInstance
+
 from typing import Dict, List, Optional, Union
-from qlkit.algorithms.qknn.qknn_circuit import *
 from sklearn.base import ClassifierMixin
+
+from .qknn_circuit import *
 import collections
 
-from qlkit.encodings import EncodingMap
+from ...encodings import EncodingMap
 
 logger = logging.getLogger(__name__)
 

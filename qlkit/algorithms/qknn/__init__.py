@@ -1,5 +1,5 @@
-from qlkit.algorithms.qknn.qknn import QKNeighborsClassifier
+from .qknn import QKNeighborsClassifier
 
 __all__ = [
-    'QKNeighborsClassifier'
+    "QKNeighborsClassifier"
 ]
