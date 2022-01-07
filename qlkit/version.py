@@ -6,5 +6,11 @@ except ImportError:
     # for Python < 3.8
     import importlib_metadata as metadata
 
-# set __version__ from package metadata at runtime
-__version__ = metadata.version("qlkit")
+
+__version__ = "unknown"
+try:
+    # set __version__ from package metadata at runtime
+    __version__ = metadata.version("qlkit")
+except metadata.PackageNotFoundError:
+    # package not installed
+    pass
