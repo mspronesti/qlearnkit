@@ -3,6 +3,7 @@ from typing import List, Dict, Union, Optional
 
 from qiskit.result import Result
 from qiskit.providers import BaseBackend, Backend
+from qiskit.tools import parallel_map
 from qiskit.utils import QuantumInstance
 
 from sklearn.exceptions import NotFittedError
@@ -230,7 +231,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
             circuits.append(construct_circuit(xt, self.centroids, self.n_clusters))
 
         '''
-        circuits = self.parallel_construct_circuits(
+        circuits = parallel_map(
             construct_circuit,
             X_test,
             task_args=[self.centroids, self.n_clusters]

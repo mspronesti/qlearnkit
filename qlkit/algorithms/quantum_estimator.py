@@ -1,5 +1,5 @@
 import logging
-from typing import Union, Optional, List, Callable
+from typing import Union, Optional, List
 
 import numpy as np
 from abc import abstractmethod
@@ -63,35 +63,6 @@ class QuantumEstimator(TransformerMixin):
             the labels associated to X_test
         """
         raise NotImplementedError("Must have implemented this.")
-
-    @staticmethod
-    def parallel_construct_circuits(construct_circuit_task: Callable,
-                                    X_test: np.ndarray,
-                                    task_args: list = None) -> List[QuantumCircuit]:
-        """
-        Wrapper helper to qiskit parallel_map used to parallely construct
-        circuits if the algorithm allows it. See qiskit parallel_map
-        for more
-
-        Args:
-            construct_circuit_task:
-                the task constructing a single
-                quantum circuit
-            X_test:
-                the test dataset
-            task_args:
-                the other (optional) parameters of the task
-
-        Returns:
-            The result list contains the value of
-                ``construct_circuit_task(X_test, *task_args)`` for
-                    each value in ``X_test``.
-
-        """
-        from qiskit.tools import parallel_map
-        return parallel_map(construct_circuit_task,
-                            X_test,
-                            task_args=task_args)
 
     @property
     def quantum_instance(self) -> QuantumInstance:
@@ -161,7 +132,9 @@ class QuantumEstimator(TransformerMixin):
               sample_weight: Optional[np.ndarray] = None) -> float:
         """
         Returns a score of this model given samples and true values for the samples.
-        In case of clustering, the `y` parameter is typically ignored
+        In case of classification, this value should correspond to mean accuracy,
+        in case of regression, the coefficient of determination :math:`R^2` of the prediction.
+        In case of clustering, the `y` parameter is typically ignored.
 
         Args:
             X: array-like of shape (n_samples, n_features)
