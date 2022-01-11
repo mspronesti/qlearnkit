@@ -30,7 +30,7 @@ def random(X: np.ndarray,
     return np.array(centroids)
 
 
-def qkmeans_plus_plus(X: np.ndarray,
+def kmeans_plus_plus(X: np.ndarray,
                       k: int,
                       random_state: int = 42) -> np.ndarray:
     """
