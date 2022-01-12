@@ -6,4 +6,4 @@ requires = [
 ]
 
 [tool.setuptools_scm]
-write_to = "qlkit/_version.py"
+write_to = "qlearnkit/_version.py"
