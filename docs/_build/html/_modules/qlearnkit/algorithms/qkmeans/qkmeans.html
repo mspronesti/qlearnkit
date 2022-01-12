@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>qlearnkit.algorithms.qkmeans.qkmeans &#8212; qlearnkit 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/thebelab.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for qlearnkit.algorithms.qkmeans.qkmeans</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qiskit.result</span> <span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span>
+<span class="kn">from</span> <span class="nn">qiskit.tools</span> <span class="kn">import</span> <span class="n">parallel_map</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">ClusterMixin</span>
+
+<span class="kn">from</span> <span class="nn">..quantum_estimator</span> <span class="kn">import</span> <span class="n">QuantumEstimator</span>
+<span class="kn">from</span> <span class="nn">.centroid_initialization</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">random</span><span class="p">,</span>
+    <span class="n">kmeans_plus_plus</span><span class="p">,</span>
+    <span class="n">naive_sharding</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.qkmeans_circuit</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QKMeans"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qkmeans.html#qlearnkit.algorithms.QKMeans">[docs]</a><span class="k">class</span> <span class="nc">QKMeans</span><span class="p">(</span><span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">QuantumEstimator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Quantum K-Means algorithm for classification</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The naming conventions follow the KMeans from</span>
+<span class="sd">        sklearn.cluster</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        Classify data using the Iris dataset.</span>
+
+<span class="sd">        ..  jupyter-execute::</span>
+
+<span class="sd">            import numpy as np</span>
+<span class="sd">            import matplotlib.pyplot as plt</span>
+<span class="sd">            from qlearnkit.algorithms import QKMeans</span>
+<span class="sd">            from qiskit import BasicAer</span>
+<span class="sd">            from qiskit.utils import QuantumInstance, algorithm_globals</span>
+<span class="sd">            from sklearn.datasets import load_iris</span>
+<span class="sd">            from sklearn.model_selection import train_test_split</span>
+
+<span class="sd">            seed = 42</span>
+<span class="sd">            algorithm_globals.random_seed = seed</span>
+
+<span class="sd">            quantum_instance = QuantumInstance(BasicAer.get_backend(&#39;qasm_simulator&#39;),</span>
+<span class="sd">                                               shots=1024,</span>
+<span class="sd">                                               optimization_level=1,</span>
+<span class="sd">                                               seed_simulator=seed,</span>
+<span class="sd">                                               seed_transpiler=seed)</span>
+
+<span class="sd">            # Use iris data set for training and test data</span>
+<span class="sd">            X, y = load_iris(return_X_y=True)</span>
+
+<span class="sd">            num_features = 2</span>
+<span class="sd">            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])</span>
+<span class="sd">            y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])</span>
+
+<span class="sd">            qkmeans = QKMeans(n_clusters=3,</span>
+<span class="sd">                              quantum_instance=quantum_instance</span>
+<span class="sd">            )</span>
+
+<span class="sd">            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=seed)</span>
+<span class="sd">            qkmeans.fit(X_train)</span>
+
+<span class="sd">            print(qkmeans.labels_)</span>
+<span class="sd">            print(qkmeans.cluster_centers_)</span>
+
+<span class="sd">            # Plot the results</span>
+<span class="sd">            colors = [&#39;blue&#39;, &#39;orange&#39;, &#39;green&#39;]</span>
+<span class="sd">            for i in range(X_train.shape[0]):</span>
+<span class="sd">                plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.labels_[i]])</span>
+<span class="sd">            plt.scatter(qkmeans.cluster_centers_[:, 0], qkmeans.cluster_centers_[:, 1], marker=&#39;*&#39;, c=&#39;g&#39;, s=150)</span>
+<span class="sd">            plt.show()</span>
+
+<span class="sd">            # Predict new points</span>
+<span class="sd">            prediction = qkmeans.predict(X_test)</span>
+<span class="sd">            print(prediction)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+                 <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">init</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;kmeans++&quot;</span><span class="p">,</span>
+                 <span class="n">n_init</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+                 <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
+                 <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            n_clusters:</span>
+<span class="sd">                The number of clusters to form as well as the number of</span>
+<span class="sd">                centroids to generate.</span>
+<span class="sd">            quantum_instance:</span>
+<span class="sd">                the quantum instance to set. Can be a</span>
+<span class="sd">                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`</span>
+<span class="sd">                or a :class:`~qiskit.providers.BaseBackend`</span>
+<span class="sd">            init:</span>
+<span class="sd">                Method of initialization of centroids.</span>
+<span class="sd">            n_init:</span>
+<span class="sd">                Number of time the qkmeans algorithm will be run with</span>
+<span class="sd">                different centroid seeds.</span>
+<span class="sd">            max_iter:</span>
+<span class="sd">                Maximum number of iterations of the qkmeans algorithm for a</span>
+<span class="sd">                single run.</span>
+<span class="sd">            tol:</span>
+<span class="sd">                Tolerance with regard to the difference of the cluster centroids</span>
+<span class="sd">                of two consecutive iterations to declare convergence.</span>
+<span class="sd">            random_state:</span>
+<span class="sd">                Determines random number generation for centroid initialization.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_clusters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_init</span> <span class="o">=</span> <span class="n">n_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_clusters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># do not rename : this name is needed for</span>
+        <span class="c1"># `fit_predict` inherited method from</span>
+        <span class="c1"># `ClusterMixin` base class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_init_centroid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                       <span class="n">init</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+                       <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the centroids according to the following criteria:</span>
+<span class="sd">        &#39;kmeans++&#39;: Create cluster centroids using the k-means++ algorithm.</span>
+<span class="sd">        &#39;random&#39;: Create random cluster centroids.</span>
+<span class="sd">        &#39;naive_sharding&#39;: Create cluster centroids using deterministic naive sharding algorithm.</span>
+<span class="sd">        If an array is passed, it should be of shape (n_clusters, n_features)</span>
+<span class="sd">        and gives the initial centers.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            X:</span>
+<span class="sd">                Training dataset.</span>
+<span class="sd">            init:</span>
+<span class="sd">                Method of initialization of centroids.</span>
+<span class="sd">            random_state:</span>
+<span class="sd">                Determines random number generation for centroid initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">=</span> <span class="n">random</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;kmeans++&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">=</span> <span class="n">kmeans_plus_plus</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;naive&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">=</span> <span class="n">naive_sharding</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown centroids initialization method </span><span class="si">{</span><span class="n">init</span><span class="si">}</span><span class="s2">. &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;Expected random, kmeans++, naive or vector of &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;centers, but </span><span class="si">{</span><span class="n">init</span><span class="si">}</span><span class="s2"> was provided&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">=</span> <span class="n">init</span>
+
+    <span class="k">def</span> <span class="nf">_recompute_centroids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reassign centroid value to be the calculated mean value for each cluster.</span>
+<span class="sd">        If a cluster is empty the corresponding centroid remains the same.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">==</span> <span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_distances_centroids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                     <span class="n">counts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute distance, without explicitly measure it, of a point with respect</span>
+<span class="sd">        to all the centroids using a dictionary of counts,</span>
+<span class="sd">        which refers to the following circuit:</span>
+
+<span class="sd">        .. parsed-literal::</span>
+
+<span class="sd">                        ┌───┐                   ┌───┐</span>
+<span class="sd">                |0anc&gt;: ┤ H ├────────────■──────┤ H ├────────M</span>
+<span class="sd">                        └───┘            |      └───┘</span>
+<span class="sd">                        ┌───┐   ┌────┐   |</span>
+<span class="sd">                |0&gt;: ───┤ H ├───┤ U3 ├───X──────────</span>
+<span class="sd">                        └───┘   └────┘   |</span>
+<span class="sd">                        ┌───┐   ┌────┐   |</span>
+<span class="sd">                |0&gt;: ───┤ H ├───┤ U3 ├───X──────────</span>
+<span class="sd">                        └───┘   └────┘</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            counts:</span>
+<span class="sd">                Counts resulting after the simulation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The computed distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distance_centroids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">):</span>
+            <span class="n">binary</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">)</span>
+            <span class="n">distance_centroids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">binary</span><span class="p">]</span> <span class="k">if</span> <span class="n">binary</span> <span class="ow">in</span> <span class="n">counts</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">distance_centroids</span>
+
+    <span class="k">def</span> <span class="nf">_get_distances_centroids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">results</span><span class="p">:</span> <span class="n">Result</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves distances from counts via :func:`_compute_distances_centroids`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            results: :class:`~qiskit.Result` object of execution results</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray of distances</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+        <span class="c1"># compute distance from centroids using counts</span>
+        <span class="n">distances_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">count</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_distances_centroids</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="n">counts</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">distances_list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_construct_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">X_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">QuantumCircuit</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the circuits to be executed on</span>
+<span class="sd">        the gated quantum computer for the classification</span>
+<span class="sd">        process</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X_test: The unclassified input data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of quantum circuits created for the computation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting circuits construction ...&quot;</span><span class="p">)</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        circuits = []</span>
+<span class="sd">        for xt in X_test:</span>
+<span class="sd">            circuits.append(construct_circuit(xt, self.cluster_centers_, self.n_clusters))</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">circuits</span> <span class="o">=</span> <span class="n">parallel_map</span><span class="p">(</span>
+            <span class="n">construct_circuit</span><span class="p">,</span>
+            <span class="n">X_test</span><span class="p">,</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">circuits</span>
+
+<div class="viewcode-block" id="QKMeans.fit"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qkmeans.html#qlearnkit.algorithms.QKMeans.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fits the model using X as training dataset</span>
+<span class="sd">        and y as training labels. For the qkmeans algorithm y is ignored.</span>
+<span class="sd">        The fit model creates clusters from the training dataset given as input</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: training dataset</span>
+<span class="sd">            y: Ignored.</span>
+<span class="sd">               Kept here for API consistency</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            trained QKMeans object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_centroid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># while error not below tolerance, reiterate the</span>
+        <span class="c1"># centroid computation for a maximum of `max_iter` times</span>
+        <span class="k">while</span> <span class="n">error</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">:</span>
+            <span class="c1"># construct circuits using training data</span>
+            <span class="c1"># notice: the construction uses the centroids</span>
+            <span class="c1"># which are recomputed after every iteration</span>
+            <span class="n">circuits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_circuits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">)</span>
+
+            <span class="c1"># executing and computing distances from centroids</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">)</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distances_centroids</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+            <span class="c1"># assigning clusters and recomputing centroids</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">cluster_centers_old</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_recompute_centroids</span><span class="p">()</span>
+
+            <span class="c1"># evaluating error and updating iteration count</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="o">-</span> <span class="n">cluster_centers_old</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QKMeans failed to converge after &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="QKMeans.predict"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qkmeans.html#qlearnkit.algorithms.QKMeans.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">X_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Predict the labels of the provided data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X_test:</span>
+<span class="sd">                New data to predict.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Index of the cluster each sample belongs to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
+                <span class="s2">&quot;This QKMeans instance is not fitted yet. &quot;</span>
+                <span class="s2">&quot;Call &#39;fit&#39; with appropriate arguments before using &quot;</span>
+                <span class="s2">&quot;this estimator.&quot;</span><span class="p">)</span>
+
+        <span class="n">circuits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_circuits</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distances_centroids</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">predicted_labels</span></div>
+
+<div class="viewcode-block" id="QKMeans.score"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qkmeans.html#qlearnkit.algorithms.QKMeans.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+              <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns Mean Silhouette Coefficient for all samples.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            X:  array of features</span>
+
+<span class="sd">            y: Ignored.</span>
+<span class="sd">               Not used, present here for API consistency by convention.</span>
+
+<span class="sd">            sample_weight: Ignored.</span>
+<span class="sd">                Not used, present here for API consistency by convention.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mean Silhouette Coefficient for all samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">silhouette_score</span>
+        <span class="n">predicted_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">qlearnkit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">qlkit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Massimiliano Pronesti, Federico Tiblias, Giulio Corallo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

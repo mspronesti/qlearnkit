@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from qiskit.circuit.library import ZZFeatureMap
 
-from qlkit.algorithms import QSVClassifier
+from qlearnkit.algorithms import QSVClassifier
 
 from qiskit import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals

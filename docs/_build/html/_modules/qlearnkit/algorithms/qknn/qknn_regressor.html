@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>qlearnkit.algorithms.qknn.qknn_regressor &#8212; qlearnkit 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/thebelab.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for qlearnkit.algorithms.qknn.qknn_regressor</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">qiskit.providers</span> <span class="kn">import</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">RegressorMixin</span>
+
+<span class="kn">from</span> <span class="nn">.qknn_base</span> <span class="kn">import</span> <span class="n">QNeighborsBase</span>
+<span class="kn">from</span> <span class="nn">...encodings</span> <span class="kn">import</span> <span class="n">EncodingMap</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QKNeighborsRegressor"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qknn.html#qlearnkit.algorithms.QKNeighborsRegressor">[docs]</a><span class="k">class</span> <span class="nc">QKNeighborsRegressor</span><span class="p">(</span><span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">QNeighborsBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Quantum K-Nearest Neighbors algorithm for regression</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The naming conventions follow the KNeighborsRegressor from</span>
+<span class="sd">        sklearn.neighbors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">n_neighbors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                 <span class="n">encoding_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EncodingMap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">quantum_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">BaseBackend</span><span class="p">,</span> <span class="n">Backend</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a QKNeighborsClassifier Object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_neighbors:</span>
+<span class="sd">                number of neighbors participating in the</span>
+<span class="sd">                majority vote</span>
+<span class="sd">            encoding_map:</span>
+<span class="sd">                map to classical data to quantum states.</span>
+<span class="sd">                This class does not impose any constraint on it.</span>
+<span class="sd">            quantum_instance:</span>
+<span class="sd">                the quantum instance to set. Can be a</span>
+<span class="sd">                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`</span>
+<span class="sd">                or a :class:`~qiskit.providers.BaseBackend`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_neighbors</span><span class="p">,</span> <span class="n">encoding_map</span><span class="p">,</span> <span class="n">quantum_instance</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_average_fidelities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">y_train</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                            <span class="n">fidelities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Averages the values corresponding to the :math:`k` nearest</span>
+<span class="sd">        neighbors to predict the target value</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y_train: the train labels</span>
+<span class="sd">            fidelities: the list ``F`` of fidelities used as a measure of</span>
+<span class="sd">                        distance</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list of predicted labels for the test data</span>
+<span class="sd">        Raises:</span>
+<span class="sd">              ValueError if math:: \exists f \in F \ t.c. f \notin [0, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Averaging ...&quot;</span><span class="p">)</span>
+
+        <span class="n">k_nearest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kneighbors</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">fidelities</span><span class="p">)</span>
+
+        <span class="n">n_queries</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">n_queries</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">k_nearest</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">k_nearest</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">predicted_labels</span>
+
+<div class="viewcode-block" id="QKNeighborsRegressor.predict"><a class="viewcode-back" href="../../../../qlearnkit.algorithms.qknn.html#qlearnkit.algorithms.QKNeighborsRegressor.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">X_test</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Predict the labels of the provided data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
+                <span class="s2">&quot;This QKNeighborsRegressor instance is not fitted yet. &quot;</span>
+                <span class="s2">&quot;Call &#39;fit&#39; with appropriate arguments before using &quot;</span>
+                <span class="s2">&quot;this estimator.&quot;</span><span class="p">)</span>
+
+        <span class="n">circuits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_circuits</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">)</span>
+
+        <span class="c1"># the execution results are employed to compute</span>
+        <span class="c1"># fidelities which are used for the average</span>
+        <span class="n">fidelities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fidelities</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average_fidelities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="n">fidelities</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">qlearnkit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">qlkit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Massimiliano Pronesti, Federico Tiblias, Giulio Corallo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 
-from qlkit.algorithms import QKMeans
+from qlearnkit.algorithms import QKMeans
 import pytest
 
 from qiskit import Aer

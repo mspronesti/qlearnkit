@@ -1,29 +1,35 @@
-# Qlkit python library
+# Qlearnkit python library
 
-[![License](https://img.shields.io/github/license/mspronesti/qlkit)](https://opensource.org/licenses/Apache-2.0)
-[![Build](https://github.com/mspronesti/qlkit/actions/workflows/build-and-test.yml/badge.svg)]()
+[![Python Versions](https://img.shields.io/badge/Python-3.7&nbsp;|&nbsp;3.8&nbsp;|&nbsp;3.9-blue.svg?style=flat&logo=python&logoColor=white)]()
+[![License](https://img.shields.io/github/license/mspronesti/qlearnkit)](https://opensource.org/licenses/Apache-2.0)
+[![Build](https://github.com/mspronesti/qlearnkit/actions/workflows/build-and-test.yml/badge.svg)]()
+[![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit)
+[![PypI Versions](https://img.shields.io/pypi/v/qlearnkit)](https://pypi.org/project/qlearnkit/#history)
 
-Qlkit (pronounced cool-kit) is a simple python library implementing well-know supervised and unsupervised machine learning algorithms for a gated quantum computer, build with [Qiskit](https://github.com/Qiskit/qiskit)
+Qlearnkit is a simple python library implementing well-know supervised and unsupervised machine learning algorithms for a gated quantum computer, built with [Qiskit](https://github.com/Qiskit/qiskit).
 
-## Install Qlkit
-Install Qlkit running 
+## Installation
+
+We recommend installing `qlearnkit` with pip
 ```bash
-sudo python3 setup.py install
+pip install qlearnkit
 ```
-In the near future, we will make it installable via pip.
+**Note:** pip will install the latest stable qlearnkit. 
+However, the main branch of qlearnkit is in active development. If you want to test the latest scripts or functions please refer to [development notes](#development-notes).
 
-## Getting started with Qlkit
-Now that Qlkit is installed, it's time to begin working with the Machine Learning module. 
-Let's try an experiment using the KNN Classifier algorithm to train and test samples from a 
+## Getting started with Qlearnkit
+
+Now that Qlearnkit is installed, it's time to begin working with the Machine Learning module. 
+Let's try an experiment using the QKNN Classifier algorithm to train and test samples from a 
 data set to see how accurately the test set can be classified.
 
 ```python
-from qlkit.algorithms import QKNeighborsClassifier
-from qlkit.encodings import AmplitudeEncoding
+from qlearnkit.algorithms import QKNeighborsClassifier
+from qlearnkit.encodings import AmplitudeEncoding
 from qiskit import BasicAer
 from qiskit.utils import QuantumInstance, algorithm_globals
 
-from qlkit.datasets import load_iris
+from qlearnkit.datasets import load_iris
 
 seed = 42
 algorithm_globals.random_seed = seed

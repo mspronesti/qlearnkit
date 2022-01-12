@@ -1,7 +1,4 @@
-# notice: without this file, pypi-deploy action
-# with our setup.py file won't work!
-
-include LICENSE.txt
+include LICENSE
 include requirements.txt
 include README.md
 global-exclude *.py[co] .DS_Store

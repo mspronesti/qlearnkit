@@ -9,13 +9,13 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name="qlkit",
+    name="qlearnkit",
     author="Massimiliano Pronesti, "
            "Federico Tiblias, "
            "Giulio Corallo",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mspronesti/qlkit",
+    url="https://github.com/mspronesti/qlearnkit",
     packages=setuptools.find_packages(),
     install_requires=requirements,
     python_requires='>=3.7'

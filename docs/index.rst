@@ -1,17 +1,16 @@
-.. qlkit documentation master file, created by
-   sphinx-quickstart on Fri Dec 24 12:44:53 2021.
+.. qlearnkit documentation master file, created by
+   sphinx-quickstart on Wed Jan 12 23:22:44 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to qlkit's documentation!
-=================================
+Welcome to qlearnkit's documentation!
+=====================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
-    modules
 
+   modules
 
 Indices and tables
 ==================

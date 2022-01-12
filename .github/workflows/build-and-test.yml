@@ -1,4 +1,4 @@
-name: 'qlkit unit tests'
+name: 'qlearnkit unit tests'
 
 on:
   push:

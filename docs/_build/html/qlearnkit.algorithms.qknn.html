@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>qlearnkit.algorithms.qknn package &#8212; qlearnkit 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qlearnkit.algorithms.qsvm package" href="qlearnkit.algorithms.qsvm.html" />
+    <link rel="prev" title="qlearnkit.algorithms.qkmeans package" href="qlearnkit.algorithms.qkmeans.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="qlearnkit-algorithms-qknn-package">
+<h1>qlearnkit.algorithms.qknn package<a class="headerlink" href="#qlearnkit-algorithms-qknn-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-qlearnkit.algorithms.qknn.qknn_base">
+<span id="qlearnkit-algorithms-qknn-qknn-base-module"></span><h2>qlearnkit.algorithms.qknn.qknn_base module<a class="headerlink" href="#module-qlearnkit.algorithms.qknn.qknn_base" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.</span></span><span class="sig-name descname"><span class="pre">QNeighborsBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qlearnkit.encodings.html#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.basebackend.BaseBackend</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.backend.Backend</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_base.html#QNeighborsBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="qlearnkit.algorithms.html#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="qlearnkit.algorithms.quantum_estimator.QuantumEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.quantum_estimator.QuantumEstimator</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_base.html#QNeighborsBase.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels
+:param X: training dataset
+:param y: training labels</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms.qknn.qknn_classifier">
+<span id="qlearnkit-algorithms-qknn-qknn-classifier-module"></span><h2>qlearnkit.algorithms.qknn.qknn_classifier module<a class="headerlink" href="#module-qlearnkit.algorithms.qknn.qknn_classifier" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_classifier.QKNeighborsClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qlearnkit.algorithms.qknn.qknn_classifier.</span></span><span class="sig-name descname"><span class="pre">QKNeighborsClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qlearnkit.encodings.html#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.basebackend.BaseBackend</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.backend.Backend</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_classifier.QKNeighborsClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.ClassifierMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for classification</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsClassifier from
+sklearn.neighbors</p>
+</div>
+<p class="rubric">Example</p>
+<p>Classify data using the Iris dataset.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QKNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.encodings</span> <span class="kn">import</span> <span class="n">AmplitudeEncoding</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">AmplitudeEncoding</span><span class="p">()</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">num_features</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_features</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">y_</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">qknn</span> <span class="o">=</span> <span class="n">QKNeighborsClassifier</span><span class="p">(</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span><span class="p">,</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qknn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qknn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Testing accuracy: 1.00
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_classifier.QKNeighborsClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_classifier.QKNeighborsClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms.qknn.qknn_regressor">
+<span id="qlearnkit-algorithms-qknn-qknn-regressor-module"></span><h2>qlearnkit.algorithms.qknn.qknn_regressor module<a class="headerlink" href="#module-qlearnkit.algorithms.qknn.qknn_regressor" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_regressor.QKNeighborsRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qlearnkit.algorithms.qknn.qknn_regressor.</span></span><span class="sig-name descname"><span class="pre">QKNeighborsRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qlearnkit.encodings.html#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.basebackend.BaseBackend</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.backend.Backend</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_regressor.QKNeighborsRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for regression</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsRegressor from
+sklearn.neighbors</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.qknn_regressor.QKNeighborsRegressor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.qknn_regressor.QKNeighborsRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms.qknn">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qlearnkit.algorithms.qknn" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.QKNeighborsClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qlearnkit.algorithms.qknn.</span></span><span class="sig-name descname"><span class="pre">QKNeighborsClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qlearnkit.encodings.html#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.basebackend.BaseBackend</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.backend.Backend</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.QKNeighborsClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.ClassifierMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for classification</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsClassifier from
+sklearn.neighbors</p>
+</div>
+<p class="rubric">Example</p>
+<p>Classify data using the Iris dataset.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QKNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.encodings</span> <span class="kn">import</span> <span class="n">AmplitudeEncoding</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">AmplitudeEncoding</span><span class="p">()</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">num_features</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_features</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">y_</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">qknn</span> <span class="o">=</span> <span class="n">QKNeighborsClassifier</span><span class="p">(</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span><span class="p">,</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qknn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qknn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Testing accuracy: 1.00
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.QKNeighborsClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.QKNeighborsClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.QKNeighborsRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qlearnkit.algorithms.qknn.</span></span><span class="sig-name descname"><span class="pre">QKNeighborsRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qlearnkit.encodings.html#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.basebackend.BaseBackend</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qiskit.providers.backend.Backend</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.QKNeighborsRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for regression</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsRegressor from
+sklearn.neighbors</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.qknn.QKNeighborsRegressor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.qknn.QKNeighborsRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">qlearnkit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">qlkit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="qlearnkit.html">qlearnkit package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">qlkit</a><ul>
+  <li><a href="qlearnkit.html">qlearnkit package</a><ul>
+  <li><a href="qlearnkit.algorithms.html">qlearnkit.algorithms package</a><ul>
+      <li>Previous: <a href="qlearnkit.algorithms.qkmeans.html" title="previous chapter">qlearnkit.algorithms.qkmeans package</a></li>
+      <li>Next: <a href="qlearnkit.algorithms.qsvm.html" title="next chapter">qlearnkit.algorithms.qsvm package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Massimiliano Pronesti, Federico Tiblias, Giulio Corallo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/qlearnkit.algorithms.qknn.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

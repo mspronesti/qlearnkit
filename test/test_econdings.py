@@ -1,5 +1,5 @@
 from numpy.lib.scimath import sqrt
-from qlkit.encodings import AmplitudeEncoding
+from qlearnkit.encodings import AmplitudeEncoding
 import pytest
 
 

@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from qlkit.algorithms import QKNeighborsRegressor
-from qlkit.encodings import AmplitudeEncoding
+from qlearnkit.algorithms import QKNeighborsRegressor
+from qlearnkit.encodings import AmplitudeEncoding
 
 from qiskit import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
