@@ -1,6 +1,8 @@
+import warnings
 from copy import deepcopy
 from typing import List, Dict, Union, Optional
 
+import numpy as np
 from qiskit.result import Result
 from qiskit.providers import BaseBackend, Backend
 from qiskit.tools import parallel_map
@@ -10,9 +12,13 @@ from sklearn.exceptions import NotFittedError
 from sklearn.base import ClusterMixin
 
 from ..quantum_estimator import QuantumEstimator
-from .centroid_initialization import random, qkmeans_plus_plus, naive_sharding
-from .qkmeans_circuit import *
+from .centroid_initialization import (
+    random,
+    kmeans_plus_plus,
+    naive_sharding
+)
 
+from .qkmeans_circuit import *
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +72,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
             colors = ['blue', 'orange', 'green']
             for i in range(X_train.shape[0]):
                 plt.scatter(X_train[i, 0], X_train[i, 1], color=colors[qkmeans.labels_[i]])
-            plt.scatter(qkmeans.centroids[:, 0], qkmeans.centroids[:, 1], marker='*', c='g', s=150)
+            plt.scatter(qkmeans.cluster_centers_[:, 0], qkmeans.cluster_centers_[:, 1], marker='*', c='g', s=150)
             plt.show()
 
             # Predict new points
@@ -74,14 +80,15 @@ class QKMeans(ClusterMixin, QuantumEstimator):
             print(prediction)
 
     """
+
     def __init__(self,
                  n_clusters: int = 6,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
-                 init: Union[str, np.ndarray] = "qkmeans++",
+                 init: Union[str, np.ndarray] = "kmeans++",
                  n_init: int = 1,
-                 max_iter: int = 300,
+                 max_iter: int = 30,
                  tol: float = 1e-4,
-                 random_state: int = 42
+                 random_state: int = 42,
                  ):
         """
         Args:
@@ -111,25 +118,24 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
+        self.n_iter_ = 0
         self.tol = tol
         self.n_init = n_init
-        self.y_train = None
-        self.X_train = None
         self.n_clusters = n_clusters
         self.random_state = random_state
-        self.centroids = None
+        self.cluster_centers_ = None
         # do not rename : this name is needed for
-        # `fit_transform` inherited method from
+        # `fit_predict` inherited method from
         # `ClusterMixin` base class
         self.labels_ = None
 
     def _init_centroid(self,
                        X: np.ndarray,
-                       init: str,
+                       init: Union[str, np.ndarray],
                        random_state: int):
         """
         Initializes the centroids according to the following criteria:
-        'qkmeans++: Create cluster centroids using the k-means++ algorithm.
+        'kmeans++': Create cluster centroids using the k-means++ algorithm.
         'random': Create random cluster centroids.
         'naive_sharding': Create cluster centroids using deterministic naive sharding algorithm.
         If an array is passed, it should be of shape (n_clusters, n_features)
@@ -142,14 +148,19 @@ class QKMeans(ClusterMixin, QuantumEstimator):
             random_state:
                 Determines random number generation for centroid initialization.
         """
-        if init == "random":
-            self.centroids = random(X, self.n_clusters, random_state)
-        elif init == "qkmeans++":
-            self.centroids = qkmeans_plus_plus(X, self.n_clusters, random_state)
-        elif init == "naive":
-            self.centroids = naive_sharding(X, self.n_clusters)
+        if isinstance(init, str):
+            if init == "random":
+                self.cluster_centers_ = random(X, self.n_clusters, random_state)
+            elif init == "kmeans++":
+                self.cluster_centers_ = kmeans_plus_plus(X, self.n_clusters, random_state)
+            elif init == "naive":
+                self.cluster_centers_ = naive_sharding(X, self.n_clusters)
+            else:
+                raise ValueError(f"Unknown centroids initialization method {init}. "
+                                 f"Expected random, kmeans++, naive or vector of "
+                                 f"centers, but {init} was provided")
         else:
-            self.centroids = init
+            self.cluster_centers_ = init
 
     def _recompute_centroids(self):
         """
@@ -158,7 +169,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         """
         for i in range(self.n_clusters):
             if np.sum(self.labels_ == i) != 0:
-                self.centroids[i] = np.mean(self.X_train[self.labels_ == i], axis=0)
+                self.cluster_centers_[i] = np.mean(self.X_train[self.labels_ == i], axis=0)
 
     def _compute_distances_centroids(self,
                                      counts: Dict[str, int]) -> List[int]:
@@ -208,7 +219,6 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         counts = results.get_counts()
         # compute distance from centroids using counts
         distances_list = list(map(lambda count: self._compute_distances_centroids(count), counts))
-
         return np.asarray(distances_list)
 
     def _construct_circuits(self,
@@ -228,13 +238,13 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         '''
         circuits = []
         for xt in X_test:
-            circuits.append(construct_circuit(xt, self.centroids, self.n_clusters))
+            circuits.append(construct_circuit(xt, self.cluster_centers_, self.n_clusters))
 
         '''
         circuits = parallel_map(
             construct_circuit,
             X_test,
-            task_args=[self.centroids, self.n_clusters]
+            task_args=[self.cluster_centers_, self.n_clusters]
         )
 
         logger.info("Done.")
@@ -260,11 +270,11 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         self._init_centroid(self.X_train, self.init, self.random_state)
         self.labels_ = np.zeros(self.X_train.shape[0])
         error = np.inf
-        it = 0
+        self.n_iter_ = 0
 
         # while error not below tolerance, reiterate the
         # centroid computation for a maximum of `max_iter` times
-        while error > self.tol and it < self.max_iter:
+        while error > self.tol and self.n_iter_ < self.max_iter:
             # construct circuits using training data
             # notice: the construction uses the centroids
             # which are recomputed after every iteration
@@ -276,12 +286,16 @@ class QKMeans(ClusterMixin, QuantumEstimator):
 
             # assigning clusters and recomputing centroids
             self.labels_ = np.argmin(distances, axis=1)
-            centroids_old = deepcopy(self.centroids)
+            cluster_centers_old = deepcopy(self.cluster_centers_)
             self._recompute_centroids()
 
             # evaluating error and updating iteration count
-            error = np.linalg.norm(self.centroids - centroids_old)
-            it = it + 1
+            error = np.linalg.norm(self.cluster_centers_ - cluster_centers_old)
+            self.n_iter_ = self.n_iter_ + 1
+
+        if self.n_iter_ == self.max_iter:
+            warnings.warn(f"QKMeans failed to converge after "
+                          f"{self.max_iter} iterations.")
 
         return self
 
