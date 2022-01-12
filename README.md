@@ -1,11 +1,7 @@
 # Qlkit python library
 
-<p align="center">
- <img alt="CI build" src="https://github.com/mspronesti/qlkit/actions/workflows/build-and-test.yml/badge.svg"/> 
- <!-- <img alt="License"  src="https://img.shields.io/github/license/mspronesti/qlkit"/> -->
- <!-- <img alt="Release"  src ="https://img.shields.io/github/v/release/mspronesti/qlkit"/> -->
-</p> 
-
+[![License](https://img.shields.io/github/license/mspronesti/qlkit)](https://opensource.org/licenses/Apache-2.0)
+[![Build](https://github.com/mspronesti/qlkit/actions/workflows/build-and-test.yml/badge.svg)]()
 
 Qlkit (pronounced cool-kit) is a simple python library implementing well-know supervised and unsupervised machine learning algorithms for a gated quantum computer, build with [Qiskit](https://github.com/Qiskit/qiskit)
 
@@ -59,7 +55,7 @@ print(f"Testing accuracy: "
       f"{qknn.score(X_test, y_test):0.2f}")
 ```
 
-## Developement notes
+## Development notes
 
 After cloning this repository, create a virtual environment
 
