@@ -8,19 +8,18 @@ from qiskit.utils import QuantumInstance
 from qiskit.providers import BaseBackend, Backend
 from qiskit.circuit.library import NLocal, ZZFeatureMap
 from ..quantum_estimator import QuantumEstimator
-from ..kernel_method import KernelMethod
+from ..kernel_method_mixin import KernelMethodMixin
 
 logger = logging.getLogger(__name__)
 
-class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
+
+class QRidgeRegressor(KernelMethodMixin, RegressorMixin, QuantumEstimator):
     """
-    The Quantum Ridge algorithm for regression.
+    The Quantum Kernel Ridge algorithm for regression.
     Maps datapoints to quantum states using a FeatureMap or similar
     QuantumCircuit.
 
     Example:
-
-        Classify data using the Iris dataset.
 
         ..  jupyter-execute::
 
@@ -53,7 +52,7 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
             encoding_map = PauliFeatureMap(3)
 
             qridge = QRidgeRegressor(
-                _gamma=10e-3,
+                gamma=1e-2,
                 encoding_map=encoding_map,
                 quantum_instance=quantum_instance
             )
@@ -66,10 +65,11 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
                   f"{qridge.score(X_test, y_test):0.2f}")
 
     """
+
     def __init__(self,
                  encoding_map: Optional[NLocal] = None,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
-                 gamma: Union[float, str] = 1):
+                 gamma: float = 1.0):
         """
         Creates a Quantum Ridge Regressor
 
@@ -77,16 +77,17 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
             encoding_map:
                 map to classical data to quantum states.
                 Default: :class:`~qiskit_machine_learning.circuit.library.ZZFeatureMap`
+
             quantum_instance:
                 the quantum instance to set. Can be a
                 :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
                 or a :class:`~qiskit.providers.BaseBackend`
+
             gamma:
-                regularization parameter
+                regularization parameter (float, default 1.0)
         """
         encoding_map = encoding_map if encoding_map else ZZFeatureMap(2)
-        QuantumEstimator.__init__(self,encoding_map,quantum_instance)
-        KernelMethod.__init__(self,encoding_map, quantum_instance)
+        super().__init__(encoding_map, quantum_instance)
 
         # Initial setting for _gamma
         # Numerical value is set in fit method
@@ -110,32 +111,23 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
 
         """
         if np.any(X < 0) or np.any(X > 1):
-            warnings.warn("Detected input values not in range 0<=F<=1:\n"
-                             f"{X[X < 0]}\n"
-                             f"{X[X > 1]}\n"
-                             "QRidgeRegressor may perform poorly out of this range. Rescaling of the input is advised.")
-        self.alpha = None
+            warnings.warn("Detected input values not in range 0<=X<=1:\n"
+                          f"{X[X < 0]}\n"
+                          f"{X[X > 1]}\n"
+                          "QRidgeRegressor may perform poorly out of this range. "
+                          "Rescaling of the input is advised.")
 
         self.X_train = np.asarray(X)
         self.y_train = np.asarray(y)
-        n_features = self.X_train.shape[1]
-
-        if self.gamma == 'scale':
-            self._gamma = 1 / (n_features * np.var(self.X_train))
-        elif self.gamma == 'auto':
-            self._gamma = 1 / n_features
-        elif isinstance(self.gamma, str):
-            raise ValueError("Invalid argument value %s", self.gamma)
-        else:
-            self._gamma = self.gamma
 
         logger.info("setting training data: ")
         for _X, _y in zip(X, y):
             logger.info("%s: %s", _X, _y)
-        # Sets the training matrix to None to signal it must be computed again
+        # Sets the training matrix to None to signal it must be
+        # recomputed again in case train data changes
         self._reset_train_matrix()
 
-    def _compute_alpha(self,train_kernel_matrix):
+    def _compute_alpha(self, train_kernel_matrix):
         """
         Computes alpha parameters for data in the training set.
         Alpha parameters will be used as weights in prediction.
@@ -149,7 +141,7 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
         """
         n_train = train_kernel_matrix.shape[0]
         I = np.eye(n_train)
-        K = train_kernel_matrix + self._gamma * I
+        K = train_kernel_matrix + self.gamma * I
         Y = self.y_train
 
         alpha = np.linalg.solve(K, Y)
@@ -161,8 +153,10 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
         Ridge formulation.
 
         Args:
-            train_kernel_matrix: matrix of distances between training datapoints
-            test_kernel_matrix: matrix of distances between training and test datapoints
+            train_kernel_matrix:
+                matrix of distances between training datapoints
+            test_kernel_matrix:
+                matrix of distances between training and test datapoints
 
         Returns:
             numpy ndarray of predicted classes. Uses the internal representation
@@ -170,12 +164,9 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
         # Fit
         self.alpha = self._compute_alpha(train_kernel_matrix)
         # Predict
-        n_test = test_kernel_matrix.shape[0]
-        I = np.eye(n_test)
         K_test = test_kernel_matrix
         predictions = K_test @ self.alpha
         return predictions
-
 
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
@@ -193,11 +184,13 @@ class QRidgeRegressor(RegressorMixin, QuantumEstimator, KernelMethod):
                 "This QRidgeRegressor instance is not fitted yet. "
                 "Call 'fit' with appropriate arguments before using "
                 "this estimator.")
+
         if np.any(X_test < 0) or np.any(X_test > 1):
-            warnings.warn("Detected input values not in range 0<=F<=1:\n"
-                             f"{X_test[X_test < 0]}\n"
-                             f"{X_test[X_test > 1]}\n"
-                             "QRidgeRegressor may perform poorly out of this range. Rescaling of the input is advised.")
+            warnings.warn("Detected input values not in range 0<=X<=1:\n"
+                          f"{X_test[X_test < 0]}\n"
+                          f"{X_test[X_test > 1]}\n"
+                          "QRidgeRegressor may perform poorly out of this range. "
+                          "Rescaling of the input is advised.")
 
         logger.info("Computing kernel matrices...")
         train_kernel_matrix, test_kernel_matrix = self._compute_kernel_matrices(self.X_train, X_test)
