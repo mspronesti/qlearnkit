@@ -197,4 +197,23 @@ def test_change_kernel(quantum_instance, quantum_instance_type):
                             f"Test failed with {quantum_instance_type}.\n"
                             f"Expected score of 0.5, but it was {score}")
 
-# TODO: add tests changing `gamma`
+@pytest.mark.parametrize(
+    'quantum_instance, quantum_instance_type',
+    [
+        (qasm_quantum_instance, 'qasm'),
+        (sv_quantum_instance, 'statevector')
+    ]
+)
+def test_change_gamma(quantum_instance, quantum_instance_type):
+    """Test QSVC adding parameters later"""
+    qsvc = QSVClassifier(
+        quantum_instance=quantum_instance,
+    )
+
+    qsvc.gamma = 10
+    qsvc.fit(sample_train, label_train)
+    score = qsvc.score(sample_test, label_test)
+
+    np.testing.assert_equal(score, 0.5,
+                            f"Test failed with {quantum_instance_type}.\n"
+                            f"Expected score of 0.5, but it was {score}")

@@ -1,18 +1,18 @@
 import logging
 from typing import Optional, Union
 import numpy as np
-from qiskit_machine_learning.kernels import QuantumKernel
 from sklearn.base import ClassifierMixin
 from sklearn.exceptions import NotFittedError
 from qiskit.utils import QuantumInstance
 from qiskit.providers import BaseBackend, Backend
 from qiskit.circuit.library import NLocal, ZZFeatureMap
 from ..quantum_estimator import QuantumEstimator
+from ..kernel_method_mixin import KernelMethodMixin
 
 logger = logging.getLogger(__name__)
 
 
-class QSVClassifier(ClassifierMixin, QuantumEstimator):
+class QSVClassifier(KernelMethodMixin, ClassifierMixin, QuantumEstimator):
     r"""
     The Quantum Support Vector Machine algorithm for classification.
     Maps datapoints to quantum states using a FeatureMap or similar
@@ -63,6 +63,7 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
                   f"{qsvc.score(X_test, y_test):0.2f}")
 
     """
+
     def __init__(self,
                  encoding_map: Optional[NLocal] = None,
                  quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
@@ -74,32 +75,39 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
             encoding_map:
                 map to classical data to quantum states.
                 Default: :class:`~qiskit_machine_learning.circuit.library.ZZFeatureMap`
+
             quantum_instance:
                 the quantum instance to set. Can be a
                 :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
                 or a :class:`~qiskit.providers.BaseBackend`
+
             gamma:
-                regularization parameter
+                regularization parameter (float or string, default 1.0)
+                Admitted string values: { "scale", "auto" }
         """
+        if gamma == 0:
+            raise ValueError(
+                "The gamma value of 0.0 is invalid. Use 'auto' to set"
+                " gamma to a value of 1 / n_features."
+            )
+
         encoding_map = encoding_map if encoding_map else ZZFeatureMap(2)
         super().__init__(encoding_map, quantum_instance)
 
-        # Initial setting for gamma
+        # Initial setting for _gamma
         # Numerical value is set in fit method
-        self.gamma_init = gamma
+        self.gamma = gamma
         self.label_class_dict = None
         self.class_label_dict = None
         self.alpha = None
         self.bias = None
         self.n_classes = None
-        self.train_kernel_matrix = None
-
 
     def fit(self, X, y):
         """
         Fits the model using X as training dataset
         and y as training labels. The actual computation
-        is done at the predict stage to allow running
+        is done at the "predict" stage to allow running
         the qiskit backend only once
 
         Args:
@@ -107,24 +115,23 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
             y: training labels
 
         """
-        self.label_class_dict = None
-        self.class_label_dict = None
-        self.alpha = None
-        self.bias = None
-
         self.X_train = np.asarray(X)
         self.y_train = np.asarray(y)
         self.n_classes = np.unique(y).size
-        n_features = self.X_train.shape[1]
 
-        if self.gamma_init == 'scale':
-            self.gamma = 1 / (n_features * np.var(self.X_train))
-        elif self.gamma_init == 'auto':
-            self.gamma = 1 / n_features
-        elif isinstance(self.gamma_init, str):
-            raise ValueError("Invalid argument value %s",self.gamma_init)
+        n_features = self.X_train.shape[1]
+        if isinstance(self.gamma, str):
+            if self.gamma == "scale":
+                self._gamma = 1.0 / (n_features * np.var(self.X_train))
+            elif self.gamma == "auto":
+                self._gamma = 1.0 / n_features
+            else:
+                raise ValueError(
+                    "When 'gamma' is a string, it should be either 'scale' or "
+                    "'auto'. Got '{}' instead." % self.gamma
+                )
         else:
-            self.gamma = self.gamma_init
+            self._gamma = self.gamma
 
         self.label_class_dict, self.class_label_dict = QSVClassifier._create_label_class_dicts(self.y_train)
 
@@ -141,13 +148,13 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
             classes_matrix = np.equal(classes_array,
                                       np.arange(self.n_classes) * np.ones((classes_array.size, self.n_classes)))
 
-        self.classes_train = classes_matrix * 2 - 1
+        self.train_classes = classes_matrix * 2 - 1
         logger.info("setting training data: ")
         for _X, _y in zip(X, y):
             logger.info("%s: %s", _X, _y)
-        # Sets the training matrix to None to signal it must be computed again
-        self.train_kernel_matrix = None
-
+        # Sets the training matrix to None to signal it must be
+        # recomputed again in case train data changes
+        self._reset_train_matrix()
 
     @staticmethod
     def _create_label_class_dicts(labels):
@@ -163,11 +170,15 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
             representation and vice versa
         """
         unique_labels = np.unique(labels)
-        label_class_dict = {unique_labels[i]: i for i in range(unique_labels.size)}
-        class_label_dict = {c: unique_labels[c] for c in range(unique_labels.size)}
+        label_class_dict = {
+            unique_labels[i]: i for i in range(unique_labels.size)
+        }
+        class_label_dict = {
+            c: unique_labels[c] for c in range(unique_labels.size)
+        }
         return label_class_dict, class_label_dict
 
-    def _compute_alpha(self,train_kernel_matrix):
+    def _compute_alpha(self, train_kernel_matrix):
         """
         Computes alpha parameters for data in the training set.
         Alpha parameters will be used as weights in prediction.
@@ -182,7 +193,7 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
         """
         n_train = train_kernel_matrix.shape[0]
         omega = train_kernel_matrix
-        gamma_inv = 1 / self.gamma
+        gamma_inv = 1 / self._gamma
         ones = np.ones(n_train)
         eye = np.eye(n_train)
 
@@ -191,58 +202,25 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
             np.block([ones.reshape([n_train, 1]), omega + gamma_inv * eye])
         ])
         if self.n_classes == 2:
-            B = np.vstack([np.zeros(1), self.classes_train.reshape(-1,1)])
+            B = np.vstack([np.zeros(1), self.train_classes.reshape(-1, 1)])
         else:
-            B = np.vstack([np.zeros(self.n_classes), self.classes_train])
+            B = np.vstack([np.zeros(self.n_classes), self.train_classes])
 
         # Binary case: X is a vector containing alpha values.
         # Multiclass case: X is a (n_train+1,n_classes) matrix
-        # containing alpha values for each of the n_classes linear systems.
+        # containing alpha values for each of the n_classes qridge systems.
         # This is equivalent to solving n_classes distinct binary problems.
         X = np.linalg.solve(A, B)
         bias = X[0, :]
         alpha = np.squeeze(X[1:, :])
         return alpha, bias
 
-    def _compute_kernel_matrices(self, X_train, X_test):
-        """
-        Computes the kernel matrices of distances between each training datapoint
-        and between training and test datapoints.
-        Takes advantage of quantum circuits for faster computation.
-
-        Args:
-            X_train: the training data
-            X_test: the unclassified input data
-        Returns:
-            ndarray of train and test kernel matrices
-        """
-        q_kernel = QuantumKernel(feature_map=self._encoding_map,
-                                 quantum_instance=self.quantum_instance)
-
-        if self.train_kernel_matrix is None:
-            n_train = X_train.shape[0]
-
-            # Train and test data stacked together to run backend only once
-            X_total = np.vstack([X_train, X_test])
-
-            total_kernel_matrix = q_kernel.evaluate(x_vec=X_train, y_vec=X_total)
-
-            # Splitting the total matrix into training and test part
-            self.train_kernel_matrix = total_kernel_matrix[:, 0:n_train]
-            # Transposed for ease of use later on
-            test_kernel_matrix = total_kernel_matrix[:, n_train:].T
-        else:
-            # Only the test kernel matrix is needed as the train one has already been computed
-            test_kernel_matrix = q_kernel.evaluate(x_vec=X_test, y_vec=X_train)
-
-        return self.train_kernel_matrix, test_kernel_matrix
-
     def _compute_predictions_multiclass(self, train_kernel_matrix, test_kernel_matrix):
         """
         Uses kernel matrices to find n_classes dividing hyperplanes,
         following a one-to-rest approach. Based on Least Squares
         Support Vector Machine formulation. Actually solves n_classes
-        linear systems in order to separate multiple classes.
+        qridge systems in order to separate multiple classes.
 
         Args:
             train_kernel_matrix: matrix of distances between training datapoints
@@ -278,7 +256,6 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
         prediction_classes = (prediction_classes + 1) / 2
         return prediction_classes
 
-
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
         """
@@ -307,7 +284,10 @@ class QSVClassifier(ClassifierMixin, QuantumEstimator):
 
         logger.info("Computing predictions...")
         if self.n_classes == 2:
-            classes_predict = self._compute_predictions_binary(train_kernel_matrix, test_kernel_matrix)
+            classes_predict = self._compute_predictions_binary(
+                train_kernel_matrix,
+                test_kernel_matrix
+            )
         else:
             classes_predict = self._compute_predictions_multiclass(train_kernel_matrix, test_kernel_matrix)
 
