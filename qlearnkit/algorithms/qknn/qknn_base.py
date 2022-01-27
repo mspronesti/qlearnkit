@@ -28,11 +28,13 @@ class QNeighborsBase(QuantumEstimator, ABC):
 
         Args:
             n_neighbors:
-                number of neighbors participating in the
-                majority vote
+                number of neighbors. It's the :math:`k` parameter
+                of the knn algorithm
+
             encoding_map:
                 map to classical data to quantum states.
                 This class does not impose any constraint on it.
+
             quantum_instance:
                 the quantum instance to set. Can be a
                 :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
@@ -85,9 +87,10 @@ class QNeighborsBase(QuantumEstimator, ABC):
             the computed fidelity
         """
         counts_0 = counts.get('0', 0)
-        counts_1 = counts.get('1', 0)
-
-        return np.sqrt(np.abs(counts_0 - counts_1)/self._quantum_instance.run_config.shots)
+        counts_1 = counts.get('1', 1)
+        # squared fidelity
+        f_2 = np.abs(counts_0 - counts_1) / self._quantum_instance.run_config.shots
+        return np.sqrt(f_2)
 
     def _get_fidelities(self,
                         results: Result,
@@ -169,11 +172,10 @@ class QNeighborsBase(QuantumEstimator, ABC):
             raise ValueError("encoding map must be specified to construct"
                              "swap test circuit")
 
-        qc_1 = encoding_map.circuit(feature_vector_1)
-        qc_2 = encoding_map.circuit(feature_vector_2)
+        q1 = encoding_map.construct_circuit(feature_vector_1)
+        q2 = encoding_map.construct_circuit(feature_vector_2)
 
-        qc_swap = SwaptestCircuit(qc_1, qc_2)
-        return qc_swap
+        return SwaptestCircuit(q1, q2)
 
     def _construct_circuits(self,
                             X_test: np.ndarray) -> List[QuantumCircuit]:
@@ -234,14 +236,20 @@ class QNeighborsBase(QuantumEstimator, ABC):
             raise ValueError("Detected fidelities values not in range 0<=F<=1:"
                              f"{fidelities[fidelities < -0.2]}"
                              f"{fidelities[fidelities > 1.2]}")
-        # sklearn naming
-        n_queries, _ = fidelities.shape
 
-        # extracting indices of the k nearest neighbors
-        # from the sorted fidelities
-        neigh_indices = np.argsort(fidelities, axis=1)[:, -self.n_neighbors:]
+        # first sort neighbors
+        neigh_indices = np.argsort(fidelities)
+
+        # extract indices according to number of neighbors
+        # and dimension
+        n_queries, _ = fidelities.shape
+        if n_queries == 1:
+            neigh_indices = neigh_indices[-self.n_neighbors:]
+        else:
+            neigh_indices = neigh_indices[:, -self.n_neighbors:]
 
         neigh_labels = y_train[neigh_indices]
+
         if return_indices:
             return neigh_labels, neigh_indices
         else:
