@@ -42,7 +42,7 @@ class AmplitudeEncoding(EncodingMap):
             # then we add some padding
             x = np.pad(x, (0, (1 << self.num_qubits) - len(x)))
 
-        state_vector, _ = self.state_vector(x)
+        state_vector = self.state_vector(x)
 
         q = QuantumRegister(self.num_qubits)
         qc = QuantumCircuit(q)
@@ -75,8 +75,5 @@ class AmplitudeEncoding(EncodingMap):
 
         norm = np.linalg.norm(x)
         # retrieves the normalized vector
-        # and its norm (to increase versatility)
-        if norm == 0:
-            return x, norm
-        else:
-            return x / norm, norm
+        # if the norm is not zero
+        return x / norm if not norm == 0 else x
