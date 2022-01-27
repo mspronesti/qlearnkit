@@ -34,27 +34,27 @@ from qlearnkit.datasets import load_iris
 seed = 42
 algorithm_globals.random_seed = seed
 
+train_size = 32
+test_size = 8
+n_features = 4  # all features
+
+# Use iris data set for training and test data
+X_train, X_test, y_train, y_test = load_iris(train_size, test_size, n_features)
+
 quantum_instance = QuantumInstance(BasicAer.get_backend('qasm_simulator'),
                                    shots=1024,
                                    optimization_level=1,
                                    seed_simulator=seed,
                                    seed_transpiler=seed)
 
-encoding_map = AmplitudeEncoding()
+encoding_map = AmplitudeEncoding(n_features=n_features)
 
 qknn = QKNeighborsClassifier(
     n_neighbors=3,
     quantum_instance=quantum_instance,
     encoding_map=encoding_map
 )
-# Use iris data set for training and test data
 
-train_size = 32
-test_size = 8
-num_features = 4 # all features
- 
-
-X_train, X_test, y_train, y_test = load_iris(train_size, test_size, num_features)
 qknn.fit(X_train, y_train)
 
 print(f"Testing accuracy: "

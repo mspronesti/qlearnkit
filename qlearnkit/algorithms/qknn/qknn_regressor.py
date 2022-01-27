@@ -45,36 +45,6 @@ class QKNeighborsRegressor(RegressorMixin, QNeighborsBase):
         """
         super().__init__(n_neighbors, encoding_map, quantum_instance)
 
-    def _average_fidelities(self,
-                            y_train: np.ndarray,
-                            fidelities: np.ndarray) -> np.ndarray:
-        r"""
-        Averages the values corresponding to the :math:`k` nearest
-        neighbors to predict the target value
-
-        Args:
-            y_train: the train labels
-            fidelities: the list ``F`` of fidelities used as a measure of
-                        distance
-
-        Returns:
-            a list of predicted labels for the test data
-        Raises:
-              ValueError if math:: \exists f \in F \ t.c. f \notin [0, 1]
-        """
-        logger.info("Averaging ...")
-
-        k_nearest = self._kneighbors(y_train, fidelities)
-
-        n_queries, _ = self.X_train.shape
-        if n_queries == 1:
-            predicted_labels = np.mean(k_nearest)
-        else:
-            predicted_labels = np.mean(k_nearest, axis=1)
-
-        logger.info("Done.")
-        return predicted_labels
-
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
         """Predict the labels of the provided data."""
@@ -91,4 +61,15 @@ class QKNeighborsRegressor(RegressorMixin, QNeighborsBase):
         # fidelities which are used for the average
         fidelities = self._get_fidelities(results, len(X_test))
 
-        return self._average_fidelities(self.y_train, fidelities)
+        logger.info("Averaging ...")
+
+        k_nearest = self._kneighbors(self.y_train, fidelities)
+
+        n_queries, _ = self.X_train.shape
+        if n_queries == 1:
+            predicted_labels = np.mean(k_nearest)
+        else:
+            predicted_labels = np.mean(k_nearest, axis=1)
+
+        logger.info("Done.")
+        return predicted_labels

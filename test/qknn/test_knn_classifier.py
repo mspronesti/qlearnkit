@@ -23,7 +23,6 @@ qasm_quantum_instance = QuantumInstance(
     seed_transpiler=algorithm_globals.random_seed,
 )
 
-encoding_map = AmplitudeEncoding()
 
 @pytest.mark.parametrize(
     'quantum_instance, quantum_instance_type',
@@ -37,7 +36,7 @@ def test_qknn_normalized(quantum_instance, quantum_instance_type):
     qknn = QKNeighborsClassifier(
         n_neighbors=3,
         quantum_instance=quantum_instance,
-        encoding_map=encoding_map
+        encoding_map=AmplitudeEncoding(n_features=4)
     )
 
     train_data = [
@@ -78,8 +77,8 @@ def test_qknn_score(quantum_instance, quantum_instance_type):
     # initialising the qknn model
     qknn = QKNeighborsClassifier(
         n_neighbors=3,
-        quantum_instance=qasm_quantum_instance,
-        encoding_map=encoding_map
+        quantum_instance=quantum_instance,
+        encoding_map=AmplitudeEncoding(n_features=2)
     )
 
     num_inputs = 2
@@ -128,7 +127,7 @@ def test_qknn_str(
     knn = QKNeighborsClassifier(
         n_neighbors=n_neighbors,
         quantum_instance=quantum_instance,
-        encoding_map=encoding_map
+        encoding_map=AmplitudeEncoding(n_features=4)
     )
 
     knn.fit(X, y)

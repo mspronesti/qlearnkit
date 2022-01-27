@@ -114,14 +114,16 @@ class QuantumEstimator(TransformerMixin):
         Returns:
             the execution results
         """
-        logger.info("Executing circuits...")
         if self._quantum_instance is None:
             raise QiskitError("Circuits execution requires a quantum instance")
+
+        logger.info("Executing circuits...")
 
         # Instead of transpiling and assembling the quantum object
         # and running the backend, we call execute from the quantum
         # instance that does it at once a very efficient way
         # please notice: this execution is parallelized
+        # which is why we pass a list of circuits and not one at a time
         result = self._quantum_instance.execute(qcircuits)
         return result
 
@@ -148,4 +150,4 @@ class QuantumEstimator(TransformerMixin):
         Returns:
             a float score of the model.
         """
-        raise NotImplementedError("You should have implemented this.")
+        raise NotImplementedError("Must have implemented this.")

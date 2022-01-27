@@ -48,7 +48,7 @@ def test_qknn_regressor(
 
     y_target = y[:n_test_pts]
 
-    encoding_map = AmplitudeEncoding()
+    encoding_map = AmplitudeEncoding(n_features=n_features)
 
     knn = QKNeighborsRegressor(
         n_neighbors=n_neighbors,

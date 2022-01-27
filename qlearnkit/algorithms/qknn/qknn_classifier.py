@@ -47,13 +47,12 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
                                                seed_simulator=seed,
                                                seed_transpiler=seed)
 
-            encoding_map = AmplitudeEncoding()
+            encoding_map = AmplitudeEncoding(n_features=2)
 
             # Use iris data set for training and test data
             X, y = load_iris(return_X_y=True)
 
-            num_features = 2
-            X = np.asarray([x[0:num_features] for x, y_ in zip(X, y) if y_ != 2])
+            X = np.asarray([x[0:2] for x, y_ in zip(X, y) if y_ != 2])
             y = np.asarray([y_ for x, y_ in zip(X, y) if y_ != 2])
 
             qknn = QKNeighborsClassifier(
@@ -81,9 +80,11 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
             n_neighbors:
                 number of neighbors participating in the
                 majority vote
+
             encoding_map:
                 map to classical data to quantum states.
                 This class does not impose any constraint on it.
+
             quantum_instance:
                 the quantum instance to set. Can be a
                 :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
@@ -115,7 +116,7 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
         # getting most frequent values in `k_nearest`
         # in a more efficient way than looping and
         # using, for instance, collections.Counter
-        n_queries, _ = self.X_train.shape
+        n_queries = self.X_train.shape[0]
         if n_queries == 1:
             # case of 1D array
             labels, _ = stats.mode(k_nearest)
