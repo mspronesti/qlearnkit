@@ -7,6 +7,7 @@ scikit-learn==1.0.2
 scipy==1.7.3
 numpy==1.21.5
 pytest==6.2.5
+pytest-cov==3.0.0
 jupyter-sphinx==0.3.2
 Sphinx==4.3.2
 sphinxcontrib-applehelp==1.0.2
@@ -15,5 +16,6 @@ sphinxcontrib-htmlhelp==2.0.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
+sphinx-rtd-theme
 matplotlib>=3.3
 jupyter

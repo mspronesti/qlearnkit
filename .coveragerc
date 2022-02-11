@@ -1,0 +1,8 @@
+[run]
+source = qlearnkit
+parallel = True
+omit =
+    # omit everything under datasets
+    qlearnkit/datasets/*
+    # omit version file
+    */version.py
