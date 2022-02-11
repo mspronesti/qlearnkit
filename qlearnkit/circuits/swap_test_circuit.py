@@ -7,6 +7,7 @@ class SwaptestCircuit(QuantumCircuit):
     Constructs a swap test circuit employing a controlled
     swap:
     .. parsed-literal::
+
                      ┌───┐       ┌───┐┌─┐
             q_0: ────┤ H ├─────■─┤ H ├┤M├
                  ┌───┴───┴───┐ │ └───┘└╥┘
@@ -16,11 +17,13 @@ class SwaptestCircuit(QuantumCircuit):
                  └───────────┘         ║
             c: 1/══════════════════════╩═
                                        0
+
     A swap test circuit allows to measure the fidelity between two quantum
     states, which can be interpreted as a distance measure of some sort.
     In other words, given two quanutm states :math:`|\alpha\rangle, \ |\beta\rangle`,
     it measures how symmetric the state :math:`|\alpha\rangle \otimes |\beta\rangle` is
     """
+
     def __init__(self,
                  qc_state_1: QuantumCircuit,
                  qc_state_2: QuantumCircuit,

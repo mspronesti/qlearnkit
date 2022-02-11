@@ -53,7 +53,6 @@ def construct_circuit(input_point: np.ndarray,
     Encode data points using U3 gate.
     Perform controlled swap to entangle the state with the ancillary qubit
     Apply another Hadamard gate to the ancillary qubit.
-
     .. parsed-literal::
 
                     ┌───┐                   ┌───┐
@@ -65,17 +64,18 @@ def construct_circuit(input_point: np.ndarray,
                     ┌───┐   ┌────┐   |
             |0>: ───┤ H ├───┤ U3 ├───X──────────
                     └───┘   └────┘
+
     Args:
         input_point:
             Input point from which calculate the distance.
         centroids:
             Array of points representing the centroids to calculate 
-            the distance to.
+            the distance to
         k:
-            Number of centroids.
+            Number of centroids
 
     Returns:
-        The quantum circuit created.
+        The quantum circuit created
     """
     phi_input, theta_input, phi_centroids_list, theta_centroids_list = \
         _map_features(input_point, centroids, k)

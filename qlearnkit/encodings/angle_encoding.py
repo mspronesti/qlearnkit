@@ -23,7 +23,7 @@ class AngleEncoding(EncodingMap):
             rotation: the direction
                       admitted values: X, Y, Z
             scaling: scaling factor for normalized input data.
-                     The default scaling .. math:: \pi/2 does
+                     The default scaling :math:`\pi/2` does
                      not induce a relative phase difference.
         """
         ROT = {
@@ -48,8 +48,10 @@ class AngleEncoding(EncodingMap):
         Returns:
             (qiskit.QuantumCircuit): The circuit that encodes x
                 Assumes data is feature-normalized.
-                Assumes every element in x is in [0, 1].
+                Assumes every element in x is in [0, 1]
+
         """
+
         self._check_feature_vector(x)
 
         circuit = QuantumCircuit(self.num_qubits)
@@ -62,9 +64,11 @@ class AngleEncoding(EncodingMap):
         """
         Args
              x (np.array): The input data to encode
+
         Returns:
              np.array: The state vector representation of x after angle encoding
         """
+
         qubit_states = []
         for x_i in x:
             qubit_state = self.gate(2 * self.scaling * x_i).to_matrix()[:, 0]

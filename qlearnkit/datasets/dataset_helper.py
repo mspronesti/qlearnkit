@@ -52,6 +52,7 @@ def features_labels_from_data(X: Union[np.ndarray, list],
         Returns:
             Preprocessed dataset as available in sklearn
     """
+
     # decomposing dataset according to the required train and test size
     # exceptions are already handled in train_test_split
     X_train, X_test, y_train, y_test = \
@@ -104,20 +105,18 @@ def label_to_class_name(predicted_labels,
         predicted_labels (numpy.ndarray): Nx1 array
         classes (dict or list): a mapping form label (numeric) to class name (str)
 
-        Example:
-
     Returns:
         list of predicted class names of each datum
 
     Example:
         classes = ['sepal length (cm)',
                    'sepal width (cm)',
-                  'petal length (cm)',
-                  'petal width (cm)'
-                  ]
-        predicted_labels = [0, 2, 1, 2, 0]
+                   'petal length (cm)',
+                   'petal width (cm)']
 
+        predicted_labels = [0, 2, 1, 2, 0]
         print(label_to_class_name(predicted_labels, classes))
+
     """
 
     if not isinstance(predicted_labels, np.ndarray):

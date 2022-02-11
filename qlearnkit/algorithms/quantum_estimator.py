@@ -83,7 +83,7 @@ class QuantumEstimator(TransformerMixin):
 
         Args:
             The quantum instance to set. Can be a
-            :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
+            :class:``~qiskit.utils.QuantumInstance``, a :class:`~qiskit.providers.Backend`
             or a :class:`~qiskit.providers.BaseBackend`
 
         """
@@ -106,9 +106,10 @@ class QuantumEstimator(TransformerMixin):
                 qcircuits: Union[QuantumCircuit, List[QuantumCircuit]]) -> Union[Optional[Result], None]:
         """
         Executes the given quantum circuit
+
         Args:
             qcircuits:
-                a :class:`~qiskit.QuantumCircuit` or a list of
+             a :class:`~qiskit.QuantumCircuit` or a list of
                 this type to be executed
 
         Returns:

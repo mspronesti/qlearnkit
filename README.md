@@ -61,6 +61,16 @@ print(f"Testing accuracy: "
       f"{qknn.score(X_test, y_test):0.2f}")
 ```
 
+## Documentation
+
+The documentation is currently not deployed anywhere. To browse it, please run
+
+```bash
+make doc
+```
+
+then simply open `docs/_build/index.html` with your favourite browser.
+
 ## Development notes
 
 After cloning this repository, create a virtual environment
@@ -84,5 +94,5 @@ pip install -r requirements-dev.txt
 now run the tests
 
 ```bash
-python -m pytest
+make test
 ```

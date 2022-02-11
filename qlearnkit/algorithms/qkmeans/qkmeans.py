@@ -333,11 +333,12 @@ class QKMeans(ClusterMixin, QuantumEstimator):
               sample_weight: Optional[np.ndarray] = None) -> float:
         """
         Returns Mean Silhouette Coefficient for all samples.
+
         Args:
-            X:  array of features
+            X: array of features
 
             y: Ignored.
-               Not used, present here for API consistency by convention.
+             Not used, present here for API consistency by convention.
 
             sample_weight: Ignored.
                 Not used, present here for API consistency by convention.
