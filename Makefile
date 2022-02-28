@@ -30,28 +30,42 @@ endif
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  all                to clean and run the test suite"
 	@echo "  install            to install qlearnkit"
 	@echo "  test               to run the test suite for all tested packages"
+	@echo "  test-parallel      to run the test suite for all tested packages in parallel"
 	@echo "  coverage           to generate a coverage report for all tested packages"
+	@echo "  coverage-parallel  to generate a coverage report for all tested packages in parallel"
 	@echo "  doc                to generate documentation for qlearnkit"
-	@echo "  clean_doc          to delete all built documentation"
+	@echo "  clean-doc          to delete all built documentation"
 	@echo "  apidoc             to re-generate sphinx sources. Run ``make doc`` afterwards to build the documentation"
 	@echo "  clean              to delete all temporary, cache, and build files"
 
-.PHONY: install test coverage doc clean_doc apidoc clean
+.PHONY: all install test test-parallel coverage coverage-parallel doc clean-doc apidoc clean
+all: clean test-parallel
+
 install:
 	$(PYTHON) setup.py install
 
 test:
 	$(PYTHON) -m pytest
 
+test-parallel:
+	echo "Detected $(NPROCS) CPUs running with $(CONCURRENCY) workers"
+	$(PYTHON) -m pytest -n $(CONCURRENCY)
+
 coverage:
+	rm .coverage
 	$(PYTHON) -m pytest --cov=qlearnkit test/
+
+coverage-parallel:
+	rm .coverage
+	$(PYTHON) -m pytest -n $(CONCURRENCY) --cov=qlearnkit test/
 
 doc:
 	sphinx-build -M html docs docs/_build
 
-clean_doc:
+clean-doc:
 	$(MAKE) -C docs clean
 
 apidoc:

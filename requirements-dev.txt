@@ -8,6 +8,7 @@ scipy==1.7.3
 numpy==1.21.5
 pytest==6.2.5
 pytest-cov==3.0.0
+pytest-xdist==2.5.0
 jupyter-sphinx==0.3.2
 Sphinx==4.3.2
 sphinxcontrib-applehelp==1.0.2
