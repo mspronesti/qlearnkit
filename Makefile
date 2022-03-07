@@ -30,7 +30,8 @@ endif
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  all                to clean and run the test suite"
+	@echo "  all                to clean, check the style guidelines and run the test suite"
+	@echo "  flake              to check overall code style guidelines "
 	@echo "  install            to install qlearnkit"
 	@echo "  test               to run the test suite for all tested packages"
 	@echo "  test-parallel      to run the test suite for all tested packages in parallel"
@@ -41,8 +42,11 @@ help:
 	@echo "  apidoc             to re-generate sphinx sources. Run ``make doc`` afterwards to build the documentation"
 	@echo "  clean              to delete all temporary, cache, and build files"
 
-.PHONY: all install test test-parallel coverage coverage-parallel doc clean-doc apidoc clean
-all: clean test-parallel
+.PHONY: all flake install test test-parallel coverage coverage-parallel doc clean-doc apidoc clean
+all: clean flake test-parallel
+
+flake:
+	flake8 qlearnkit | grep -v __init__ | grep -v external
 
 install:
 	$(PYTHON) setup.py install
