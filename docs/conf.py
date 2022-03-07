@@ -37,12 +37,15 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx_autodoc_typehints',
     'jupyter_sphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
 
+# Shorten names in the API (removing repetitions of module's name)
+add_module_names = False
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -61,4 +64,6 @@ html_theme = 'sphinx_rtd_theme'  # 'classic'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 html_css_files = ["style.css"]
+
+
 
