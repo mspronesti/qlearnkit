@@ -17,6 +17,13 @@ pip install qlearnkit
 **Note:** pip will install the latest stable qlearnkit. 
 However, the main branch of qlearnkit is in active development. If you want to test the latest scripts or functions please refer to [development notes](#development-notes).
 
+### Optional Install
+Via pip, you can install `qlearnkit` with the optional extension
+packages dependent on `pennylane`. To do so, run
+```bash
+pip install qleanrkit['pennylane']
+```
+
 ## Getting started with Qlearnkit
 
 Now that Qlearnkit is installed, it's time to begin working with the Machine Learning module. 
