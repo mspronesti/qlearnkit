@@ -1,58 +1,29 @@
 from typing import Optional, Union
+import qlearnkit.optionals as _optionals
 
-try:
+if _optionals.HAS_PENNYLANE:
+    # then qlearnkit has been installed
+    # with the 'pennylane' option (or the env
+    # already has both pennylane and torch)
     import pennylane as qml
     from pennylane import PauliZ
+    from pennylane.templates import AngleEmbedding
     from pennylane.qnn import TorchLayer as TorchConnector
 
     import torch
     import torch.nn as nn
     from torch.nn import Module
     from torch import Tensor
-
-    # whether qlearnkit has been installed
-    # with the 'pennylane' option (or if the env
-    # already has both pennylane and torch)
-    _PENNYLANE_INSTALL = True
-except ImportError:
+else:
     from unittest.mock import Mock
+
     # allows importing the module, but
-    # the instantiation will raise an ImportError.
-    # See the constructor of the following class
+    # the instantiation will raise an Exception
     Module = Mock
     Tensor = Mock
 
-    _PENNYLANE_INSTALL = False
 
-
-def H_layer(n_qubits):
-    """
-    Layer of single-qubit Hadamard gates.
-    """
-    for w in range(n_qubits):
-        qml.Hadamard(wires=w)
-
-
-def RY_layer(feats):
-    """
-    Layer of parametrized qubit rotations around the y axis.
-    """
-    for w, xi in enumerate(feats):
-        qml.RY(xi, wires=w)
-
-
-def entangling_layer(n_qubits):
-    """
-    Layer of CNOTs followed by another shifted layer of CNOT.
-    """
-    # loop over even indices
-    for i in range(0, n_qubits - 1, 2):
-        qml.CNOT(wires=[i, i + 1])
-    # loop over odd indices
-    for i in range(1, n_qubits - 1, 2):
-        qml.CNOT(wires=[i, i + 1])
-
-
+@_optionals.HAS_PENNYLANE.require_in_instance
 class QLongShortTermMemory(Module):
     r"""
     Hybrid Quantum Long Short Term Memory, miming pytorch's API and exploiting
@@ -86,7 +57,25 @@ class QLongShortTermMemory(Module):
     [1] Chen et al.,
         `Quantum Long Short-Term Memory <https://arxiv.org/pdf/2009.01783.pdf>`_
 
+    Args:
+        input_size:
+            the number of expected features in the input x
+        hidden_size:
+            the number of features in the hidden state h
+        n_layers:
+            the number of recurrent layers
+        n_qubits:
+            the number of qubits
+        batch_first:
+            if ``True``, then the input and output tensors are provided
+            as (batch, seq, feature) instead of (seq, batch, length)
+        backend:
+            Can be a string representing the backend name
+            or a valid :class:`~pennylane.Device` having
+            ``n_qubits`` wires
+
     """
+
     def __init__(self,
                  input_size: int,
                  hidden_size: int,
@@ -95,33 +84,6 @@ class QLongShortTermMemory(Module):
                  batch_first: Optional[bool] = True,
                  backend: Optional[Union[str, qml.Device]] = 'default.qubit',
                  ):
-        """
-
-        Args:
-            input_size:
-                the number of expected features in the input x
-            hidden_size:
-                the number of features in the hidden state h
-            n_layers:
-                the number of recurrent layers
-            n_qubits:
-                the number of qubits
-            batch_first:
-                if ``True``, then the input and output tensors are
-                provided as (batch, seq, feature) instead of (seq, batch, length)
-           backend:
-                Can be a string representing the backend name
-                or a valid :class:`~pennylane.Device` having
-                ``n_qubits`` wires
-
-        """
-        if not _PENNYLANE_INSTALL:
-            raise ImportError(
-                "Module qlearnkit.nn.QLongShortTermMemory"
-                "depends on pennylane and torch. "
-                "Please install those or reinstall qlearnkit "
-                "running `pip install qlearnkit[pennylane]`"
-            )
         super(QLongShortTermMemory, self).__init__()
 
         self.input_size = input_size
@@ -139,36 +101,53 @@ class QLongShortTermMemory(Module):
         self.q_layers = {}
         self._construct_quantum_layers()
 
-    def _construct_quantum_network(self, inputs, weights):
+    def _construct_vqc(self, inputs, weights):
         """
         Constructs the variational quantum circuit
         as described in https://arxiv.org/pdf/2009.01783.pdf
         """
-        # Reshape weights
-        q_weights = weights.reshape(self.num_layers, self.num_qubits)
-        # Start from state |+> , unbiased w.r.t. |0> and |1>
-        H_layer(self.num_qubits)
+        wires = list(range(self.num_qubits))
+        # Encoding layer:
+        # first apply Hadamard
+        for w in wires:
+            qml.Hadamard(w)
+        # then apply an Angle embedding, which encodes the features
+        # by using the specified rotation operation (Y and Z here)
+        AngleEmbedding(torch.arctan(inputs), rotation='Y', wires=wires)
+        AngleEmbedding(torch.arctan(inputs ** 2), rotation='Z', wires=wires)
 
-        # Embed features in the quantum node
-        RY_layer(inputs)
+        # Variational layer(s):
+        # encoding layer of CNOTs followed by a qubit
+        # rotation determined by the learned weights via GD
+        for l in range(self.num_layers):
+            # entangling layer of CNOTs
+            if len(wires) == 2:
+                # if only 2 qubits, then
+                # only 1 C-NOT is needed
+                qml.CNOT(wires=[0, 1])
 
-        # Sequence of trainable variational layers
-        for k in range(self.num_layers):
-            entangling_layer(self.num_qubits)
-            RY_layer(q_weights[k])
+            elif len(wires) > 2:
+                for w in wires:
+                    qml.CNOT(wires=[w, w + 1 if w + 1 < self.num_qubits else 0])
 
+            # "weights" have shape (num_layers, num_qubits, 3)
+            AngleEmbedding(weights[l, ..., 0], rotation='X', wires=wires)
+            AngleEmbedding(weights[l, ..., 1], rotation='Y', wires=wires)
+            AngleEmbedding(weights[l, ..., 2], rotation='Z', wires=wires)
+
+        # Measurement Layer
         # Retrieve expectation values in the Z basis
         return [
             qml.expval(qml.PauliZ(wires=w))
-            for w in range(self.num_qubits)
+            for w in wires
         ]
 
     def _construct_quantum_layers(self):
-        for layer_name in ['input', 'update', 'forget', 'output']:
-            layer = qml.QNode(self._construct_quantum_network,
+        for layer_name in ['forget', 'input', 'update', 'output']:
+            layer = qml.QNode(self._construct_vqc,
                               self.backend,
                               interface='torch')
-            weight_shapes = {"weights": (self.num_layers, self.num_qubits)}
+            weight_shapes = {"weights": (self.num_layers, self.num_qubits, 3)}
 
             self.q_layers[layer_name] = TorchConnector(layer, weight_shapes)
 
@@ -188,7 +167,7 @@ class QLongShortTermMemory(Module):
             if n_wires != self.num_qubits:
                 raise ValueError(
                     f"Invalid number of wires for backend {backend.name}. "
-                    f"Expected {self.num_qubits}, but got {n_wires}"
+                    f"Expected {self.num_qubits}, got {n_wires}"
                 )
             self.backend = backend
         else:
@@ -220,8 +199,6 @@ class QLongShortTermMemory(Module):
             h_t = torch.zeros(batch, self.hidden_size)  # hidden state (output)
             c_t = torch.zeros(batch, self.hidden_size)  # cell state
         else:
-            # Each batch of the hidden state should match the input sequence that
-            # the user believes he/she is passing in.
             h_t, c_t = hx.detach()
 
         for t in range(seq):
@@ -255,7 +232,9 @@ class QLongShortTermMemory(Module):
 
         # update hidden seq
         hidden_seq = torch.cat(hidden_seq, dim=0)
-        hidden_seq = hidden_seq.transpose(0, 1).contiguous()
+        # hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         return hidden_seq, (h_t, c_t)
 
-
+    def __str__(self):
+        return f"QLongShortTermMemory({self.input_size}, " \
+               f"{self.hidden_size}, {self.q_layers}, {self.num_qubits})"
