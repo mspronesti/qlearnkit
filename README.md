@@ -6,7 +6,8 @@
 [![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit)
 [![PypI Versions](https://img.shields.io/pypi/v/qlearnkit)](https://pypi.org/project/qlearnkit/#history)
 
-Qlearnkit is a simple python library implementing well-know supervised and unsupervised machine learning algorithms for a gated quantum computer, built with [Qiskit](https://github.com/Qiskit/qiskit).
+Qlearnkit is a simple python library implementing some well-know supervised fundamental Machine Learning models and algorithms for a gated quantum computer, built on top of [Qiskit](https://github.com/Qiskit/qiskit)
+and, optionally, [Pennylane](https://pennylane.ai/).
 
 ## Installation
 
@@ -14,20 +15,20 @@ We recommend installing `qlearnkit` with pip
 ```bash
 pip install qlearnkit
 ```
-**Note:** pip will install the latest stable qlearnkit. 
+**Note:** pip will install the latest stable qlearnkit.
 However, the main branch of qlearnkit is in active development. If you want to test the latest scripts or functions please refer to [development notes](#development-notes).
 
 ### Optional Install
 Via pip, you can install `qlearnkit` with the optional extension
 packages dependent on `pennylane`. To do so, run
 ```bash
-pip install qleanrkit['pennylane']
+pip install qlearnkit['pennylane']
 ```
 
 ## Getting started with Qlearnkit
 
-Now that Qlearnkit is installed, it's time to begin working with the Machine Learning module. 
-Let's try an experiment using the QKNN Classifier algorithm to train and test samples from a 
+Now that Qlearnkit is installed, it's time to begin working with the Machine Learning module.
+Let's try an experiment using the QKNN Classifier algorithm to train and test samples from a
 data set to see how accurately the test set can be classified.
 
 ```python
@@ -89,7 +90,7 @@ python3 -m venv .venv
 and activate it
 
 ```bash
-source .venv/bin/activate 
+source .venv/bin/activate
 ```
 
 now you can install the requirements
@@ -103,3 +104,11 @@ now run the tests
 ```bash
 make test
 ```
+
+Make sure to run
+
+```bash
+pre-commit install
+```
+
+to set up the git hook scripts. Now `pre-commit` will run automatically on `git commit`!
