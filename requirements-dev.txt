@@ -22,3 +22,4 @@ sphinx-rtd-theme
 matplotlib>=3.3
 flake8==4.0.1
 jupyter
+pre-commit
