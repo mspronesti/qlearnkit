@@ -6,7 +6,7 @@
 [![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit)
 [![PypI Versions](https://img.shields.io/pypi/v/qlearnkit)](https://pypi.org/project/qlearnkit/#history)
 
-Qlearnkit is a simple python library implementing some well-know supervised fundamental Machine Learning models and algorithms for a gated quantum computer, built on top of [Qiskit](https://github.com/Qiskit/qiskit)
+Qlearnkit is a simple python library implementing some fundamental Machine Learning models and algorithms for a gated quantum computer, built on top of [Qiskit](https://github.com/Qiskit/qiskit)
 and, optionally, [Pennylane](https://pennylane.ai/).
 
 ## Installation
@@ -112,3 +112,7 @@ pre-commit install
 ```
 
 to set up the git hook scripts. Now `pre-commit` will run automatically on `git commit`!
+
+## Acknowledgments
+The Quantum LSTM model is adapted from [this](https://towardsdatascience.com/a-quantum-enhanced-lstm-layer-38a8c135dbfa) article from Riccardio Di Sipio, but the Quantum part
+has been changed entirely according to the architecture described in [this](https://arxiv.org/pdf/2009.01783.pdf) paper.
