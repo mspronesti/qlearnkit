@@ -11,6 +11,7 @@ Subpackages
    qlearnkit.circuits
    qlearnkit.datasets
    qlearnkit.encodings
+   qlearnkit.nn
 
 Submodules
 ----------

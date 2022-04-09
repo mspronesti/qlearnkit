@@ -18,5 +18,11 @@ setuptools.setup(
     url="https://github.com/mspronesti/qlearnkit",
     packages=setuptools.find_packages(),
     install_requires=requirements,
+    extras_require={
+        'pennylane': [
+            'pennylane',
+            'torch'
+        ]
+    },
     python_requires='>=3.7'
 )

@@ -6,3 +6,5 @@ omit =
     qlearnkit/datasets/*
     # omit version file
     */version.py
+    # omit optionals
+    */optionals.py
