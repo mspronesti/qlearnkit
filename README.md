@@ -25,6 +25,19 @@ packages dependent on `pennylane`. To do so, run
 pip install qlearnkit['pennylane']
 ```
 
+### Docker Image
+You can also use qlearnkit via Docker building the image from the provided `Dockerfile` 
+
+```bash
+docker build -t qlearnkit -f docker/Dockerfile .
+```
+
+then you can use it like this
+
+```bash
+docker run -it --rm -v $PWD:/tmp -w /tmp qlearnkit python ./script.py
+```
+
 ## Getting started with Qlearnkit
 
 Now that Qlearnkit is installed, it's time to begin working with the Machine Learning module.
