@@ -6,14 +6,16 @@ from typing import Optional, Union, Tuple, List
 import numpy as np
 
 
-def features_labels_from_data(X: Union[np.ndarray, list],
-                              y: Union[np.ndarray, list],
-                              train_size: Optional[Union[float, int]] = None,
-                              test_size: Optional[Union[float, int]] = None,
-                              n_features: Optional[int] = None,
-                              *,
-                              use_pca: Optional[bool] = False,
-                              return_bunch: Optional[bool] = False):
+def features_labels_from_data(
+    X: Union[np.ndarray, list],
+    y: Union[np.ndarray, list],
+    train_size: Optional[Union[float, int]] = None,
+    test_size: Optional[Union[float, int]] = None,
+    n_features: Optional[int] = None,
+    *,
+    use_pca: Optional[bool] = False,
+    return_bunch: Optional[bool] = False
+):
     """
     This script splits a dataset according to the required train size, test size and
     number of features
@@ -47,7 +49,7 @@ def features_labels_from_data(X: Union[np.ndarray, list],
 
         return_bunch:
             whether to return a :class:`sklearn.Bunch`
-                    (similar to a dictionary) or not
+            (similar to a dictionary) or not
 
         Returns:
             Preprocessed dataset as available in sklearn
@@ -55,8 +57,9 @@ def features_labels_from_data(X: Union[np.ndarray, list],
 
     # decomposing dataset according to the required train and test size
     # exceptions are already handled in train_test_split
-    X_train, X_test, y_train, y_test = \
-        train_test_split(X, y, test_size=test_size, train_size=train_size, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, train_size=train_size, random_state=42
+    )
 
     if n_features is not None:
         if use_pca:
@@ -72,32 +75,23 @@ def features_labels_from_data(X: Union[np.ndarray, list],
             training_data=X_train,
             test_data=X_test,
             training_labels=y_train,
-            test_labels=y_test
+            test_labels=y_test,
         )
 
-    return (
-        X_train,
-        X_test,
-        y_train,
-        y_test
-    )
+    return (X_train, X_test, y_train, y_test)
 
 
-def pca_reduce(X_train: np.ndarray,
-               X_test: np.ndarray,
-               n_components: int = 2) -> Tuple[np.ndarray, np.ndarray]:
+def pca_reduce(
+    X_train: np.ndarray, X_test: np.ndarray, n_components: int = 2
+) -> Tuple[np.ndarray, np.ndarray]:
     pca = PCA(n_components=n_components)
     X_train = pca.fit_transform(X_train)
     X_test = pca.fit_transform(X_test)
 
-    return (
-        X_train,
-        X_test
-    )
+    return (X_train, X_test)
 
 
-def label_to_class_name(predicted_labels,
-                        classes) -> List[str]:
+def label_to_class_name(predicted_labels, classes) -> List[str]:
     """
     Helper converts labels (numeric) to class name (string)
 
@@ -109,22 +103,19 @@ def label_to_class_name(predicted_labels,
         list of predicted class names of each datum
 
     Example:
-        classes = ['sepal length (cm)',
-                   'sepal width (cm)',
-                   'petal length (cm)',
-                   'petal width (cm)']
-
-        predicted_labels = [0, 2, 1, 2, 0]
-        print(label_to_class_name(predicted_labels, classes))
+        >>>  classes = ['sepal length (cm)',
+        >>>             'sepal width (cm)',
+        >>>             'petal length (cm)',
+        >>>             'petal width (cm)']
+        >>> predicted_labels = [0, 2, 1, 2, 0]
+        >>> print(label_to_class_name(predicted_labels, classes))
 
     """
-
     if not isinstance(predicted_labels, np.ndarray):
-        predicted_labels = np.asarray([predicted_labels])
+        predicted_labels = np.asarray(predicted_labels)
 
     predicted_class_names = [
-        classes[predicted_label]
-        for predicted_label in predicted_labels
+        classes[predicted_label] for predicted_label in predicted_labels
     ]
 
     return predicted_class_names

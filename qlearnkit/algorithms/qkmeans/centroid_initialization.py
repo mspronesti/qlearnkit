@@ -2,9 +2,7 @@ from math import floor
 import numpy as np
 
 
-def random(X: np.ndarray,
-           n_clusters: int,
-           random_state: int = 42) -> np.ndarray:
+def random(X: np.ndarray, n_clusters: int, random_state: int = 42) -> np.ndarray:
     """
     Create random cluster centroids.
 
@@ -30,9 +28,7 @@ def random(X: np.ndarray,
     return np.array(centroids)
 
 
-def kmeans_plus_plus(X: np.ndarray,
-                      k: int,
-                      random_state: int = 42) -> np.ndarray:
+def kmeans_plus_plus(X: np.ndarray, k: int, random_state: int = 42) -> np.ndarray:
     """
     Create cluster centroids using the k-means++ algorithm.
 
@@ -51,7 +47,9 @@ def kmeans_plus_plus(X: np.ndarray,
     centroids = [X[0]]
     i = 0
     for _ in range(1, k):
-        dist_sq = np.array([min([np.inner(c - x, c - x) for c in centroids]) for x in X])
+        dist_sq = np.array(
+            [min([np.inner(c - x, c - x) for c in centroids]) for x in X]
+        )
         probs = dist_sq / dist_sq.sum()
         cumulative_probs = probs.cumsum()
         r = np.random.rand()
@@ -65,8 +63,7 @@ def kmeans_plus_plus(X: np.ndarray,
     return np.array(centroids)
 
 
-def naive_sharding(X: np.ndarray,
-                   k: int) -> np.ndarray:
+def naive_sharding(X: np.ndarray, k: int) -> np.ndarray:
     """
     Create cluster centroids using deterministic naive sharding algorithm.
 
@@ -88,12 +85,14 @@ def naive_sharding(X: np.ndarray,
     ds.sort(axis=0)
 
     step = floor(m / k)
-    vfunc = np.vectorize(lambda sums, step_: sums/step_)
+    vfunc = np.vectorize(lambda sums, step_: sums / step_)
 
     for j in range(k):
         if j == k - 1:
-            centroids[j:] = vfunc(np.sum(ds[j * step:, 1:], axis=0), step)
+            centroids[j:] = vfunc(np.sum(ds[j * step :, 1:], axis=0), step)
         else:
-            centroids[j:] = vfunc(np.sum(ds[j * step:(j + 1) * step, 1:], axis=0), step)
+            centroids[j:] = vfunc(
+                np.sum(ds[j * step : (j + 1) * step, 1:], axis=0), step
+            )
 
     return centroids

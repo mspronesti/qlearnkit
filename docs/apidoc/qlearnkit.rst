@@ -16,6 +16,14 @@ Subpackages
 Submodules
 ----------
 
+qlearnkit.optionals module
+--------------------------
+
+.. automodule:: qlearnkit.optionals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 qlearnkit.version module
 ------------------------
 

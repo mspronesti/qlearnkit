@@ -14,10 +14,9 @@ class AngleEncoding(EncodingMap):
     Angle Encoding algorithm. Assumes data is feature-normalized.
     """
 
-    def __init__(self,
-                 n_features: int = 2,
-                 rotation: str = 'Y',
-                 scaling: float = np.pi / 2):
+    def __init__(
+        self, n_features: int = 2, rotation: str = "Y", scaling: float = np.pi / 2
+    ):
         r"""
         Args:
             rotation: the direction
@@ -26,13 +25,9 @@ class AngleEncoding(EncodingMap):
                      The default scaling :math:`\pi/2` does
                      not induce a relative phase difference.
         """
-        ROT = {
-            'X': RXGate,
-            'Y': RYGate,
-            'Z': RZGate
-        }
+        ROT = {"X": RXGate, "Y": RYGate, "Z": RZGate}
         if rotation not in ROT:
-            raise ValueError('No such rotation direction {}'.format(rotation))
+            raise ValueError("No such rotation direction {}".format(rotation))
 
         super().__init__(n_features)
         # angle encoding requires 1 qubit
@@ -46,9 +41,9 @@ class AngleEncoding(EncodingMap):
         Args:
             x (np.array): The input data to encode
         Returns:
-            (qiskit.QuantumCircuit): The circuit that encodes x
-                Assumes data is feature-normalized.
-                Assumes every element in x is in [0, 1]
+            The circuit that encodes x.
+            Assumes data is feature-normalized.
+            Assumes every element in x is in [0, 1]
 
         """
 
@@ -62,11 +57,15 @@ class AngleEncoding(EncodingMap):
 
     def state_vector(self, x):
         """
-        Args
+        The encoding of a state via angle encoding, operating
+        a rotation around the ``rotation`` axis.
+
+        Args:
              x (np.array): The input data to encode
 
         Returns:
              np.array: The state vector representation of x after angle encoding
+
         """
 
         qubit_states = []

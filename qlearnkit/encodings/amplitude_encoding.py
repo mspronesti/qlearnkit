@@ -28,7 +28,7 @@ class AmplitudeEncoding(EncodingMap):
         self._num_qubits = int(n_qubits)
 
     def construct_circuit(self, x) -> QuantumCircuit:
-        """"
+        """
         Constructs circuit for amplitude encoding
 
         Args:
@@ -52,7 +52,7 @@ class AmplitudeEncoding(EncodingMap):
         # to unwrap the "initialize" block
         qc = to_basis_gates(qc)
         # remove the reset gates the unroller added
-        qc.data = [d for d in qc.data if d[0].name != 'reset']
+        qc.data = [d for d in qc.data if d[0].name != "reset"]
         return qc
 
     def state_vector(self, x):

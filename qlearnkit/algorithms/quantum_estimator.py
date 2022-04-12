@@ -14,10 +14,11 @@ logger = logging.getLogger(__name__)
 
 
 class QuantumEstimator(TransformerMixin):
-    def __init__(self,
-                 encoding_map=None,
-                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None
-                 ):
+    def __init__(
+        self,
+        encoding_map=None,
+        quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+    ):
         """
         Args:
             encoding_map:
@@ -37,12 +38,11 @@ class QuantumEstimator(TransformerMixin):
         self._set_quantum_instance(quantum_instance)
 
     @abstractmethod
-    def fit(self,
-            X_train: np.ndarray,
-            y_train: np.ndarray):
+    def fit(self, X_train: np.ndarray, y_train: np.ndarray):
         """
         Fits the model using X as training dataset
         and y as training labels
+
         Args:
             X_train: training dataset
             y_train: training labels
@@ -51,11 +51,11 @@ class QuantumEstimator(TransformerMixin):
         raise NotImplementedError("Must have implemented this.")
 
     @abstractmethod
-    def predict(self,
-                X_test: np.ndarray) -> np.ndarray:
+    def predict(self, X_test: np.ndarray) -> np.ndarray:
         """
         Predicts the labels associated to the
         unclassified data X_test
+
         Args:
             X_test: the unclassified data
 
@@ -70,14 +70,15 @@ class QuantumEstimator(TransformerMixin):
         return self._quantum_instance
 
     @quantum_instance.setter
-    def quantum_instance(self,
-                         quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]):
+    def quantum_instance(
+        self, quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]
+    ):
         """Quantum Instance setter"""
         self._set_quantum_instance(quantum_instance)
 
     def _set_quantum_instance(
-            self,
-            quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]):
+        self, quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]
+    ):
         """
         Internal method to set a quantum instance according to its type
 
@@ -102,15 +103,16 @@ class QuantumEstimator(TransformerMixin):
         """Encoding Map setter"""
         self._encoding_map = encoding_map
 
-    def execute(self,
-                qcircuits: Union[QuantumCircuit, List[QuantumCircuit]]) -> Union[Optional[Result], None]:
+    def execute(
+        self, qcircuits: Union[QuantumCircuit, List[QuantumCircuit]]
+    ) -> Union[Optional[Result], None]:
         """
         Executes the given quantum circuit
 
         Args:
             qcircuits:
              a :class:`~qiskit.QuantumCircuit` or a list of
-                this type to be executed
+            this type to be executed
 
         Returns:
             the execution results
@@ -129,10 +131,9 @@ class QuantumEstimator(TransformerMixin):
         return result
 
     @abstractmethod
-    def score(self,
-              X: np.ndarray,
-              y: np.ndarray,
-              sample_weight: Optional[np.ndarray] = None) -> float:
+    def score(
+        self, X: np.ndarray, y: np.ndarray, sample_weight: Optional[np.ndarray] = None
+    ) -> float:
         """
         Returns a score of this model given samples and true values for the samples.
         In case of classification, this value should correspond to mean accuracy,

@@ -7,8 +7,7 @@ Qlearnkit: a python toolkit for Quantum Machine Learning
 =========================================================
 Welcome to the documentation page for ``qleanrkit``.
 
-``Qlearnkit`` is a simple python library implementing well-known
-supervised and unsupervised machine-learning algorithms for a
+``Qlearnkit`` is a python library implementing machine-learning algorithms and models for a
 gated quantum computer, mainly developed for academic purposes at
 Institute EURECOM. If you find any issues, please report it at the
 `GitHub page <https://github.com/mspronesti/qlearnkit>`_.
@@ -18,6 +17,10 @@ Requirements
 The following package is required for this to work:
  * Qiskit
  * Scikit-learn
+
+Optionally, it also requires:
+ * Pennylane
+ * Pytorch
 
 Dependencies
 ------------
