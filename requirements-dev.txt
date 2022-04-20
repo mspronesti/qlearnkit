@@ -16,7 +16,11 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 sphinx-autodoc-typehints==1.14.0
-sphinx-rtd-theme
+sphinx-gallery
+pandoc>=1.1.0
+pydata-sphinx-theme>=0.4.1
+nbsphinx
+nbsphinx-link
 matplotlib>=3.3
 flake8==4.0.1
 jupyter

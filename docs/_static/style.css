@@ -10,3 +10,19 @@ dl.class > dt:first-of-type {
     background-color: #f0f0f0;
 }
 
+
+/* To customize thumbnails in tutorials gallery */
+.sphx-glr-thumbcontainer {
+    min-height: 320px !important;
+    margin: 20px !important;
+}
+.sphx-glr-thumbcontainer .figure {
+    width: 300px !important;
+}
+.sphx-glr-thumbcontainer img {
+    max-height: 300px !important;
+    width: 300px !important;
+}
+.sphx-glr-thumbcontainer a.internal {
+    padding: 170px 90px 0 !important;
+}

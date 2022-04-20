@@ -9,36 +9,22 @@ Welcome to the documentation page for ``qleanrkit``.
 
 ``Qlearnkit`` is a python library implementing machine-learning algorithms and models for a
 gated quantum computer, mainly developed for academic purposes at
-Institute EURECOM. If you find any issues, please report it at the
+Institute EURECOM. 
+
+If you find any issues, please report it at the
 `GitHub page <https://github.com/mspronesti/qlearnkit>`_.
 
-Requirements
-------------
-The following package is required for this to work:
- * Qiskit
- * Scikit-learn
-
-Optionally, it also requires:
- * Pennylane
- * Pytorch
-
-Dependencies
-------------
-The same dependencies needed for Qiskit and Scikit-learn are also needed for this package to
-work.
-
-Usage
------
-More info on how to work with the qlearnkit is explained thoroughly in
-the rest of the documentation.
 
 Table of Contents
 -----------------
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
-   apidoc/qlearnkit
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+   
+   Getting Started <readme>
+   Qlearnkit Module API <apidoc/qlearnkit>
+   Tutorials <tutorials/index>
 
 Indices and tables
 ==================

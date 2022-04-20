@@ -73,7 +73,7 @@ clean-doc:
 	$(MAKE) -C docs clean
 
 apidoc:
-	sphinx-apidoc --force -o  docs/apidoc . setup.py
+	sphinx-apidoc --force -o  docs/apidoc . setup.py */optionals.py */version.py
 	rm docs/apidoc/modules.rst
 
 clean:

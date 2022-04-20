@@ -1,10 +1,11 @@
 # Qlearnkit python library
 
-[![Python Versions](https://img.shields.io/badge/Python-3.7&nbsp;|&nbsp;3.8&nbsp;|&nbsp;3.9-blue.svg?style=flat&logo=python&logoColor=white)]()
+[![Python Versions](https://img.shields.io/badge/Python-3.7 | 3.8 | 3.9-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/github/license/mspronesti/qlearnkit)](https://opensource.org/licenses/Apache-2.0)
-[![Build](https://github.com/mspronesti/qlearnkit/actions/workflows/build-and-test.yml/badge.svg)]()
-[![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit)
+[![Build](https://github.com/mspronesti/qlearnkit/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/mspronesti/qlearnkit/blob/master/.github/workflows/build-and-test.yml)
+[![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit/)
 [![PypI Versions](https://img.shields.io/pypi/v/qlearnkit)](https://pypi.org/project/qlearnkit/#history)
+
 
 Qlearnkit is a simple python library implementing some fundamental Machine Learning models and algorithms for a gated quantum computer, built on top of [Qiskit](https://github.com/Qiskit/qiskit)
 and, optionally, [Pennylane](https://pennylane.ai/).
@@ -26,7 +27,7 @@ pip install qlearnkit['pennylane']
 ```
 
 ### Docker Image
-You can also use qlearnkit via Docker building the image from the provided `Dockerfile` 
+You can also use qlearnkit via Docker building the image from the provided `Dockerfile`
 
 ```bash
 docker build -t qlearnkit -f docker/Dockerfile .
@@ -83,14 +84,20 @@ print(f"Testing accuracy: "
 ```
 
 ## Documentation
+The documentation is available [here](https://mspronesti.github.io/qlearnkit).
 
-The documentation is currently not deployed anywhere. To browse it, please run
+Alternatively, you can build and browse it locally as follows:
 
 ```bash
+sudo apt install pandoc
 make doc
 ```
 
-then simply open `docs/_build/index.html` with your favourite browser.
+then simply open `docs/_build/index.html` with your favourite browser, e.g.
+
+```bash
+brave docs/_build/index.html
+```
 
 ## Development notes
 
@@ -127,5 +134,5 @@ pre-commit install
 to set up the git hook scripts. Now `pre-commit` will run automatically on `git commit`!
 
 ## Acknowledgments
-The Quantum LSTM model is adapted from [this](https://towardsdatascience.com/a-quantum-enhanced-lstm-layer-38a8c135dbfa) article from Riccardio Di Sipio, but the Quantum part
-has been changed entirely according to the architecture described in [this](https://arxiv.org/pdf/2009.01783.pdf) paper.
+The Quantum LSTM model is adapted from this [article](https://towardsdatascience.com/a-quantum-enhanced-lstm-layer-38a8c135dbfa) from Riccardio Di Sipio, but the Quantum part
+has been changed entirely according to the architecture described in this [paper](https://arxiv.org/pdf/2009.01783.pdf).
