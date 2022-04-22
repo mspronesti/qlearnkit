@@ -1,6 +1,6 @@
 # Qlearnkit python library
 
-[![Python Versions](https://img.shields.io/badge/Python-3.7 | 3.8 | 3.9-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Python Versions](https://img.shields.io/badge/Python-3.7&nbsp;|&nbsp;3.8&nbsp;|&nbsp;3.9-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/github/license/mspronesti/qlearnkit)](https://opensource.org/licenses/Apache-2.0)
 [![Build](https://github.com/mspronesti/qlearnkit/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/mspronesti/qlearnkit/blob/master/.github/workflows/build-and-test.yml)
 [![Upload Python Package](https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/qlearnkit/)
@@ -88,8 +88,15 @@ The documentation is available [here](https://mspronesti.github.io/qlearnkit).
 
 Alternatively, you can build and browse it locally as follows:
 
+first make sure to have `pandoc` installed
+
 ```bash
 sudo apt install pandoc
+```
+
+then run
+
+```bash
 make doc
 ```
 
