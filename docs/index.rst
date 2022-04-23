@@ -22,7 +22,7 @@ Table of Contents
    :maxdepth: 1
    :caption: Contents:
    
-   Getting Started <readme>
+   Getting Started <getting_started>
    Qlearnkit Module API <apidoc/qlearnkit>
    Tutorials <tutorials/index>
 

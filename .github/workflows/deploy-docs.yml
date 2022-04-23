@@ -5,13 +5,16 @@ on:
     
 jobs:
   docs:
+    
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Install dependencies
         run: |
           sudo apt install pandoc
+          pip install torch pennylane
           pip install -r requirements-dev.txt
       - name: Sphinx build
         run: |

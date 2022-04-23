@@ -18,7 +18,7 @@ sphinxcontrib-serializinghtml==1.1.5
 sphinx-autodoc-typehints==1.14.0
 sphinx-gallery
 pandoc>=1.1.0
-pydata-sphinx-theme>=0.4.1
+sphinx-rtd-theme
 nbsphinx
 nbsphinx-link
 matplotlib>=3.3

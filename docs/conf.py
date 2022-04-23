@@ -40,6 +40,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "jupyter_sphinx",
+    "sphinx_rtd_theme",
     "sphinx_gallery.load_style",
 ]
 
@@ -60,7 +61,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = "pydata_sphinx_theme"
+html_theme = "sphinx_rtd_theme"
 
 # The suffix of source filenames.
 source_suffix = ".rst"
@@ -69,7 +70,7 @@ source_suffix = ".rst"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-html_css_files = ["style.css"]
+html_css_files = ["style.css", "theme_override.css"]
 
 nbsphinx_thumbnails = {
     "tutorials/qlstm_tagger": "_static/thumbnail/qlstm.png",
