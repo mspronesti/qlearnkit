@@ -1,0 +1,30 @@
+/* border in tutorial boxes */
+.sphx-glr-thumbcontainer {
+    border-color: #E8E3E3 !important;
+}
+
+
+/* Blue background of width of the block (instead of width of content) */
+dl.class > dt:first-of-type {
+    display: block !important;
+}
+
+.xref.py.py-class,
+.xref.py.py-data,
+.xref.py.py-obj
+{
+    background-color: #f0f0f0;
+}
+
+/* ReadTheDocs top left panel color */
+
+.wy-nav-top { background-color: #f07e44 }
+
+/* extend page width*/
+.wy-nav-content {
+    max-width: 1200px;
+}
+
+/* left search nav*/
+.wy-side-nav-search { background-color: transparent }
+.wy-side-nav-search input[type="text"] { border-width: 0 }

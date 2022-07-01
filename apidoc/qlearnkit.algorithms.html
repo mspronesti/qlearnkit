@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qlearnkit.algorithms package &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qlearnkit.algorithms.qkmeans package" href="qlearnkit.algorithms.qkmeans.html" />
+    <link rel="prev" title="qlearnkit package" href="qlearnkit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qlearnkit.html">Qlearnkit Module API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="qlearnkit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">qlearnkit.algorithms package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qlearnkit.algorithms.kernel_method_mixin">qlearnkit.algorithms.kernel_method_mixin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qlearnkit.algorithms.quantum_estimator">qlearnkit.algorithms.quantum_estimator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qlearnkit.algorithms">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.circuits.html">qlearnkit.circuits package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.datasets.html">qlearnkit.datasets package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.encodings.html">qlearnkit.encodings package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.nn.html">qlearnkit.nn package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.html#module-qlearnkit">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="qlearnkit.html">qlearnkit package</a> &raquo;</li>
+      <li>qlearnkit.algorithms package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apidoc/qlearnkit.algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="qlearnkit-algorithms-package">
+<h1>qlearnkit.algorithms package<a class="headerlink" href="#qlearnkit-algorithms-package" title="Permalink to this headline"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html">qlearnkit.algorithms.qkmeans package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.centroid_initialization">qlearnkit.algorithms.qkmeans.centroid_initialization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.qkmeans">qlearnkit.algorithms.qkmeans.qkmeans module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.qkmeans_circuit">qlearnkit.algorithms.qkmeans.qkmeans_circuit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qknn.html">qlearnkit.algorithms.qknn package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_base">qlearnkit.algorithms.qknn.qknn_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_classifier">qlearnkit.algorithms.qknn.qknn_classifier module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_regressor">qlearnkit.algorithms.qknn.qknn_regressor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qridge.html">qlearnkit.algorithms.qridge package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qridge.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qridge.html#module-qlearnkit.algorithms.qridge.qridge">qlearnkit.algorithms.qridge.qridge module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qridge.html#module-qlearnkit.algorithms.qridge">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html">qlearnkit.algorithms.qsvm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html#module-qlearnkit.algorithms.qsvm.qsvc">qlearnkit.algorithms.qsvm.qsvc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html#module-qlearnkit.algorithms.qsvm">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-qlearnkit.algorithms.kernel_method_mixin">
+<span id="qlearnkit-algorithms-kernel-method-mixin-module"></span><h2>qlearnkit.algorithms.kernel_method_mixin module<a class="headerlink" href="#module-qlearnkit.algorithms.kernel_method_mixin" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">KernelMethodMixin</span></span><a class="reference internal" href="../_modules/qlearnkit/algorithms/kernel_method_mixin.html#KernelMethodMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin class for kernel methods such as SVM and Ridge.
+Exploits quantum parallelization to efficiently compute
+kernel matrices for train and test data.</p>
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms.quantum_estimator">
+<span id="qlearnkit-algorithms-quantum-estimator-module"></span><h2>qlearnkit.algorithms.quantum_estimator module<a class="headerlink" href="#module-qlearnkit.algorithms.quantum_estimator" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QuantumEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.encoding_map">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encoding_map</span></span><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.encoding_map" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the Encoding Map</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qcircuits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.execute" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the given quantum circuit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qcircuits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>]]) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code> or a list of</p></li>
+<li><p><strong>executed</strong> (<em>this type to be</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the execution results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – training dataset</p></li>
+<li><p><strong>y_train</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – training labels</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predicts the labels associated to the
+unclassified data X_test</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – the unclassified data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the labels associated to X_test</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.quantum_instance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantum_instance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span></em><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.quantum_instance" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the quantum instance to evaluate the circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumInstance</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.score">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.score" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a score of this model given samples and true values for the samples.
+In case of classification, this value should correspond to mean accuracy,
+in case of regression, the coefficient of determination <span class="math notranslate nohighlight">\(R^2\)</span> of the prediction.
+In case of clustering, the <cite>y</cite> parameter is typically ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array-like of shape (n_samples, n_features)</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array-like of labels of shape (n_samples,)</p></li>
+<li><p><strong>sample_weight</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – array-like of shape (n_samples,), default=None
+The weights for each observation in X. If None, all observations
+are assigned equal weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a float score of the model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qlearnkit.algorithms" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.KernelMethodMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">KernelMethodMixin</span></span><a class="reference internal" href="../_modules/qlearnkit/algorithms/kernel_method_mixin.html#KernelMethodMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.KernelMethodMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin class for kernel methods such as SVM and Ridge.
+Exploits quantum parallelization to efficiently compute
+kernel matrices for train and test data.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKMeans">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QKMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kmeans++'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qkmeans/qkmeans.html#QKMeans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKMeans" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.ClusterMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="qlearnkit.algorithms.quantum_estimator.QuantumEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.quantum_estimator.QuantumEstimator</span></code></a></p>
+<p>The Quantum K-Means algorithm for classification</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KMeans from
+sklearn.cluster</p>
+</div>
+<p class="rubric">Example</p>
+<p>Classify data using the Iris dataset.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QKMeans</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">num_features</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_features</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">y_</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">qkmeans</span> <span class="o">=</span> <span class="n">QKMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                  <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qkmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">qkmeans</span><span class="o">.</span><span class="n">labels_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qkmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
+
+<span class="c1"># Plot the results</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_train</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">qkmeans</span><span class="o">.</span><span class="n">labels_</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">qkmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">qkmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Predict new points</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">qkmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>[0 0 2 1 0 2 2 0 1 0 1 1 2 2 0 2 0 0 1 2 1 1 2 0 2 2 0 1 0 1 1 1 2 1 1 0 1
+ 0 2 0 0 0 0 2 2 0 2 0 0 0 0 1 0 2 1 1 0 2 0 1 0 0 2 1 1 0 2 1 2 0 0 0 0 0
+ 2 0 0 2 0 0]
+[[5.96216216 2.77027027]
+ [4.74761905 3.02857143]
+ [5.34090909 3.63181818]]
+</pre></div>
+</div>
+<img alt="../_images/qlearnkit.algorithms_0_1.png" src="../_images/qlearnkit.algorithms_0_1.png" />
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>[0 0 0 1 2 2 2 0 2 2 2 1 0 2 0 2 0 0 1 2]
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKMeans.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qkmeans/qkmeans.html#QKMeans.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKMeans.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels. For the qkmeans algorithm y is ignored.
+The fit model creates clusters from the training dataset given as input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – training dataset</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Ignored.
+Kept here for API consistency</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>trained QKMeans object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKMeans.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qkmeans/qkmeans.html#QKMeans.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKMeans.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – New data to predict.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Index of the cluster each sample belongs to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKMeans.score">
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qkmeans/qkmeans.html#QKMeans.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKMeans.score" title="Permalink to this definition"></a></dt>
+<dd><p>Returns Mean Silhouette Coefficient for all samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array of features</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Ignored.
+Not used, present here for API consistency by convention.</p></li>
+<li><p><strong>sample_weight</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Ignored.
+Not used, present here for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Mean Silhouette Coefficient for all samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKNeighborsClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QKNeighborsClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKNeighborsClassifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.ClassifierMixin</span></code>, <a class="reference internal" href="qlearnkit.algorithms.qknn.html#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for classification</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsClassifier from
+sklearn.neighbors</p>
+</div>
+<p class="rubric">Example</p>
+<p>Classify data using the Iris dataset.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QKNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.encodings</span> <span class="kn">import</span> <span class="n">AmplitudeEncoding</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">AmplitudeEncoding</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">y_</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">qknn</span> <span class="o">=</span> <span class="n">QKNeighborsClassifier</span><span class="p">(</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span><span class="p">,</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qknn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qknn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Testing accuracy: 1.00
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKNeighborsClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qknn/qknn_classifier.html#QKNeighborsClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKNeighborsClassifier.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKNeighborsRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QKNeighborsRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKNeighborsRegressor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code>, <a class="reference internal" href="qlearnkit.algorithms.qknn.html#qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase" title="qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.qknn.qknn_base.QNeighborsBase</span></code></a></p>
+<p>The Quantum K-Nearest Neighbors algorithm for regression</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The naming conventions follow the KNeighborsRegressor from
+sklearn.neighbors</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QKNeighborsRegressor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qknn/qknn_regressor.html#QKNeighborsRegressor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QKNeighborsRegressor.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the labels of the provided data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QRidgeRegressor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QRidgeRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qridge/qridge.html#QRidgeRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QRidgeRegressor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin" title="qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="qlearnkit.algorithms.quantum_estimator.QuantumEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.quantum_estimator.QuantumEstimator</span></code></a></p>
+<p>The Quantum Kernel Ridge algorithm for regression.
+Maps datapoints to quantum states using a FeatureMap or similar
+QuantumCircuit.</p>
+<p class="rubric">Example</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QRidgeRegressor</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_regression</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">PauliFeatureMap</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;statevector_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">mms</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+<span class="c1"># Use iris data set for training and test data</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                       <span class="n">n_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                       <span class="n">noise</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                       <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">mms</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">PauliFeatureMap</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">qridge</span> <span class="o">=</span> <span class="n">QRidgeRegressor</span><span class="p">(</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span>
+<span class="p">)</span>
+
+<span class="c1"># use diabetes dataset</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qridge</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qridge</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Testing accuracy: 0.87
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QRidgeRegressor.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qridge/qridge.html#QRidgeRegressor.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QRidgeRegressor.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training values. The actual computation
+is done at the predict stage to allow running
+the qiskit backend only once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – training dataset</p></li>
+<li><p><strong>y</strong> – training labels</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QRidgeRegressor.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qridge/qridge.html#QRidgeRegressor.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QRidgeRegressor.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Solves a Least Squares problem to predict value of input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – the test data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>numpy ndarray of predicted labels</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QSVClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QSVClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scale'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qsvm/qsvc.html#QSVClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QSVClassifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin" title="qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.ClassifierMixin</span></code>, <a class="reference internal" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="qlearnkit.algorithms.quantum_estimator.QuantumEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.algorithms.quantum_estimator.QuantumEstimator</span></code></a></p>
+<p>The Quantum Support Vector Machine algorithm for classification.
+Maps datapoints to quantum states using a FeatureMap or similar
+QuantumCircuit.</p>
+<p class="rubric">Example</p>
+<p>Classify data using the Iris dataset.</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QSVClassifier</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">ZZFeatureMap</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;statevector_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">num_features</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_features</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">y_</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y_</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">ZZFeatureMap</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">qsvc</span> <span class="o">=</span> <span class="n">QSVClassifier</span><span class="p">(</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span>
+<span class="p">)</span>
+
+<span class="c1"># use iris dataset</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">qsvc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qsvc</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Testing accuracy: 0.95
+</pre></div>
+</div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QSVClassifier.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qsvm/qsvc.html#QSVClassifier.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QSVClassifier.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels. The actual computation
+is done at the “predict” stage to allow running
+the qiskit backend only once</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – training dataset</p></li>
+<li><p><strong>y</strong> – training labels</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QSVClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/qsvm/qsvc.html#QSVClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QSVClassifier.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Solves a Least Squares problem to predict value of input data.
+Internally distinguishes between binary and multiclass case.
+For the binary case solves an optimization problem to find a
+dividing hyperplane.
+For the multiclass case uses a one-to-rest approach and thus
+needs to run the algorithm n_classes different times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – the test data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>numpy ndarray of predicted labels</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QuantumEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.encoding_map">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encoding_map</span></span><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.encoding_map" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the Encoding Map</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qcircuits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.execute" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the given quantum circuit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qcircuits</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>]]) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code> or a list of</p></li>
+<li><p><strong>executed</strong> (<em>this type to be</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the execution results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – training dataset</p></li>
+<li><p><strong>y_train</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – training labels</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predicts the labels associated to the
+unclassified data X_test</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – the unclassified data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the labels associated to X_test</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.quantum_instance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantum_instance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span></em><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.quantum_instance" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the quantum instance to evaluate the circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumInstance</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.QuantumEstimator.score">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.QuantumEstimator.score" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a score of this model given samples and true values for the samples.
+In case of classification, this value should correspond to mean accuracy,
+in case of regression, the coefficient of determination <span class="math notranslate nohighlight">\(R^2\)</span> of the prediction.
+In case of clustering, the <cite>y</cite> parameter is typically ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array-like of shape (n_samples, n_features)</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – array-like of labels of shape (n_samples,)</p></li>
+<li><p><strong>sample_weight</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – array-like of shape (n_samples,), default=None
+The weights for each observation in X. If None, all observations
+are assigned equal weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a float score of the model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qlearnkit.html" class="btn btn-neutral float-left" title="qlearnkit package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qlearnkit.algorithms.qkmeans.html" class="btn btn-neutral float-right" title="qlearnkit.algorithms.qkmeans package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
