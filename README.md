@@ -17,7 +17,7 @@ We recommend installing `qlearnkit` with pip
 pip install qlearnkit
 ```
 **Note:** pip will install the latest stable qlearnkit.
-However, the main branch of qlearnkit is in active development. If you want to test the latest scripts or functions please refer to [development notes](#development-notes).
+However, the main branch of qlearnkit is in (not so active) development. If you want to test the latest scripts or functions please refer to [development notes](#development-notes).
 
 ### Optional Install
 Via pip, you can install `qlearnkit` with the optional extension

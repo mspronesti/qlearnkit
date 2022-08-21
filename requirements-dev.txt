@@ -25,3 +25,8 @@ matplotlib>=3.3
 flake8==4.0.1
 jupyter
 pre-commit
+# this are optional requirements for the user.
+# However, for the developement of the nn package,
+# they are needed, here's why they are included here.
+pennylane
+torch

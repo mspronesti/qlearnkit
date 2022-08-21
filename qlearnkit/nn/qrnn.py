@@ -14,6 +14,8 @@ if _optionals.HAS_PENNYLANE:
     import torch.nn as nn
     from torch.nn import Module
     from torch import Tensor
+
+    from .qml_mixin import QmlMixin
 else:
     from unittest.mock import Mock
 
@@ -24,7 +26,7 @@ else:
 
 
 @_optionals.HAS_PENNYLANE.require_in_instance
-class QLongShortTermMemory(Module):
+class QLongShortTermMemory(QmlMixin, Module):
     r"""
     Hybrid Quantum Long Short Term Memory, miming pytorch's API and exploiting
     :class:`~pennylane.qnn.TorchLayer`.
@@ -87,9 +89,9 @@ class QLongShortTermMemory(Module):
         super(QLongShortTermMemory, self).__init__()
 
         self.input_size = input_size
-        self.num_qubits = n_qubits
+        self.n_qubits = n_qubits
         self.hidden_size = hidden_size
-        self.num_layers = n_layers
+        self.n_layers = n_layers
         self.batch_first = batch_first
 
         self._set_qml_backend(backend)
@@ -106,7 +108,7 @@ class QLongShortTermMemory(Module):
         Constructs the variational quantum circuit
         as described in https://arxiv.org/pdf/2009.01783.pdf
         """
-        wires = list(range(self.num_qubits))
+        wires = list(range(self.n_qubits))
         # Encoding layer:
         # first apply Hadamard
         for w in wires:
@@ -119,7 +121,7 @@ class QLongShortTermMemory(Module):
         # Variational layer(s):
         # encoding layer of CNOTs followed by a qubit
         # rotation determined by the learned weights via GD
-        for l in range(self.num_layers):
+        for l in range(self.n_layers):
             # entangling layer of CNOTs
             if len(wires) == 2:
                 # if only 2 qubits, then
@@ -128,7 +130,7 @@ class QLongShortTermMemory(Module):
 
             elif len(wires) > 2:
                 for w in wires:
-                    qml.CNOT(wires=[w, w + 1 if w + 1 < self.num_qubits else 0])
+                    qml.CNOT(wires=[w, w + 1 if w + 1 < self.n_qubits else 0])
 
             # "weights" have shape (num_layers, num_qubits, 3)
             AngleEmbedding(weights[l, ..., 0], rotation='X', wires=wires)
@@ -147,32 +149,9 @@ class QLongShortTermMemory(Module):
             layer = qml.QNode(self._construct_vqc,
                               self.backend,
                               interface='torch')
-            weight_shapes = {"weights": (self.num_layers, self.num_qubits, 3)}
+            weight_shapes = {"weights": (self.n_layers, self.n_qubits, 3)}
 
             self.q_layers[layer_name] = TorchConnector(layer, weight_shapes)
-
-    def _set_qml_backend(self,
-                         backend: Union[str, qml.Device]):
-        """
-        Internal method to set a pennylane device according to its type
-
-        Args:
-            The backend to set. Can be a
-            :class:`~pennylane.Device` or a string
-            (valid name of the backend)
-
-        """
-        if isinstance(backend, qml.Device):
-            n_wires = len(backend.wires)
-            if n_wires != self.num_qubits:
-                raise ValueError(
-                    f"Invalid number of wires for backend {backend.name}. "
-                    f"Expected {self.num_qubits}, got {n_wires}"
-                )
-            self.backend = backend
-        else:
-            # shots left as default (1000)
-            self.backend = qml.device(backend, wires=self.num_qubits)
 
     def forward(self,
                 input: Tensor,
@@ -237,4 +216,4 @@ class QLongShortTermMemory(Module):
 
     def __str__(self):
         return f"QLongShortTermMemory({self.input_size}, " \
-               f"{self.hidden_size}, {self.q_layers}, {self.num_qubits})"
+               f"{self.hidden_size}, {self.q_layers}, {self.n_qubits})"
