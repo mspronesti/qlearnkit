@@ -24,7 +24,7 @@ else:
 
 
 @_optionals.HAS_PENNYLANE.require_in_instance
-class QuantumAutoEncoder(QmlMixin, Module):
+class QuantumAutoEncoder(Module, QmlMixin):
     """
     Hybrid Quantum AutoEncoder, miming pytorch's API and exploiting
     :class:`~pennylane.qnn.TorchLayer`.
@@ -47,8 +47,8 @@ class QuantumAutoEncoder(QmlMixin, Module):
             int, the number of qubits that can be discarded
             during the encoding.
 
-        backend:
-            Can be a string representing the backend name
+        device:
+            Can be a string representing the device name
             or a valid :class:`~pennylane.Device` having
             ``n_qubits`` wires
     """
@@ -57,7 +57,7 @@ class QuantumAutoEncoder(QmlMixin, Module):
                  n_qubits: int = 4,
                  n_aux_qubits: int = 1,
                  n_latent_qubits: int = 1,
-                 backend: Optional[Union[str, qml.Device]] = 'default.qubit'
+                 device: Optional[Union[str, qml.Device]] = 'default.qubit'
                  ) -> None:
         super(QuantumAutoEncoder, self).__init__()
         self.n_qubits = n_qubits + n_latent_qubits + n_aux_qubits
@@ -65,7 +65,7 @@ class QuantumAutoEncoder(QmlMixin, Module):
         self.n_aux_qubits = n_aux_qubits
         self.n_latent_qubits = n_latent_qubits
 
-        self._set_qml_backend(backend)
+        self._set_qml_device(device)
 
         # define model parameters
         weight_shapes = {
@@ -76,7 +76,7 @@ class QuantumAutoEncoder(QmlMixin, Module):
 
         # create a quantum node layer interfaced via torch
         q_layer = qml.QNode(self._circuit,
-                            self.backend,
+                            self.device,
                             interface='torch')
         self.q_layer = TorchConnector(q_layer, weight_shapes)
 

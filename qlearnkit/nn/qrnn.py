@@ -26,7 +26,7 @@ else:
 
 
 @_optionals.HAS_PENNYLANE.require_in_instance
-class QLongShortTermMemory(QmlMixin, Module):
+class QLongShortTermMemory(Module, QmlMixin):
     r"""
     Hybrid Quantum Long Short Term Memory, miming pytorch's API and exploiting
     :class:`~pennylane.qnn.TorchLayer`.
@@ -71,8 +71,8 @@ class QLongShortTermMemory(QmlMixin, Module):
         batch_first:
             if ``True``, then the input and output tensors are provided
             as (batch, seq, feature) instead of (seq, batch, length)
-        backend:
-            Can be a string representing the backend name
+        device:
+            Can be a string representing the device name
             or a valid :class:`~pennylane.Device` having
             ``n_qubits`` wires
 
@@ -84,7 +84,7 @@ class QLongShortTermMemory(QmlMixin, Module):
                  n_layers: Optional[int] = 1,
                  n_qubits: Optional[int] = 4,
                  batch_first: Optional[bool] = True,
-                 backend: Optional[Union[str, qml.Device]] = 'default.qubit',
+                 device: Optional[Union[str, qml.Device]] = 'default.qubit',
                  ):
         super(QLongShortTermMemory, self).__init__()
 
@@ -94,7 +94,7 @@ class QLongShortTermMemory(QmlMixin, Module):
         self.n_layers = n_layers
         self.batch_first = batch_first
 
-        self._set_qml_backend(backend)
+        self._set_qml_device(device)
         # classical layers
         self.clayer_in = nn.Linear(input_size + hidden_size, n_qubits)
         self.clayer_out = nn.Linear(n_qubits, hidden_size)
@@ -147,7 +147,7 @@ class QLongShortTermMemory(QmlMixin, Module):
     def _construct_quantum_layers(self):
         for layer_name in ['forget', 'input', 'update', 'output']:
             layer = qml.QNode(self._construct_vqc,
-                              self.backend,
+                              self.device,
                               interface='torch')
             weight_shapes = {"weights": (self.n_layers, self.n_qubits, 3)}
 
