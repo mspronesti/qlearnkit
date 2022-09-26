@@ -5,7 +5,7 @@ import pennylane as qml
 class QmlMixin:
     """Mixin for models built on top of Pennylane (QML)"""
 
-    _backend: Union[str, qml.Device]
+    _device: Union[str, qml.Device]
     _n_qubits: int
 
     def _set_qml_device(self,
@@ -26,18 +26,18 @@ class QmlMixin:
                     f"Invalid number of wires for backend {device.name}. "
                     f"Expected {self._n_qubits}, got {n_wires}"
                 )
-            self._backend = device
+            self._device = device
         else:
             # shots left as default (1000)
-            self._backend = qml.device(device, wires=self._n_qubits)
+            self._device = qml.device(device, wires=self._n_qubits)
 
     @property
     def device(self) -> qml.Device:
-        return self._backend
+        return self._device
 
     @device.setter
     def device(self, backend: Union[str, qml.Device]):
-        self._backend = backend
+        self._device = backend
 
     @property
     def n_qubits(self) -> int:
