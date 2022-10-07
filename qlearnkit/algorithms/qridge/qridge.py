@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.exceptions import NotFittedError
 from qiskit.utils import QuantumInstance
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.circuit.library import NLocal, ZZFeatureMap
 from ..quantum_estimator import QuantumEstimator
 from ..kernel_method_mixin import KernelMethodMixin
@@ -68,7 +68,7 @@ class QRidgeRegressor(KernelMethodMixin, RegressorMixin, QuantumEstimator):
 
     def __init__(self,
                  encoding_map: Optional[NLocal] = None,
-                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+                 quantum_instance: Optional[Union[QuantumInstance, Backend]] = None,
                  gamma: float = 1.0):
         """
         Creates a Quantum Ridge Regressor

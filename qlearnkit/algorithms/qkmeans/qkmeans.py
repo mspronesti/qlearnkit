@@ -7,7 +7,7 @@ from typing import List, Dict, Union, Optional
 
 from qiskit import QuantumCircuit
 from qiskit.result import Result
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.tools import parallel_map
 from qiskit.utils import QuantumInstance
 
@@ -86,7 +86,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
     def __init__(
         self,
         n_clusters: int = 6,
-        quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+        quantum_instance: Optional[Union[QuantumInstance, Backend]] = None,
         *,
         init: Union[str, np.ndarray] = "kmeans++",
         n_init: int = 1,

@@ -4,7 +4,7 @@ from typing import Union, Optional, List
 import numpy as np
 from abc import abstractmethod
 from qiskit import QuantumCircuit
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.result import Result
 from sklearn.base import TransformerMixin
 from qiskit.utils import QuantumInstance
@@ -17,7 +17,7 @@ class QuantumEstimator(TransformerMixin):
     def __init__(
         self,
         encoding_map=None,
-        quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+        quantum_instance: Optional[Union[QuantumInstance, Backend]] = None,
     ):
         """
         Args:
@@ -71,13 +71,13 @@ class QuantumEstimator(TransformerMixin):
 
     @quantum_instance.setter
     def quantum_instance(
-        self, quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]
+        self, quantum_instance: Optional[Union[QuantumInstance, Backend]]
     ):
         """Quantum Instance setter"""
         self._set_quantum_instance(quantum_instance)
 
     def _set_quantum_instance(
-        self, quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]]
+        self, quantum_instance: Optional[Union[QuantumInstance, Backend]]
     ):
         """
         Internal method to set a quantum instance according to its type
@@ -88,7 +88,7 @@ class QuantumEstimator(TransformerMixin):
             or a :class:`~qiskit.providers.BaseBackend`
 
         """
-        if isinstance(quantum_instance, (BaseBackend, Backend)):
+        if isinstance(quantum_instance, Backend):
             quantum_instance = QuantumInstance(quantum_instance)
 
         self._quantum_instance = quantum_instance
