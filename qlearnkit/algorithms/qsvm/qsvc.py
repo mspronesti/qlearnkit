@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.base import ClassifierMixin
 from sklearn.exceptions import NotFittedError
 from qiskit.utils import QuantumInstance
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.circuit.library import NLocal, ZZFeatureMap
 from ..quantum_estimator import QuantumEstimator
 from ..kernel_method_mixin import KernelMethodMixin
@@ -66,7 +66,7 @@ class QSVClassifier(KernelMethodMixin, ClassifierMixin, QuantumEstimator):
 
     def __init__(self,
                  encoding_map: Optional[NLocal] = None,
-                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None,
+                 quantum_instance: Optional[Union[QuantumInstance, Backend]] = None,
                  gamma: Union[float, str] = 'scale'):
         """
         Creates a Quantum Support Vector Classifier

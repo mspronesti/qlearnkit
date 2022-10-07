@@ -6,7 +6,7 @@ import numpy as np
 import logging
 
 from qiskit import QuantumCircuit
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.result import Result
 from qiskit.tools import parallel_map
 from qiskit.utils import QuantumInstance
@@ -22,7 +22,7 @@ class QNeighborsBase(QuantumEstimator, ABC):
     def __init__(self,
                  n_neighbors: int = 3,
                  encoding_map: Optional[EncodingMap] = None,
-                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None):
+                 quantum_instance: Optional[Union[QuantumInstance, Backend]] = None):
         """
         Base class for Nearest Neighbors algorithms
 

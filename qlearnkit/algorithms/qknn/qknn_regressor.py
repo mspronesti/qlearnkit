@@ -3,7 +3,7 @@ from sklearn.exceptions import NotFittedError
 import logging
 import numpy as np
 
-from qiskit.providers import BaseBackend, Backend
+from qiskit.providers import Backend
 from qiskit.utils import QuantumInstance
 
 from typing import Optional, Union
@@ -26,7 +26,7 @@ class QKNeighborsRegressor(RegressorMixin, QNeighborsBase):
     def __init__(self,
                  n_neighbors: int = 3,
                  encoding_map: Optional[EncodingMap] = None,
-                 quantum_instance: Optional[Union[QuantumInstance, BaseBackend, Backend]] = None):
+                 quantum_instance: Optional[Union[QuantumInstance, Backend]] = None):
         """
         Creates a QKNeighborsClassifier Object
 
