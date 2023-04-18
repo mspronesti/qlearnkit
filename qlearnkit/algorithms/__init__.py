@@ -3,7 +3,6 @@ from .kernel_method_mixin import KernelMethodMixin
 from .qknn import QKNeighborsClassifier, QKNeighborsRegressor
 from .qsvm import QSVClassifier
 from .qkmeans import QKMeans
-from .qridge import QRidgeRegressor
 
 __all__ = [
     "QuantumEstimator",
@@ -12,5 +11,4 @@ __all__ = [
     "QKNeighborsRegressor",
     "QSVClassifier",
     "QKMeans",
-    "QRidgeRegressor"
 ]
