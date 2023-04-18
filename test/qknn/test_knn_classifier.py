@@ -4,7 +4,7 @@ import pytest
 from qlearnkit.algorithms import QKNeighborsClassifier
 from qlearnkit.encodings import AmplitudeEncoding
 
-from qiskit import Aer
+from qiskit_aer import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
 
 seed = 42

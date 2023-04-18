@@ -9,7 +9,6 @@ Subpackages
 
    qlearnkit.algorithms.qkmeans
    qlearnkit.algorithms.qknn
-   qlearnkit.algorithms.qridge
    qlearnkit.algorithms.qsvm
 
 Submodules

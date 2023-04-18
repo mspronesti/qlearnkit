@@ -119,9 +119,9 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
         n_queries = self.X_train.shape[0]
         if n_queries == 1:
             # case of 1D array
-            labels, _ = stats.mode(k_nearest)
+            labels, _ = stats.mode(k_nearest, keepdims=True)
         else:
-            labels, _ = stats.mode(k_nearest, axis=1)
+            labels, _ = stats.mode(k_nearest, keepdims=True, axis=1)
 
         # eventually flatten the np.ndarray
         # returned by stats.mode

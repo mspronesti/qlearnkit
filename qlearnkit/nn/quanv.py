@@ -36,7 +36,7 @@ class Quanv2DLayer(Module, QmlMixin):
     **References:**
 
     [1] Henderson et al.,
-        `Quantum Long Short-Term Memory <https://arxiv.org/pdf/1904.04767.pdf>`_
+        `Quanvolutional Neural Networks: Powering Image Recognition with Quantum Circuits <https://arxiv.org/pdf/1904.04767.pdf>`_
 
     Args:
         n_qubits:
