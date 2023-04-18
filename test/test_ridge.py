@@ -1,9 +1,8 @@
 import numpy as np
-import pytest
 from sklearn.datasets import make_regression
 from sklearn.preprocessing import MinMaxScaler
 from qlearnkit.algorithms import QRidgeRegressor
-from qiskit import Aer
+from qiskit_aer import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.circuit.library import PauliFeatureMap, ZZFeatureMap
 
@@ -19,7 +18,7 @@ sv_quantum_instance = QuantumInstance(
 
 qasm_quantum_instance = QuantumInstance(
     Aer.get_backend("aer_simulator"),
-    shots=100,
+    shots=8192,
     seed_simulator=algorithm_globals.random_seed,
     seed_transpiler=algorithm_globals.random_seed,
     optimization_level=1

@@ -5,7 +5,7 @@ from qiskit.circuit.library import ZZFeatureMap
 
 from qlearnkit.algorithms import QSVClassifier
 
-from qiskit import Aer
+from qiskit_aer import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
 
 seed = 42
