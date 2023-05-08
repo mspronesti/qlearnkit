@@ -14,8 +14,7 @@ class QmlMixin:
         Internal method to set a pennylane device according to its type
 
         Args:
-            The backend to set. Can be a
-            :class:`~pennylane.Device` or a string
+            The backend to set. Can be a :class:`~pennylane.Device` or a string
             (valid name of the backend)
 
         """

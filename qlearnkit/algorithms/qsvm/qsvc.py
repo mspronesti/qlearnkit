@@ -78,8 +78,7 @@ class QSVClassifier(KernelMethodMixin, ClassifierMixin, QuantumEstimator):
 
             quantum_instance:
                 the quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
 
             gamma:
                 regularization parameter (float or string, default 1.0)

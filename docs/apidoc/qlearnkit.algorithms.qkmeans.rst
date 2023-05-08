@@ -1,18 +1,7 @@
-qlearnkit.algorithms.qkmeans package
+Quantum K-Means
 ====================================
 
-Submodules
-----------
-
-qlearnkit.algorithms.qkmeans.centroid\_initialization module
-------------------------------------------------------------
-
-.. automodule:: qlearnkit.algorithms.qkmeans.centroid_initialization
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-qlearnkit.algorithms.qkmeans.qkmeans module
+QKMeans Algorithm
 -------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.qkmeans.qkmeans
@@ -20,7 +9,7 @@ qlearnkit.algorithms.qkmeans.qkmeans module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.algorithms.qkmeans.qkmeans\_circuit module
+QKMeans Circuit
 ----------------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.qkmeans.qkmeans_circuit
@@ -28,10 +17,10 @@ qlearnkit.algorithms.qkmeans.qkmeans\_circuit module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Initializations
+------------------------------------------------------------
 
-.. automodule:: qlearnkit.algorithms.qkmeans
+.. automodule:: qlearnkit.algorithms.qkmeans.centroid_initialization
    :members:
    :undoc-members:
    :show-inheritance:

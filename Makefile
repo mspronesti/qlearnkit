@@ -42,7 +42,8 @@ help:
 	@echo "  apidoc             to re-generate sphinx sources. Run ``make doc`` afterwards to build the documentation"
 	@echo "  clean              to delete all temporary, cache, and build files"
 
-.PHONY: all flake install test test-parallel coverage coverage-parallel doc clean-doc apidoc clean
+.PHONY: all flake install test test-parallel coverage coverage-parallel docs clean-doc apidoc clean
+
 all: clean flake test-parallel
 
 flake:
@@ -66,14 +67,14 @@ coverage-parallel:
 	rm .coverage
 	$(PYTHON) -m pytest -n $(CONCURRENCY) --cov=qlearnkit test/
 
-doc:
+docs:
 	sphinx-build -M html docs docs/_build
 
 clean-doc:
 	$(MAKE) -C docs clean
 
 apidoc:
-	sphinx-apidoc --force -o  docs/apidoc . setup.py */optionals.py */version.py
+	sphinx-apidoc -f -o docs/apidoc . setup.py */optionals.py */version.py
 	rm docs/apidoc/modules.rst
 
 clean:

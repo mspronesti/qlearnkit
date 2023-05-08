@@ -1,10 +1,7 @@
-qlearnkit.nn package
+Quantum Neural Networks
 ====================
 
-Submodules
-----------
-
-qlearnkit.nn.qae module
+Quantum Autoencoder
 -----------------------
 
 .. automodule:: qlearnkit.nn.qae
@@ -12,7 +9,7 @@ qlearnkit.nn.qae module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.nn.qml\_mixin module
+QML Mixin
 ------------------------------
 
 .. automodule:: qlearnkit.nn.qml_mixin
@@ -20,7 +17,7 @@ qlearnkit.nn.qml\_mixin module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.nn.qrnn module
+Quantum LSTM
 ------------------------
 
 .. automodule:: qlearnkit.nn.qrnn
@@ -28,7 +25,7 @@ qlearnkit.nn.qrnn module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.nn.quanv module
+Quanvolutional Layer
 -------------------------
 
 .. automodule:: qlearnkit.nn.quanv
@@ -36,10 +33,3 @@ qlearnkit.nn.quanv module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.nn
-   :members:
-   :undoc-members:
-   :show-inheritance:

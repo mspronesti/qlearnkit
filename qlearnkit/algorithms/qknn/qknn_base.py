@@ -37,8 +37,7 @@ class QNeighborsBase(QuantumEstimator, ABC):
 
             quantum_instance:
                 the quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
 
         """
         super().__init__(encoding_map, quantum_instance)
@@ -57,6 +56,7 @@ class QNeighborsBase(QuantumEstimator, ABC):
         """
         Fits the model using X as training dataset
         and y as training labels
+        
         Args:
             X: training dataset
             y: training labels
@@ -78,7 +78,7 @@ class QNeighborsBase(QuantumEstimator, ABC):
 
         .. math::
 
-            \sqrt{\abs{\frac{counts[0] - counts[1]}{n\_shots}}}
+            \sqrt{\left | \frac{counts[0] - counts[1]}{n\_shots} \right | }
 
         Args:
             counts: the counts resulting after the simulation

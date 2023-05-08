@@ -1,18 +1,7 @@
-qlearnkit.circuits package
+Circuits
 ==========================
 
-Submodules
-----------
-
-qlearnkit.circuits.circuit\_utils module
-----------------------------------------
-
-.. automodule:: qlearnkit.circuits.circuit_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-qlearnkit.circuits.swap\_test\_circuit module
+Swap Test Circuit
 ---------------------------------------------
 
 .. automodule:: qlearnkit.circuits.swap_test_circuit
@@ -20,10 +9,3 @@ qlearnkit.circuits.swap\_test\_circuit module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.circuits
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -44,6 +44,15 @@ extensions = [
     "sphinx_gallery.load_style",
 ]
 
+autodoc_member_order = 'bysource'
+
+html_show_sourcelink = False
+napoleon_google_docstring = True
+napoleon_use_param = False
+napoleon_use_ivar = True
+# to document constructors
+autoclass_content = 'both'
+
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -71,6 +80,13 @@ source_suffix = ".rst"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["style.css", "theme_override.css"]
+
+html_context = {
+    "display_github": True, # Integrate GitHub
+    "github_user": "mspronesti", # Username
+    "github_repo": "qlearnkit", # Repo name
+    "github_version": "master/docs/", # Version
+}
 
 nbsphinx_thumbnails = {
     "tutorials/qlstm_tagger": "_static/thumbnail/qlstm.png",
