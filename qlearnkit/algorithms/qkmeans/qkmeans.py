@@ -310,9 +310,8 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         """Predict the labels of the provided data.
 
         Args:
-            X_test:
-                New data to predict.
-
+                X_test: ndarray, test samples
+    
         Returns:
             Index of the cluster each sample belongs to.
         """

@@ -130,7 +130,13 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
 
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
-        """Predict the labels of the provided data."""
+        """
+        Predict the labels of the provided data.
+       
+        Args:
+                X_test: ndarray, test samples
+
+        """
         if self.X_train is None:
             raise NotFittedError(
                 "This QKNeighborsClassifier instance is not fitted yet. "
