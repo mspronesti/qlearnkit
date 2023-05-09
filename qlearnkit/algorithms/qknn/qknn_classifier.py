@@ -87,8 +87,7 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
 
             quantum_instance:
                 the quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
 
         """
         super().__init__(n_neighbors, encoding_map, quantum_instance)
@@ -100,6 +99,7 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
         Performs the classical majority vote procedure of the
         K-Nearest Neighbors classifier with the :math:`k` nearest to
         determine class
+        
         Args:
             y_train: the train labels
             fidelities: the list ``F`` of fidelities used as a measure of
@@ -107,8 +107,9 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
 
         Returns:
             a list of predicted labels for the test data
+        
         Raises:
-              ValueError if :math:`\exists f \in F \ t.c. f \notin [0, 1]`, assuming
+              ValueError: if :math:`\exists f \in F \ t.c. f \notin [0, 1]`, assuming
                 a tolerance of `0.2`
         """
         k_nearest = self._kneighbors(y_train, fidelities)
@@ -129,7 +130,13 @@ class QKNeighborsClassifier(ClassifierMixin, QNeighborsBase):
 
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
-        """Predict the labels of the provided data."""
+        """
+        Predict the labels of the provided data.
+       
+        Args:
+                X_test: ndarray, test samples
+
+        """
         if self.X_train is None:
             raise NotFittedError(
                 "This QKNeighborsClassifier instance is not fitted yet. "

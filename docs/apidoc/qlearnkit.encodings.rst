@@ -1,10 +1,7 @@
-qlearnkit.encodings package
+Encodings
 ===========================
 
-Submodules
-----------
-
-qlearnkit.encodings.amplitude\_encoding module
+Amplitude Encoding
 ----------------------------------------------
 
 .. automodule:: qlearnkit.encodings.amplitude_encoding
@@ -12,7 +9,7 @@ qlearnkit.encodings.amplitude\_encoding module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.encodings.angle\_encoding module
+Angle Encoding
 ------------------------------------------
 
 .. automodule:: qlearnkit.encodings.angle_encoding
@@ -20,7 +17,7 @@ qlearnkit.encodings.angle\_encoding module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.encodings.basis\_encoding module
+Basis Encoding
 ------------------------------------------
 
 .. automodule:: qlearnkit.encodings.basis_encoding
@@ -28,7 +25,7 @@ qlearnkit.encodings.basis\_encoding module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.encodings.encoding\_map module
+Encoding Map
 ----------------------------------------
 
 .. automodule:: qlearnkit.encodings.encoding_map
@@ -36,10 +33,3 @@ qlearnkit.encodings.encoding\_map module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.encodings
-   :members:
-   :undoc-members:
-   :show-inheritance:

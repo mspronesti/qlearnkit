@@ -27,8 +27,7 @@ class QuantumEstimator(TransformerMixin):
                 can either be a custom encoding map or a qiskit FeatureMap
             quantum_instance:
                 The quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
 
         """
         self.X_train = np.asarray([])

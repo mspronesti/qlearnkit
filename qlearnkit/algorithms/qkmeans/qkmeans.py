@@ -101,8 +101,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
                 centroids to generate.
             quantum_instance:
                 the quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
             init:
                 Method of initialization of centroids.
             n_init:
@@ -143,6 +142,7 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         'naive_sharding': Create cluster centroids using deterministic naive sharding algorithm.
         If an array is passed, it should be of shape (n_clusters, n_features)
         and gives the initial centers.
+
         Args:
             X:
                 Training dataset.
@@ -310,9 +310,8 @@ class QKMeans(ClusterMixin, QuantumEstimator):
         """Predict the labels of the provided data.
 
         Args:
-            X_test:
-                New data to predict.
-
+                X_test: ndarray, test samples
+    
         Returns:
             Index of the cluster each sample belongs to.
         """

@@ -34,20 +34,26 @@ class QKNeighborsRegressor(RegressorMixin, QNeighborsBase):
             n_neighbors:
                 number of neighbors participating in the
                 majority vote
+            
             encoding_map:
                 map to classical data to quantum states.
                 This class does not impose any constraint on it.
+            
             quantum_instance:
                 the quantum instance to set. Can be a
-                :class:`~qiskit.utils.QuantumInstance`, a :class:`~qiskit.providers.Backend`
-                or a :class:`~qiskit.providers.BaseBackend`
+                :class:`~qiskit.utils.QuantumInstance` or a :class:`~qiskit.providers.Backend`
 
         """
         super().__init__(n_neighbors, encoding_map, quantum_instance)
 
     def predict(self,
                 X_test: np.ndarray) -> np.ndarray:
-        """Predict the labels of the provided data."""
+        """
+        Predict the labels of the provided data.
+
+        Args:
+                X_test: ndarray, test samples
+        """
         if self.X_train is None:
             raise NotFittedError(
                 "This QKNeighborsRegressor instance is not fitted yet. "

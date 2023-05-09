@@ -1,8 +1,5 @@
-qlearnkit package
+Qlearnkit
 =================
-
-Subpackages
------------
 
 .. toctree::
    :maxdepth: 4
@@ -13,10 +10,3 @@ Subpackages
    qlearnkit.encodings
    qlearnkit.nn
 
-Module contents
----------------
-
-.. automodule:: qlearnkit
-   :members:
-   :undoc-members:
-   :show-inheritance:

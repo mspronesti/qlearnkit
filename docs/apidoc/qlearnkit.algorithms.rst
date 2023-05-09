@@ -1,8 +1,5 @@
-qlearnkit.algorithms package
+Algorithms
 ============================
-
-Subpackages
------------
 
 .. toctree::
    :maxdepth: 4
@@ -11,10 +8,7 @@ Subpackages
    qlearnkit.algorithms.qknn
    qlearnkit.algorithms.qsvm
 
-Submodules
-----------
-
-qlearnkit.algorithms.kernel\_method\_mixin module
+Kernel Method Mixin
 -------------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.kernel_method_mixin
@@ -22,7 +16,7 @@ qlearnkit.algorithms.kernel\_method\_mixin module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.algorithms.quantum\_estimator module
+Quantum Estimator
 ----------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.quantum_estimator
@@ -30,10 +24,3 @@ qlearnkit.algorithms.quantum\_estimator module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.algorithms
-   :members:
-   :undoc-members:
-   :show-inheritance:

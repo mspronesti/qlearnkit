@@ -41,7 +41,7 @@ class QuantumAutoEncoder(Module, QmlMixin):
 
         n_aux_qubits:
             int, the number of auxiliary qubits, used as
-                ancillas in the swap test.
+            ancillas in the swap test.
 
         n_latent_qubits:
             int, the number of qubits that can be discarded

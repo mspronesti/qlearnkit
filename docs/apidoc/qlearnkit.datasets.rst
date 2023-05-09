@@ -1,18 +1,7 @@
-qlearnkit.datasets package
+Datasets
 ==========================
 
-Submodules
-----------
-
-qlearnkit.datasets.breast\_cancer module
-----------------------------------------
-
-.. automodule:: qlearnkit.datasets.breast_cancer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-qlearnkit.datasets.dataset\_helper module
+Dataset Helper
 -----------------------------------------
 
 .. automodule:: qlearnkit.datasets.dataset_helper
@@ -20,7 +9,17 @@ qlearnkit.datasets.dataset\_helper module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.datasets.iris module
+
+Breast Cancer
+----------------------------------------
+
+.. automodule:: qlearnkit.datasets.breast_cancer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Iris
 ------------------------------
 
 .. automodule:: qlearnkit.datasets.iris
@@ -28,7 +27,7 @@ qlearnkit.datasets.iris module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.datasets.wine module
+Wine
 ------------------------------
 
 .. automodule:: qlearnkit.datasets.wine
@@ -36,10 +35,3 @@ qlearnkit.datasets.wine module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.datasets
-   :members:
-   :undoc-members:
-   :show-inheritance:

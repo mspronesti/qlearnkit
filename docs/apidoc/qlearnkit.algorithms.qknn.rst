@@ -1,10 +1,7 @@
-qlearnkit.algorithms.qknn package
+Quantum K-Nearest Neighbours
 =================================
 
-Submodules
-----------
-
-qlearnkit.algorithms.qknn.qknn\_base module
+Quantum KNN Base
 -------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.qknn.qknn_base
@@ -12,7 +9,7 @@ qlearnkit.algorithms.qknn.qknn\_base module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.algorithms.qknn.qknn\_classifier module
+Quantum KNeighbours Classifier
 -------------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.qknn.qknn_classifier
@@ -20,7 +17,7 @@ qlearnkit.algorithms.qknn.qknn\_classifier module
    :undoc-members:
    :show-inheritance:
 
-qlearnkit.algorithms.qknn.qknn\_regressor module
+Quantum KNeighbours Regressor
 ------------------------------------------------
 
 .. automodule:: qlearnkit.algorithms.qknn.qknn_regressor
@@ -28,10 +25,3 @@ qlearnkit.algorithms.qknn.qknn\_regressor module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: qlearnkit.algorithms.qknn
-   :members:
-   :undoc-members:
-   :show-inheritance:
