@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qlearnkit python library &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qlearnkit" href="apidoc/qlearnkit.html" />
+    <link rel="prev" title="Qlearnkit: a python toolkit for Quantum Machine Learning" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optional-install">Optional Install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-image">Docker Image</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started-with-qlearnkit">Getting started with Qlearnkit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-notes">Development notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc/qlearnkit.html">Qlearnkit Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Qlearnkit python library</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/getting_started.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qlearnkit-python-library">
+<h1>Qlearnkit python library<a class="headerlink" href="#qlearnkit-python-library" title="Permalink to this headline"></a></h1>
+<p><a class="reference external" href="https://www.python.org/"><img alt="Python Versions" src="https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9-blue.svg?style=flat&amp;logo=python&amp;logoColor=white" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/github/license/mspronesti/qlearnkit" /></a> <a class="reference external" href="https://github.com/mspronesti/qlearnkit/blob/master/.github/workflows/build-and-test.yml"><img alt="Build" src="https://github.com/mspronesti/qlearnkit/actions/workflows/build-and-test.yml/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/qlearnkit/"><img alt="Upload Python Package" src="https://github.com/mspronesti/qlearnkit/workflows/Upload%20Python%20Package/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/qlearnkit/#history"><img alt="PypI Versions" src="https://img.shields.io/pypi/v/qlearnkit" /></a></p>
+<p>Qlearnkit is a simple python library implementing some fundamental
+Machine Learning models and algorithms for a gated quantum computer,
+built on top of <a class="reference external" href="https://github.com/Qiskit/qiskit">Qiskit</a> and,
+optionally, <a class="reference external" href="https://pennylane.ai/">Pennylane</a>.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<p>We recommend installing <code class="docutils literal notranslate"><span class="pre">qlearnkit</span></code> with pip</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>qlearnkit
+</pre></div>
+</div>
+<p><strong>Note:</strong> pip will install the latest stable qlearnkit. However, the
+main branch of qlearnkit is in active development. If you want to test
+the latest scripts or functions please refer to <a class="reference external" href="#development-notes">development
+notes</a>.</p>
+<section id="optional-install">
+<h3>Optional Install<a class="headerlink" href="#optional-install" title="Permalink to this headline"></a></h3>
+<p>Via pip, you can install <code class="docutils literal notranslate"><span class="pre">qlearnkit</span></code> with the optional extension
+packages dependent on <code class="docutils literal notranslate"><span class="pre">pennylane</span></code>. To do so, run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>qlearnkit<span class="o">[</span><span class="s1">&#39;pennylane&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="docker-image">
+<h3>Docker Image<a class="headerlink" href="#docker-image" title="Permalink to this headline"></a></h3>
+<p>You can also use qlearnkit via Docker building the image from the
+provided <code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>qlearnkit<span class="w"> </span>-f<span class="w"> </span>docker/Dockerfile<span class="w"> </span>.
+</pre></div>
+</div>
+<p>then you can use it like this</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:/tmp<span class="w"> </span>-w<span class="w"> </span>/tmp<span class="w"> </span>qlearnkit<span class="w"> </span>python<span class="w"> </span>./script.py
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getting-started-with-qlearnkit">
+<h2>Getting started with Qlearnkit<a class="headerlink" href="#getting-started-with-qlearnkit" title="Permalink to this headline"></a></h2>
+<p>Now that Qlearnkit is installed, it’s time to begin working with the
+Machine Learning module. Let’s try an experiment using the QKNN
+Classifier algorithm to train and test samples from a data set to see
+how accurately the test set can be classified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qlearnkit.algorithms</span> <span class="kn">import</span> <span class="n">QKNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">qlearnkit.encodings</span> <span class="kn">import</span> <span class="n">AmplitudeEncoding</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">BasicAer</span>
+<span class="kn">from</span> <span class="nn">qiskit.utils</span> <span class="kn">import</span> <span class="n">QuantumInstance</span><span class="p">,</span> <span class="n">algorithm_globals</span>
+
+<span class="kn">from</span> <span class="nn">qlearnkit.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">algorithm_globals</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+<span class="n">train_size</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">test_size</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">n_features</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># all features</span>
+
+<span class="c1"># Use iris data set for training and test data</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">train_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+
+<span class="n">quantum_instance</span> <span class="o">=</span> <span class="n">QuantumInstance</span><span class="p">(</span><span class="n">BasicAer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">),</span>
+                                   <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                                   <span class="n">optimization_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">seed_simulator</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">seed_transpiler</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">AmplitudeEncoding</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="n">n_features</span><span class="p">)</span>
+
+<span class="n">qknn</span> <span class="o">=</span> <span class="n">QKNeighborsClassifier</span><span class="p">(</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">quantum_instance</span><span class="o">=</span><span class="n">quantum_instance</span><span class="p">,</span>
+    <span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span>
+<span class="p">)</span>
+
+<span class="n">qknn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing accuracy: &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qknn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s2">0.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="development-notes">
+<h2>Development notes<a class="headerlink" href="#development-notes" title="Permalink to this headline"></a></h2>
+<p>After cloning the <a class="reference external" href="https://github.com/mspronesti/qlearnkit">official repository</a>, create a virtual environment</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+</pre></div>
+</div>
+<p>and activate it</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</pre></div>
+</div>
+<p>now you can install the requirements</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+</pre></div>
+</div>
+<p>now run the tests</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+<p>Make sure to run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>to set up the git hook scripts. Now <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> will run
+automatically on <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code>!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Qlearnkit: a python toolkit for Quantum Machine Learning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apidoc/qlearnkit.html" class="btn btn-neutral float-right" title="Qlearnkit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

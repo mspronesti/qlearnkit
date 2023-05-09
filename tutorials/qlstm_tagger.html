@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hybrid Quantum Long-Short Term Memory NLP Example &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hybrid Quantum Support Vector Machine Classifier Example" href="qsvc.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apidoc/qlearnkit.html">Qlearnkit Module API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hybrid Quantum Long-Short Term Memory NLP Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qsvc.html">Hybrid Quantum Support Vector Machine Classifier Example</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Hybrid Quantum Long-Short Term Memory NLP Example</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/tutorials/qlstm_tagger.nblink" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Hybrid-Quantum-Long-Short-Term-Memory-NLP-Example">
+<h1>Hybrid Quantum Long-Short Term Memory NLP Example<a class="headerlink" href="#Hybrid-Quantum-Long-Short-Term-Memory-NLP-Example" title="Permalink to this headline"></a></h1>
+<p>The following example is adapted from the <a class="reference external" href="https://pytorch.org/tutorials/beginner/nlp/sequence_models_tutorial.html">official documentation</a> of pytorch, with the purpose of comparing the results of pytorch’s classical LSTM and our hybrid quantum implementation.</p>
+<p>In brief, starting from an input sequence <span class="math notranslate nohighlight">\(w_1\)</span>, …, <span class="math notranslate nohighlight">\(w_i \in \mathcal{V}\)</span> and a tag series <span class="math notranslate nohighlight">\(\{y_j\}_{j=1,...i} \in \mathcal{T}\)</span>, being <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> our vocabulary and <span class="math notranslate nohighlight">\(\mathcal{T}\)</span> our tag set, the model outputs a prediction <span class="math notranslate nohighlight">\(\hat{y1}, ..., \hat{y_M} \in \mathcal{T}\)</span> applying the following prediction rule</p>
+<p><span class="math">\begin{equation}
+\hat{y_i} = argmax_{j} \ log \ Softmax(Ah_i + b)
+\end{equation}</span></p>
+<p>Please have a look at pytorch’s official documentation for further details.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>qlearnkit<span class="o">[</span><span class="s1">&#39;pennylane&#39;</span><span class="o">]</span>
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: qlearnkit[pennylane] in /home/mspronesti/Desktop/qlearnkit (0.2.1.dev6+g4c4fa04.d20220927)
+Requirement already satisfied: qiskit-terra==0.20.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (0.20.0)
+Requirement already satisfied: qiskit-aer&gt;=0.10.3 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (0.10.4)
+Requirement already satisfied: qiskit-machine-learning&gt;=0.3.1 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (0.3.1)
+Requirement already satisfied: scikit-learn==1.0.2 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (1.0.2)
+Requirement already satisfied: scipy==1.7.3 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (1.7.3)
+Requirement already satisfied: numpy==1.22.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (1.22.0)
+Requirement already satisfied: pennylane in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (0.20.0)
+Requirement already satisfied: torch in /home/mspronesti/.local/lib/python3.8/site-packages (from qlearnkit[pennylane]) (1.10.2)
+Requirement already satisfied: retworkx&gt;=0.11.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (0.11.0)
+Requirement already satisfied: psutil&gt;=5 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (5.8.0)
+Requirement already satisfied: stevedore&gt;=3.0.0 in /usr/local/lib/python3.8/dist-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (3.5.0)
+Requirement already satisfied: symengine&gt;=0.9 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (0.9.2)
+Requirement already satisfied: python-dateutil&gt;=2.8.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (2.8.2)
+Requirement already satisfied: tweedledum&lt;2.0,&gt;=1.1 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (1.1.1)
+Requirement already satisfied: python-constraint&gt;=1.4 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (1.4.0)
+Requirement already satisfied: sympy&gt;=1.3 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (1.9)
+Requirement already satisfied: dill&gt;=0.3 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (0.3.5.1)
+Requirement already satisfied: ply&gt;=3.10 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (3.11)
+Requirement already satisfied: joblib&gt;=0.11 in /home/mspronesti/.local/lib/python3.8/site-packages (from scikit-learn==1.0.2-&gt;qlearnkit[pennylane]) (1.1.0)
+Requirement already satisfied: threadpoolctl&gt;=2.0.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from scikit-learn==1.0.2-&gt;qlearnkit[pennylane]) (3.0.0)
+Requirement already satisfied: fastdtw in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-machine-learning&gt;=0.3.1-&gt;qlearnkit[pennylane]) (0.3.4)
+Requirement already satisfied: setuptools&gt;=40.1.0 in /home/mspronesti/.local/lib/python3.8/site-packages (from qiskit-machine-learning&gt;=0.3.1-&gt;qlearnkit[pennylane]) (59.6.0)
+Requirement already satisfied: networkx in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (2.6.3)
+Requirement already satisfied: toml in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (0.10.2)
+Requirement already satisfied: autoray in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (0.2.5)
+Requirement already satisfied: cachetools in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (4.2.4)
+Requirement already satisfied: semantic-version==2.6 in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (2.6.0)
+Requirement already satisfied: appdirs in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (1.4.4)
+Requirement already satisfied: autograd in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (1.3)
+Requirement already satisfied: pennylane-lightning&gt;=0.18 in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-&gt;qlearnkit[pennylane]) (0.20.2)
+Requirement already satisfied: typing-extensions in /home/mspronesti/.local/lib/python3.8/site-packages (from torch-&gt;qlearnkit[pennylane]) (4.3.0)
+Requirement already satisfied: ninja in /home/mspronesti/.local/lib/python3.8/site-packages (from pennylane-lightning&gt;=0.18-&gt;pennylane-&gt;qlearnkit[pennylane]) (1.10.2.3)
+Requirement already satisfied: six&gt;=1.5 in /home/mspronesti/.local/lib/python3.8/site-packages (from python-dateutil&gt;=2.8.0-&gt;qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (1.16.0)
+Requirement already satisfied: pbr!=2.1.0,&gt;=2.0.0 in /usr/local/lib/python3.8/dist-packages (from stevedore&gt;=3.0.0-&gt;qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (5.8.0)
+Requirement already satisfied: mpmath&gt;=0.19 in /home/mspronesti/.local/lib/python3.8/site-packages (from sympy&gt;=1.3-&gt;qiskit-terra==0.20.0-&gt;qlearnkit[pennylane]) (1.2.1)
+Requirement already satisfied: future&gt;=0.15.2 in /home/mspronesti/.local/lib/python3.8/site-packages (from autograd-&gt;pennylane-&gt;qlearnkit[pennylane]) (0.18.2)
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: matplotlib in /home/mspronesti/.local/lib/python3.8/site-packages (3.4.3)
+Requirement already satisfied: kiwisolver&gt;=1.0.1 in /home/mspronesti/.local/lib/python3.8/site-packages (from matplotlib) (1.3.2)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /home/mspronesti/.local/lib/python3.8/site-packages (from matplotlib) (2.8.2)
+Requirement already satisfied: pyparsing&gt;=2.2.1 in /home/mspronesti/.local/lib/python3.8/site-packages (from matplotlib) (2.4.7)
+Requirement already satisfied: cycler&gt;=0.10 in /home/mspronesti/.local/lib/python3.8/site-packages (from matplotlib) (0.10.0)
+Requirement already satisfied: numpy&gt;=1.16 in /home/mspronesti/.local/lib/python3.8/site-packages (from matplotlib) (1.22.0)
+Requirement already satisfied: pillow&gt;=6.2.0 in /usr/lib/python3/dist-packages (from matplotlib) (7.0.0)
+Requirement already satisfied: six in /home/mspronesti/.local/lib/python3.8/site-packages (from cycler&gt;=0.10-&gt;matplotlib) (1.16.0)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">qlearnkit</span> <span class="k">as</span> <span class="nn">ql</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<br/></pre></div>
+</div>
+</div>
+<p>Let’s first prepare our data</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">tag_to_ix</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;DET&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>  <span class="c1"># Assign each tag with a unique index</span>
+<span class="n">ix_to_tag</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tag_to_ix</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<span class="k">def</span> <span class="nf">prepare_sequence</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">to_ix</span><span class="p">):</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_ix</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">idxs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+
+
+<span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Tags are: DET - determiner; NN - noun; V - verb</span>
+    <span class="c1"># For example, the word &quot;The&quot; is a determiner</span>
+    <span class="p">(</span><span class="s2">&quot;The dog ate the apple&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="p">[</span><span class="s2">&quot;DET&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;DET&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;Everybody read that book&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="p">[</span><span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;DET&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">])</span>
+<span class="p">]</span>
+<span class="n">word_to_ix</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># For each words-list (sentence) and tags-list in each tuple of training_data</span>
+<span class="k">for</span> <span class="n">sent</span><span class="p">,</span> <span class="n">tags</span> <span class="ow">in</span> <span class="n">training_data</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">word_to_ix</span><span class="p">:</span>  <span class="c1"># word has not been assigned an index yet</span>
+            <span class="n">word_to_ix</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_to_ix</span><span class="p">)</span>  <span class="c1"># Assign each word with a unique index</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vocabulary: </span><span class="si">{</span><span class="n">word_to_ix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entities: </span><span class="si">{</span><span class="n">ix_to_tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Vocabulary: {&#39;The&#39;: 0, &#39;dog&#39;: 1, &#39;ate&#39;: 2, &#39;the&#39;: 3, &#39;apple&#39;: 4, &#39;Everybody&#39;: 5, &#39;read&#39;: 6, &#39;that&#39;: 7, &#39;book&#39;: 8}
+Entities: {0: &#39;DET&#39;, 1: &#39;NN&#39;, 2: &#39;V&#39;}
+</pre></div></div>
+</div>
+<p>Now Let’s create the Tagger model embedding our LSTM</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LSTMTagger</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">model</span><span class="p">,</span>
+                 <span class="n">embedding_dim</span><span class="p">,</span>
+                 <span class="n">hidden_dim</span><span class="p">,</span>
+                 <span class="n">vocab_size</span><span class="p">,</span>
+                 <span class="n">tagset_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LSTMTagger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+
+        <span class="c1"># The linear layer that maps from hidden state space to tag space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">tagset_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sentence</span><span class="p">):</span>
+        <span class="n">embeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_embeddings</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+        <span class="n">lstm_out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">embeds</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">tag_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden2tag</span><span class="p">(</span><span class="n">lstm_out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">tag_scores</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">tag_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tag_scores</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s set (by hand) some hyperparameters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">embedding_dim</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">hidden_dim</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">n_layers</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;default.qubit&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s also create an helper trainer that accepting our hyperparameters and a model, to simply call it with our two implementations</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">trainer</span><span class="p">(</span><span class="n">lstm_model</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">n_epochs</span><span class="p">,</span> <span class="n">model_label</span><span class="p">):</span>
+    <span class="c1"># the LSTM Tagger Model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LSTMTagger</span><span class="p">(</span><span class="n">lstm_model</span><span class="p">,</span>
+                   <span class="n">embedding_dim</span><span class="p">,</span>
+                   <span class="n">hidden_dim</span><span class="p">,</span>
+                   <span class="n">vocab_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">word_to_ix</span><span class="p">),</span>
+                   <span class="n">tagset_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">tag_to_ix</span><span class="p">))</span>
+    <span class="c1"># loss function and Stochastic Gradient Descend</span>
+    <span class="c1"># as optimizers</span>
+    <span class="n">loss_function</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">NLLLoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">history</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;acc&#39;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">):</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">tags</span> <span class="ow">in</span> <span class="n">training_data</span><span class="p">:</span>
+            <span class="c1"># Step 1. Remember that Pytorch accumulates gradients.</span>
+            <span class="c1"># We need to clear them out before each instance</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="c1"># Step 2. Get our inputs ready for the network, that is, turn them into</span>
+            <span class="c1"># Tensors of word indices.</span>
+            <span class="n">sentence_in</span> <span class="o">=</span> <span class="n">prepare_sequence</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">word_to_ix</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">prepare_sequence</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">tag_to_ix</span><span class="p">)</span>
+
+            <span class="c1"># Step 3. Run our forward pass.</span>
+            <span class="n">tag_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">sentence_in</span><span class="p">)</span>
+
+            <span class="c1"># Step 4. Compute the loss, gradients, and update the parameters by</span>
+            <span class="c1">#  calling optimizer.step()</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">tag_scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
+
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">tag_scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+        <span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_loss</span><span class="p">)</span>
+
+        <span class="c1"># print(&quot;preds&quot;, preds)</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">corrects</span> <span class="o">=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">targets</span><span class="p">)</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">corrects</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">history</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_epochs</span><span class="si">}</span><span class="s2">: Loss = </span><span class="si">{</span><span class="n">avg_loss</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> Acc = </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">input_sentence</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">prepare_sequence</span><span class="p">(</span><span class="n">input_sentence</span><span class="p">,</span> <span class="n">word_to_ix</span><span class="p">)</span>
+        <span class="n">tag_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="n">tag_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">tag_scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">tag_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">ix_to_tag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tag_ids</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sentence:  </span><span class="si">{</span><span class="n">input_sentence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Labels:    </span><span class="si">{</span><span class="n">labels</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Predicted: </span><span class="si">{</span><span class="n">tag_labels</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_label</span><span class="si">}</span><span class="s2"> Loss&quot;</span><span class="p">)</span>
+
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Accuracy&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_label</span><span class="si">}</span><span class="s2"> LSTM Accuracy&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;tab:red&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Part-of-Speech Tagger Training&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s create our Quantum LSTM from qleanrkit</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">qlearnkit.nn</span> <span class="k">as</span> <span class="nn">qnn</span>
+<span class="n">qlstm</span> <span class="o">=</span> <span class="n">qnn</span><span class="o">.</span><span class="n">QLongShortTermMemory</span><span class="p">(</span>
+    <span class="n">embedding_dim</span><span class="p">,</span>
+    <span class="n">hidden_dim</span><span class="p">,</span>
+    <span class="n">n_layers</span><span class="p">,</span>
+    <span class="n">n_qubits</span><span class="o">=</span><span class="n">n_qubits</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s have a look at its (quantum) architecture</p>
+<p><strong>NOTICE:</strong> ignore the following code per se, it has nothing to do with the actual usage of qlearnkit’s QLSTM. It’s just here to cope with the required parameters of <code class="docutils literal notranslate"><span class="pre">qml.draw</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="c1"># random values to feed into the QNode</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">)</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_layers</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="n">dev</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">n_qubits</span><span class="p">)</span>
+<span class="n">circ</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">QNode</span><span class="p">(</span><span class="n">qlstm</span><span class="o">.</span><span class="n">_construct_vqc</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">qml</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="n">expansion_strategy</span><span class="o">=</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="n">show_all_wires</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">weights</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ 0: ──H──RY(M0)──RZ(M4)──╭C─────────────────────────────╭X──RX(0.642)──RY(0.351)──RZ(0.687)──┤ ⟨Z⟩
+ 1: ──H──RY(M1)──RZ(M5)──╰X──╭C───RX(0.138)──RY(0.664)──│───RZ(0.154)────────────────────────┤ ⟨Z⟩
+ 2: ──H──RY(M2)──RZ(M6)──────╰X──╭C──────────RX(0.493)──│───RY(0.593)──RZ(0.452)─────────────┤ ⟨Z⟩
+ 3: ──H──RY(M3)──RZ(M7)──────────╰X─────────────────────╰C──RX(0.968)──RY(0.899)──RZ(0.434)──┤ ⟨Z⟩
+M0 =
+tensor([0.4410, 0.2851, 0.0922, 0.2085, 0.4189, 0.5568, 0.3468, 0.4773])
+M1 =
+tensor([0.5397, 0.3276, 0.0610, 0.7491, 0.2016, 0.1892, 0.4293, 0.3255])
+M2 =
+tensor([0.5904, 0.5577, 0.2555, 0.6175, 0.4668, 0.4356, 0.3120, 0.4006])
+M3 =
+tensor([0.6520, 0.0839, 0.3924, 0.0972, 0.4129, 0.7706, 0.1809, 0.6805])
+M4 =
+tensor([0.2192, 0.0857, 0.0085, 0.0447, 0.1958, 0.3697, 0.1299, 0.2614])
+M5 =
+tensor([0.3446, 0.1150, 0.0037, 0.7129, 0.0418, 0.0367, 0.2065, 0.1134])
+M6 =
+tensor([0.4221, 0.3711, 0.0681, 0.4672, 0.2487, 0.2133, 0.1037, 0.1775])
+M7 =
+tensor([0.5277, 0.0071, 0.1696, 0.0095, 0.1896, 0.7558, 0.0334, 0.5800])
+
+</pre></div></div>
+</div>
+<p>Now we can train our hybrid-quantum model</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="p">(</span><span class="n">qlstm</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">,</span> <span class="n">model_label</span><span class="o">=</span><span class="s1">&#39;Hybrid Quantum&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch 1 / 300: Loss = 1.216 Acc = 0.22
+Epoch 2 / 300: Loss = 1.183 Acc = 0.22
+Epoch 3 / 300: Loss = 1.153 Acc = 0.22
+Epoch 4 / 300: Loss = 1.126 Acc = 0.22
+Epoch 5 / 300: Loss = 1.103 Acc = 0.22
+Epoch 6 / 300: Loss = 1.082 Acc = 0.33
+Epoch 7 / 300: Loss = 1.064 Acc = 0.44
+Epoch 8 / 300: Loss = 1.048 Acc = 0.56
+Epoch 9 / 300: Loss = 1.034 Acc = 0.78
+Epoch 10 / 300: Loss = 1.021 Acc = 0.67
+Epoch 11 / 300: Loss = 1.009 Acc = 0.67
+Epoch 12 / 300: Loss = 0.998 Acc = 0.67
+Epoch 13 / 300: Loss = 0.988 Acc = 0.67
+Epoch 14 / 300: Loss = 0.978 Acc = 0.67
+Epoch 15 / 300: Loss = 0.969 Acc = 0.67
+Epoch 16 / 300: Loss = 0.959 Acc = 0.67
+Epoch 17 / 300: Loss = 0.950 Acc = 0.67
+Epoch 18 / 300: Loss = 0.940 Acc = 0.67
+Epoch 19 / 300: Loss = 0.930 Acc = 0.67
+Epoch 20 / 300: Loss = 0.918 Acc = 0.67
+Epoch 21 / 300: Loss = 0.906 Acc = 0.67
+Epoch 22 / 300: Loss = 0.893 Acc = 0.67
+Epoch 23 / 300: Loss = 0.879 Acc = 0.67
+Epoch 24 / 300: Loss = 0.865 Acc = 0.67
+Epoch 25 / 300: Loss = 0.853 Acc = 0.78
+Epoch 26 / 300: Loss = 0.841 Acc = 0.78
+Epoch 27 / 300: Loss = 0.830 Acc = 0.78
+Epoch 28 / 300: Loss = 0.820 Acc = 0.78
+Epoch 29 / 300: Loss = 0.811 Acc = 0.78
+Epoch 30 / 300: Loss = 0.801 Acc = 0.78
+Epoch 31 / 300: Loss = 0.792 Acc = 0.78
+Epoch 32 / 300: Loss = 0.783 Acc = 0.78
+Epoch 33 / 300: Loss = 0.775 Acc = 0.78
+Epoch 34 / 300: Loss = 0.766 Acc = 0.78
+Epoch 35 / 300: Loss = 0.758 Acc = 0.78
+Epoch 36 / 300: Loss = 0.750 Acc = 0.78
+Epoch 37 / 300: Loss = 0.742 Acc = 0.78
+Epoch 38 / 300: Loss = 0.734 Acc = 0.78
+Epoch 39 / 300: Loss = 0.726 Acc = 0.78
+Epoch 40 / 300: Loss = 0.719 Acc = 0.78
+Epoch 41 / 300: Loss = 0.712 Acc = 0.78
+Epoch 42 / 300: Loss = 0.704 Acc = 0.78
+Epoch 43 / 300: Loss = 0.697 Acc = 0.78
+Epoch 44 / 300: Loss = 0.690 Acc = 0.78
+Epoch 45 / 300: Loss = 0.683 Acc = 0.78
+Epoch 46 / 300: Loss = 0.677 Acc = 0.78
+Epoch 47 / 300: Loss = 0.670 Acc = 0.78
+Epoch 48 / 300: Loss = 0.664 Acc = 0.78
+Epoch 49 / 300: Loss = 0.657 Acc = 0.78
+Epoch 50 / 300: Loss = 0.651 Acc = 0.78
+Epoch 51 / 300: Loss = 0.645 Acc = 0.78
+Epoch 52 / 300: Loss = 0.639 Acc = 0.78
+Epoch 53 / 300: Loss = 0.633 Acc = 0.78
+Epoch 54 / 300: Loss = 0.627 Acc = 0.78
+Epoch 55 / 300: Loss = 0.621 Acc = 0.78
+Epoch 56 / 300: Loss = 0.616 Acc = 0.78
+Epoch 57 / 300: Loss = 0.610 Acc = 0.78
+Epoch 58 / 300: Loss = 0.605 Acc = 0.78
+Epoch 59 / 300: Loss = 0.599 Acc = 0.78
+Epoch 60 / 300: Loss = 0.594 Acc = 0.78
+Epoch 61 / 300: Loss = 0.589 Acc = 0.78
+Epoch 62 / 300: Loss = 0.584 Acc = 0.78
+Epoch 63 / 300: Loss = 0.579 Acc = 0.78
+Epoch 64 / 300: Loss = 0.574 Acc = 0.78
+Epoch 65 / 300: Loss = 0.569 Acc = 0.78
+Epoch 66 / 300: Loss = 0.564 Acc = 0.78
+Epoch 67 / 300: Loss = 0.560 Acc = 0.78
+Epoch 68 / 300: Loss = 0.555 Acc = 0.78
+Epoch 69 / 300: Loss = 0.551 Acc = 0.78
+Epoch 70 / 300: Loss = 0.546 Acc = 0.78
+Epoch 71 / 300: Loss = 0.542 Acc = 0.78
+Epoch 72 / 300: Loss = 0.538 Acc = 0.78
+Epoch 73 / 300: Loss = 0.533 Acc = 0.78
+Epoch 74 / 300: Loss = 0.529 Acc = 0.78
+Epoch 75 / 300: Loss = 0.525 Acc = 0.78
+Epoch 76 / 300: Loss = 0.521 Acc = 0.78
+Epoch 77 / 300: Loss = 0.517 Acc = 0.78
+Epoch 78 / 300: Loss = 0.513 Acc = 0.78
+Epoch 79 / 300: Loss = 0.510 Acc = 0.78
+Epoch 80 / 300: Loss = 0.506 Acc = 0.78
+Epoch 81 / 300: Loss = 0.502 Acc = 0.78
+Epoch 82 / 300: Loss = 0.499 Acc = 0.78
+Epoch 83 / 300: Loss = 0.495 Acc = 0.78
+Epoch 84 / 300: Loss = 0.491 Acc = 0.78
+Epoch 85 / 300: Loss = 0.488 Acc = 0.78
+Epoch 86 / 300: Loss = 0.485 Acc = 0.78
+Epoch 87 / 300: Loss = 0.481 Acc = 0.78
+Epoch 88 / 300: Loss = 0.478 Acc = 0.78
+Epoch 89 / 300: Loss = 0.474 Acc = 0.78
+Epoch 90 / 300: Loss = 0.471 Acc = 0.78
+Epoch 91 / 300: Loss = 0.468 Acc = 0.78
+Epoch 92 / 300: Loss = 0.465 Acc = 0.78
+Epoch 93 / 300: Loss = 0.461 Acc = 0.78
+Epoch 94 / 300: Loss = 0.458 Acc = 0.78
+Epoch 95 / 300: Loss = 0.455 Acc = 0.78
+Epoch 96 / 300: Loss = 0.452 Acc = 0.78
+Epoch 97 / 300: Loss = 0.449 Acc = 0.78
+Epoch 98 / 300: Loss = 0.446 Acc = 0.78
+Epoch 99 / 300: Loss = 0.443 Acc = 0.78
+Epoch 100 / 300: Loss = 0.440 Acc = 0.78
+Epoch 101 / 300: Loss = 0.437 Acc = 0.78
+Epoch 102 / 300: Loss = 0.434 Acc = 0.78
+Epoch 103 / 300: Loss = 0.431 Acc = 0.78
+Epoch 104 / 300: Loss = 0.428 Acc = 0.78
+Epoch 105 / 300: Loss = 0.425 Acc = 0.78
+Epoch 106 / 300: Loss = 0.422 Acc = 0.78
+Epoch 107 / 300: Loss = 0.419 Acc = 0.78
+Epoch 108 / 300: Loss = 0.416 Acc = 0.78
+Epoch 109 / 300: Loss = 0.413 Acc = 0.78
+Epoch 110 / 300: Loss = 0.411 Acc = 0.89
+Epoch 111 / 300: Loss = 0.408 Acc = 0.89
+Epoch 112 / 300: Loss = 0.405 Acc = 0.89
+Epoch 113 / 300: Loss = 0.402 Acc = 0.89
+Epoch 114 / 300: Loss = 0.399 Acc = 0.89
+Epoch 115 / 300: Loss = 0.396 Acc = 0.89
+Epoch 116 / 300: Loss = 0.394 Acc = 0.89
+Epoch 117 / 300: Loss = 0.391 Acc = 1.00
+Epoch 118 / 300: Loss = 0.388 Acc = 1.00
+Epoch 119 / 300: Loss = 0.385 Acc = 1.00
+Epoch 120 / 300: Loss = 0.383 Acc = 1.00
+Epoch 121 / 300: Loss = 0.380 Acc = 1.00
+Epoch 122 / 300: Loss = 0.377 Acc = 1.00
+Epoch 123 / 300: Loss = 0.374 Acc = 1.00
+Epoch 124 / 300: Loss = 0.372 Acc = 1.00
+Epoch 125 / 300: Loss = 0.369 Acc = 1.00
+Epoch 126 / 300: Loss = 0.366 Acc = 1.00
+Epoch 127 / 300: Loss = 0.364 Acc = 1.00
+Epoch 128 / 300: Loss = 0.361 Acc = 1.00
+Epoch 129 / 300: Loss = 0.358 Acc = 1.00
+Epoch 130 / 300: Loss = 0.355 Acc = 1.00
+Epoch 131 / 300: Loss = 0.353 Acc = 1.00
+Epoch 132 / 300: Loss = 0.350 Acc = 1.00
+Epoch 133 / 300: Loss = 0.347 Acc = 1.00
+Epoch 134 / 300: Loss = 0.345 Acc = 1.00
+Epoch 135 / 300: Loss = 0.342 Acc = 1.00
+Epoch 136 / 300: Loss = 0.339 Acc = 1.00
+Epoch 137 / 300: Loss = 0.337 Acc = 1.00
+Epoch 138 / 300: Loss = 0.334 Acc = 1.00
+Epoch 139 / 300: Loss = 0.331 Acc = 1.00
+Epoch 140 / 300: Loss = 0.329 Acc = 1.00
+Epoch 141 / 300: Loss = 0.326 Acc = 1.00
+Epoch 142 / 300: Loss = 0.323 Acc = 1.00
+Epoch 143 / 300: Loss = 0.321 Acc = 1.00
+Epoch 144 / 300: Loss = 0.318 Acc = 1.00
+Epoch 145 / 300: Loss = 0.315 Acc = 1.00
+Epoch 146 / 300: Loss = 0.313 Acc = 1.00
+Epoch 147 / 300: Loss = 0.310 Acc = 1.00
+Epoch 148 / 300: Loss = 0.307 Acc = 1.00
+Epoch 149 / 300: Loss = 0.305 Acc = 1.00
+Epoch 150 / 300: Loss = 0.302 Acc = 1.00
+Epoch 151 / 300: Loss = 0.299 Acc = 1.00
+Epoch 152 / 300: Loss = 0.297 Acc = 1.00
+Epoch 153 / 300: Loss = 0.294 Acc = 1.00
+Epoch 154 / 300: Loss = 0.292 Acc = 1.00
+Epoch 155 / 300: Loss = 0.289 Acc = 1.00
+Epoch 156 / 300: Loss = 0.286 Acc = 1.00
+Epoch 157 / 300: Loss = 0.284 Acc = 1.00
+Epoch 158 / 300: Loss = 0.281 Acc = 1.00
+Epoch 159 / 300: Loss = 0.279 Acc = 1.00
+Epoch 160 / 300: Loss = 0.276 Acc = 1.00
+Epoch 161 / 300: Loss = 0.273 Acc = 1.00
+Epoch 162 / 300: Loss = 0.271 Acc = 1.00
+Epoch 163 / 300: Loss = 0.268 Acc = 1.00
+Epoch 164 / 300: Loss = 0.266 Acc = 1.00
+Epoch 165 / 300: Loss = 0.263 Acc = 1.00
+Epoch 166 / 300: Loss = 0.261 Acc = 1.00
+Epoch 167 / 300: Loss = 0.258 Acc = 1.00
+Epoch 168 / 300: Loss = 0.256 Acc = 1.00
+Epoch 169 / 300: Loss = 0.253 Acc = 1.00
+Epoch 170 / 300: Loss = 0.251 Acc = 1.00
+Epoch 171 / 300: Loss = 0.249 Acc = 1.00
+Epoch 172 / 300: Loss = 0.246 Acc = 1.00
+Epoch 173 / 300: Loss = 0.244 Acc = 1.00
+Epoch 174 / 300: Loss = 0.241 Acc = 1.00
+Epoch 175 / 300: Loss = 0.239 Acc = 1.00
+Epoch 176 / 300: Loss = 0.237 Acc = 1.00
+Epoch 177 / 300: Loss = 0.234 Acc = 1.00
+Epoch 178 / 300: Loss = 0.232 Acc = 1.00
+Epoch 179 / 300: Loss = 0.230 Acc = 1.00
+Epoch 180 / 300: Loss = 0.227 Acc = 1.00
+Epoch 181 / 300: Loss = 0.225 Acc = 1.00
+Epoch 182 / 300: Loss = 0.223 Acc = 1.00
+Epoch 183 / 300: Loss = 0.221 Acc = 1.00
+Epoch 184 / 300: Loss = 0.219 Acc = 1.00
+Epoch 185 / 300: Loss = 0.216 Acc = 1.00
+Epoch 186 / 300: Loss = 0.214 Acc = 1.00
+Epoch 187 / 300: Loss = 0.212 Acc = 1.00
+Epoch 188 / 300: Loss = 0.210 Acc = 1.00
+Epoch 189 / 300: Loss = 0.208 Acc = 1.00
+Epoch 190 / 300: Loss = 0.206 Acc = 1.00
+Epoch 191 / 300: Loss = 0.204 Acc = 1.00
+Epoch 192 / 300: Loss = 0.202 Acc = 1.00
+Epoch 193 / 300: Loss = 0.200 Acc = 1.00
+Epoch 194 / 300: Loss = 0.198 Acc = 1.00
+Epoch 195 / 300: Loss = 0.196 Acc = 1.00
+Epoch 196 / 300: Loss = 0.194 Acc = 1.00
+Epoch 197 / 300: Loss = 0.192 Acc = 1.00
+Epoch 198 / 300: Loss = 0.190 Acc = 1.00
+Epoch 199 / 300: Loss = 0.188 Acc = 1.00
+Epoch 200 / 300: Loss = 0.186 Acc = 1.00
+Epoch 201 / 300: Loss = 0.184 Acc = 1.00
+Epoch 202 / 300: Loss = 0.183 Acc = 1.00
+Epoch 203 / 300: Loss = 0.181 Acc = 1.00
+Epoch 204 / 300: Loss = 0.179 Acc = 1.00
+Epoch 205 / 300: Loss = 0.177 Acc = 1.00
+Epoch 206 / 300: Loss = 0.175 Acc = 1.00
+Epoch 207 / 300: Loss = 0.174 Acc = 1.00
+Epoch 208 / 300: Loss = 0.172 Acc = 1.00
+Epoch 209 / 300: Loss = 0.170 Acc = 1.00
+Epoch 210 / 300: Loss = 0.169 Acc = 1.00
+Epoch 211 / 300: Loss = 0.167 Acc = 1.00
+Epoch 212 / 300: Loss = 0.165 Acc = 1.00
+Epoch 213 / 300: Loss = 0.164 Acc = 1.00
+Epoch 214 / 300: Loss = 0.162 Acc = 1.00
+Epoch 215 / 300: Loss = 0.160 Acc = 1.00
+Epoch 216 / 300: Loss = 0.159 Acc = 1.00
+Epoch 217 / 300: Loss = 0.157 Acc = 1.00
+Epoch 218 / 300: Loss = 0.156 Acc = 1.00
+Epoch 219 / 300: Loss = 0.154 Acc = 1.00
+Epoch 220 / 300: Loss = 0.153 Acc = 1.00
+Epoch 221 / 300: Loss = 0.151 Acc = 1.00
+Epoch 222 / 300: Loss = 0.150 Acc = 1.00
+Epoch 223 / 300: Loss = 0.149 Acc = 1.00
+Epoch 224 / 300: Loss = 0.147 Acc = 1.00
+Epoch 225 / 300: Loss = 0.146 Acc = 1.00
+Epoch 226 / 300: Loss = 0.144 Acc = 1.00
+Epoch 227 / 300: Loss = 0.143 Acc = 1.00
+Epoch 228 / 300: Loss = 0.142 Acc = 1.00
+Epoch 229 / 300: Loss = 0.140 Acc = 1.00
+Epoch 230 / 300: Loss = 0.139 Acc = 1.00
+Epoch 231 / 300: Loss = 0.138 Acc = 1.00
+Epoch 232 / 300: Loss = 0.136 Acc = 1.00
+Epoch 233 / 300: Loss = 0.135 Acc = 1.00
+Epoch 234 / 300: Loss = 0.134 Acc = 1.00
+Epoch 235 / 300: Loss = 0.133 Acc = 1.00
+Epoch 236 / 300: Loss = 0.131 Acc = 1.00
+Epoch 237 / 300: Loss = 0.130 Acc = 1.00
+Epoch 238 / 300: Loss = 0.129 Acc = 1.00
+Epoch 239 / 300: Loss = 0.128 Acc = 1.00
+Epoch 240 / 300: Loss = 0.127 Acc = 1.00
+Epoch 241 / 300: Loss = 0.125 Acc = 1.00
+Epoch 242 / 300: Loss = 0.124 Acc = 1.00
+Epoch 243 / 300: Loss = 0.123 Acc = 1.00
+Epoch 244 / 300: Loss = 0.122 Acc = 1.00
+Epoch 245 / 300: Loss = 0.121 Acc = 1.00
+Epoch 246 / 300: Loss = 0.120 Acc = 1.00
+Epoch 247 / 300: Loss = 0.119 Acc = 1.00
+Epoch 248 / 300: Loss = 0.118 Acc = 1.00
+Epoch 249 / 300: Loss = 0.117 Acc = 1.00
+Epoch 250 / 300: Loss = 0.116 Acc = 1.00
+Epoch 251 / 300: Loss = 0.115 Acc = 1.00
+Epoch 252 / 300: Loss = 0.114 Acc = 1.00
+Epoch 253 / 300: Loss = 0.113 Acc = 1.00
+Epoch 254 / 300: Loss = 0.112 Acc = 1.00
+Epoch 255 / 300: Loss = 0.111 Acc = 1.00
+Epoch 256 / 300: Loss = 0.110 Acc = 1.00
+Epoch 257 / 300: Loss = 0.109 Acc = 1.00
+Epoch 258 / 300: Loss = 0.108 Acc = 1.00
+Epoch 259 / 300: Loss = 0.107 Acc = 1.00
+Epoch 260 / 300: Loss = 0.106 Acc = 1.00
+Epoch 261 / 300: Loss = 0.105 Acc = 1.00
+Epoch 262 / 300: Loss = 0.104 Acc = 1.00
+Epoch 263 / 300: Loss = 0.104 Acc = 1.00
+Epoch 264 / 300: Loss = 0.103 Acc = 1.00
+Epoch 265 / 300: Loss = 0.102 Acc = 1.00
+Epoch 266 / 300: Loss = 0.101 Acc = 1.00
+Epoch 267 / 300: Loss = 0.100 Acc = 1.00
+Epoch 268 / 300: Loss = 0.099 Acc = 1.00
+Epoch 269 / 300: Loss = 0.099 Acc = 1.00
+Epoch 270 / 300: Loss = 0.098 Acc = 1.00
+Epoch 271 / 300: Loss = 0.097 Acc = 1.00
+Epoch 272 / 300: Loss = 0.096 Acc = 1.00
+Epoch 273 / 300: Loss = 0.096 Acc = 1.00
+Epoch 274 / 300: Loss = 0.095 Acc = 1.00
+Epoch 275 / 300: Loss = 0.094 Acc = 1.00
+Epoch 276 / 300: Loss = 0.093 Acc = 1.00
+Epoch 277 / 300: Loss = 0.093 Acc = 1.00
+Epoch 278 / 300: Loss = 0.092 Acc = 1.00
+Epoch 279 / 300: Loss = 0.091 Acc = 1.00
+Epoch 280 / 300: Loss = 0.090 Acc = 1.00
+Epoch 281 / 300: Loss = 0.090 Acc = 1.00
+Epoch 282 / 300: Loss = 0.089 Acc = 1.00
+Epoch 283 / 300: Loss = 0.088 Acc = 1.00
+Epoch 284 / 300: Loss = 0.088 Acc = 1.00
+Epoch 285 / 300: Loss = 0.087 Acc = 1.00
+Epoch 286 / 300: Loss = 0.086 Acc = 1.00
+Epoch 287 / 300: Loss = 0.086 Acc = 1.00
+Epoch 288 / 300: Loss = 0.085 Acc = 1.00
+Epoch 289 / 300: Loss = 0.084 Acc = 1.00
+Epoch 290 / 300: Loss = 0.084 Acc = 1.00
+Epoch 291 / 300: Loss = 0.083 Acc = 1.00
+Epoch 292 / 300: Loss = 0.083 Acc = 1.00
+Epoch 293 / 300: Loss = 0.082 Acc = 1.00
+Epoch 294 / 300: Loss = 0.081 Acc = 1.00
+Epoch 295 / 300: Loss = 0.081 Acc = 1.00
+Epoch 296 / 300: Loss = 0.080 Acc = 1.00
+Epoch 297 / 300: Loss = 0.080 Acc = 1.00
+Epoch 298 / 300: Loss = 0.079 Acc = 1.00
+Epoch 299 / 300: Loss = 0.078 Acc = 1.00
+Epoch 300 / 300: Loss = 0.078 Acc = 1.00
+Sentence:  [&#39;The&#39;, &#39;dog&#39;, &#39;ate&#39;, &#39;the&#39;, &#39;apple&#39;]
+Labels:    [&#39;DET&#39;, &#39;NN&#39;, &#39;V&#39;, &#39;DET&#39;, &#39;NN&#39;]
+Predicted: [&#39;DET&#39;, &#39;NN&#39;, &#39;V&#39;, &#39;DET&#39;, &#39;NN&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_qlstm_tagger_16_1.png" src="../_images/tutorials_qlstm_tagger_16_1.png" />
+</div>
+</div>
+<p>Let’s compare it with the classical version</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">clstm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">)</span>
+<span class="n">trainer</span><span class="p">(</span><span class="n">clstm</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">,</span><span class="n">model_label</span><span class="o">=</span><span class="s1">&#39;Classical&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Epoch 1 / 300: Loss = 1.119 Acc = 0.33
+Epoch 2 / 300: Loss = 1.108 Acc = 0.33
+Epoch 3 / 300: Loss = 1.098 Acc = 0.33
+Epoch 4 / 300: Loss = 1.089 Acc = 0.44
+Epoch 5 / 300: Loss = 1.081 Acc = 0.44
+Epoch 6 / 300: Loss = 1.073 Acc = 0.44
+Epoch 7 / 300: Loss = 1.067 Acc = 0.44
+Epoch 8 / 300: Loss = 1.061 Acc = 0.44
+Epoch 9 / 300: Loss = 1.055 Acc = 0.44
+Epoch 10 / 300: Loss = 1.051 Acc = 0.44
+Epoch 11 / 300: Loss = 1.046 Acc = 0.44
+Epoch 12 / 300: Loss = 1.042 Acc = 0.56
+Epoch 13 / 300: Loss = 1.038 Acc = 0.44
+Epoch 14 / 300: Loss = 1.034 Acc = 0.44
+Epoch 15 / 300: Loss = 1.031 Acc = 0.44
+Epoch 16 / 300: Loss = 1.028 Acc = 0.44
+Epoch 17 / 300: Loss = 1.025 Acc = 0.44
+Epoch 18 / 300: Loss = 1.022 Acc = 0.44
+Epoch 19 / 300: Loss = 1.019 Acc = 0.44
+Epoch 20 / 300: Loss = 1.016 Acc = 0.44
+Epoch 21 / 300: Loss = 1.013 Acc = 0.44
+Epoch 22 / 300: Loss = 1.011 Acc = 0.44
+Epoch 23 / 300: Loss = 1.008 Acc = 0.44
+Epoch 24 / 300: Loss = 1.005 Acc = 0.44
+Epoch 25 / 300: Loss = 1.003 Acc = 0.44
+Epoch 26 / 300: Loss = 1.000 Acc = 0.44
+Epoch 27 / 300: Loss = 0.998 Acc = 0.44
+Epoch 28 / 300: Loss = 0.995 Acc = 0.44
+Epoch 29 / 300: Loss = 0.992 Acc = 0.44
+Epoch 30 / 300: Loss = 0.990 Acc = 0.44
+Epoch 31 / 300: Loss = 0.987 Acc = 0.44
+Epoch 32 / 300: Loss = 0.984 Acc = 0.44
+Epoch 33 / 300: Loss = 0.981 Acc = 0.44
+Epoch 34 / 300: Loss = 0.978 Acc = 0.44
+Epoch 35 / 300: Loss = 0.976 Acc = 0.44
+Epoch 36 / 300: Loss = 0.973 Acc = 0.44
+Epoch 37 / 300: Loss = 0.970 Acc = 0.44
+Epoch 38 / 300: Loss = 0.967 Acc = 0.44
+Epoch 39 / 300: Loss = 0.963 Acc = 0.44
+Epoch 40 / 300: Loss = 0.960 Acc = 0.44
+Epoch 41 / 300: Loss = 0.957 Acc = 0.44
+Epoch 42 / 300: Loss = 0.954 Acc = 0.44
+Epoch 43 / 300: Loss = 0.950 Acc = 0.56
+Epoch 44 / 300: Loss = 0.947 Acc = 0.56
+Epoch 45 / 300: Loss = 0.943 Acc = 0.56
+Epoch 46 / 300: Loss = 0.940 Acc = 0.56
+Epoch 47 / 300: Loss = 0.936 Acc = 0.56
+Epoch 48 / 300: Loss = 0.932 Acc = 0.67
+Epoch 49 / 300: Loss = 0.929 Acc = 0.67
+Epoch 50 / 300: Loss = 0.925 Acc = 0.67
+Epoch 51 / 300: Loss = 0.921 Acc = 0.67
+Epoch 52 / 300: Loss = 0.917 Acc = 0.67
+Epoch 53 / 300: Loss = 0.913 Acc = 0.67
+Epoch 54 / 300: Loss = 0.909 Acc = 0.67
+Epoch 55 / 300: Loss = 0.904 Acc = 0.67
+Epoch 56 / 300: Loss = 0.900 Acc = 0.67
+Epoch 57 / 300: Loss = 0.896 Acc = 0.67
+Epoch 58 / 300: Loss = 0.891 Acc = 0.67
+Epoch 59 / 300: Loss = 0.887 Acc = 0.67
+Epoch 60 / 300: Loss = 0.882 Acc = 0.67
+Epoch 61 / 300: Loss = 0.877 Acc = 0.67
+Epoch 62 / 300: Loss = 0.872 Acc = 0.67
+Epoch 63 / 300: Loss = 0.868 Acc = 0.67
+Epoch 64 / 300: Loss = 0.863 Acc = 0.67
+Epoch 65 / 300: Loss = 0.858 Acc = 0.67
+Epoch 66 / 300: Loss = 0.853 Acc = 0.67
+Epoch 67 / 300: Loss = 0.847 Acc = 0.67
+Epoch 68 / 300: Loss = 0.842 Acc = 0.67
+Epoch 69 / 300: Loss = 0.837 Acc = 0.67
+Epoch 70 / 300: Loss = 0.831 Acc = 0.67
+Epoch 71 / 300: Loss = 0.826 Acc = 0.67
+Epoch 72 / 300: Loss = 0.821 Acc = 0.67
+Epoch 73 / 300: Loss = 0.815 Acc = 0.67
+Epoch 74 / 300: Loss = 0.809 Acc = 0.67
+Epoch 75 / 300: Loss = 0.804 Acc = 0.67
+Epoch 76 / 300: Loss = 0.798 Acc = 0.67
+Epoch 77 / 300: Loss = 0.792 Acc = 0.67
+Epoch 78 / 300: Loss = 0.786 Acc = 0.67
+Epoch 79 / 300: Loss = 0.780 Acc = 0.67
+Epoch 80 / 300: Loss = 0.774 Acc = 0.67
+Epoch 81 / 300: Loss = 0.768 Acc = 0.67
+Epoch 82 / 300: Loss = 0.762 Acc = 0.67
+Epoch 83 / 300: Loss = 0.756 Acc = 0.67
+Epoch 84 / 300: Loss = 0.750 Acc = 0.67
+Epoch 85 / 300: Loss = 0.743 Acc = 0.67
+Epoch 86 / 300: Loss = 0.737 Acc = 0.67
+Epoch 87 / 300: Loss = 0.730 Acc = 0.67
+Epoch 88 / 300: Loss = 0.724 Acc = 0.67
+Epoch 89 / 300: Loss = 0.717 Acc = 0.67
+Epoch 90 / 300: Loss = 0.711 Acc = 0.67
+Epoch 91 / 300: Loss = 0.704 Acc = 0.67
+Epoch 92 / 300: Loss = 0.697 Acc = 0.67
+Epoch 93 / 300: Loss = 0.690 Acc = 0.67
+Epoch 94 / 300: Loss = 0.683 Acc = 0.67
+Epoch 95 / 300: Loss = 0.676 Acc = 0.67
+Epoch 96 / 300: Loss = 0.669 Acc = 0.67
+Epoch 97 / 300: Loss = 0.662 Acc = 0.78
+Epoch 98 / 300: Loss = 0.655 Acc = 0.78
+Epoch 99 / 300: Loss = 0.648 Acc = 0.78
+Epoch 100 / 300: Loss = 0.640 Acc = 0.78
+Epoch 101 / 300: Loss = 0.633 Acc = 0.78
+Epoch 102 / 300: Loss = 0.626 Acc = 0.78
+Epoch 103 / 300: Loss = 0.618 Acc = 0.78
+Epoch 104 / 300: Loss = 0.611 Acc = 0.78
+Epoch 105 / 300: Loss = 0.604 Acc = 0.78
+Epoch 106 / 300: Loss = 0.596 Acc = 0.78
+Epoch 107 / 300: Loss = 0.589 Acc = 0.78
+Epoch 108 / 300: Loss = 0.581 Acc = 0.78
+Epoch 109 / 300: Loss = 0.574 Acc = 0.78
+Epoch 110 / 300: Loss = 0.567 Acc = 0.78
+Epoch 111 / 300: Loss = 0.559 Acc = 0.78
+Epoch 112 / 300: Loss = 0.552 Acc = 0.78
+Epoch 113 / 300: Loss = 0.544 Acc = 0.78
+Epoch 114 / 300: Loss = 0.537 Acc = 0.78
+Epoch 115 / 300: Loss = 0.530 Acc = 0.78
+Epoch 116 / 300: Loss = 0.523 Acc = 0.89
+Epoch 117 / 300: Loss = 0.515 Acc = 0.89
+Epoch 118 / 300: Loss = 0.508 Acc = 0.89
+Epoch 119 / 300: Loss = 0.501 Acc = 0.89
+Epoch 120 / 300: Loss = 0.494 Acc = 0.89
+Epoch 121 / 300: Loss = 0.487 Acc = 0.89
+Epoch 122 / 300: Loss = 0.480 Acc = 0.89
+Epoch 123 / 300: Loss = 0.473 Acc = 0.89
+Epoch 124 / 300: Loss = 0.466 Acc = 0.89
+Epoch 125 / 300: Loss = 0.459 Acc = 0.89
+Epoch 126 / 300: Loss = 0.452 Acc = 0.89
+Epoch 127 / 300: Loss = 0.445 Acc = 0.89
+Epoch 128 / 300: Loss = 0.438 Acc = 0.89
+Epoch 129 / 300: Loss = 0.431 Acc = 0.89
+Epoch 130 / 300: Loss = 0.425 Acc = 0.89
+Epoch 131 / 300: Loss = 0.418 Acc = 0.89
+Epoch 132 / 300: Loss = 0.412 Acc = 0.89
+Epoch 133 / 300: Loss = 0.405 Acc = 0.89
+Epoch 134 / 300: Loss = 0.399 Acc = 0.89
+Epoch 135 / 300: Loss = 0.392 Acc = 0.89
+Epoch 136 / 300: Loss = 0.386 Acc = 0.89
+Epoch 137 / 300: Loss = 0.380 Acc = 0.89
+Epoch 138 / 300: Loss = 0.373 Acc = 0.89
+Epoch 139 / 300: Loss = 0.367 Acc = 1.00
+Epoch 140 / 300: Loss = 0.361 Acc = 1.00
+Epoch 141 / 300: Loss = 0.355 Acc = 1.00
+Epoch 142 / 300: Loss = 0.349 Acc = 1.00
+Epoch 143 / 300: Loss = 0.343 Acc = 1.00
+Epoch 144 / 300: Loss = 0.338 Acc = 1.00
+Epoch 145 / 300: Loss = 0.332 Acc = 1.00
+Epoch 146 / 300: Loss = 0.326 Acc = 1.00
+Epoch 147 / 300: Loss = 0.321 Acc = 1.00
+Epoch 148 / 300: Loss = 0.315 Acc = 1.00
+Epoch 149 / 300: Loss = 0.310 Acc = 1.00
+Epoch 150 / 300: Loss = 0.305 Acc = 1.00
+Epoch 151 / 300: Loss = 0.299 Acc = 1.00
+Epoch 152 / 300: Loss = 0.294 Acc = 1.00
+Epoch 153 / 300: Loss = 0.289 Acc = 1.00
+Epoch 154 / 300: Loss = 0.284 Acc = 1.00
+Epoch 155 / 300: Loss = 0.279 Acc = 1.00
+Epoch 156 / 300: Loss = 0.274 Acc = 1.00
+Epoch 157 / 300: Loss = 0.269 Acc = 1.00
+Epoch 158 / 300: Loss = 0.265 Acc = 1.00
+Epoch 159 / 300: Loss = 0.260 Acc = 1.00
+Epoch 160 / 300: Loss = 0.256 Acc = 1.00
+Epoch 161 / 300: Loss = 0.251 Acc = 1.00
+Epoch 162 / 300: Loss = 0.247 Acc = 1.00
+Epoch 163 / 300: Loss = 0.242 Acc = 1.00
+Epoch 164 / 300: Loss = 0.238 Acc = 1.00
+Epoch 165 / 300: Loss = 0.234 Acc = 1.00
+Epoch 166 / 300: Loss = 0.230 Acc = 1.00
+Epoch 167 / 300: Loss = 0.226 Acc = 1.00
+Epoch 168 / 300: Loss = 0.222 Acc = 1.00
+Epoch 169 / 300: Loss = 0.218 Acc = 1.00
+Epoch 170 / 300: Loss = 0.214 Acc = 1.00
+Epoch 171 / 300: Loss = 0.211 Acc = 1.00
+Epoch 172 / 300: Loss = 0.207 Acc = 1.00
+Epoch 173 / 300: Loss = 0.204 Acc = 1.00
+Epoch 174 / 300: Loss = 0.200 Acc = 1.00
+Epoch 175 / 300: Loss = 0.197 Acc = 1.00
+Epoch 176 / 300: Loss = 0.193 Acc = 1.00
+Epoch 177 / 300: Loss = 0.190 Acc = 1.00
+Epoch 178 / 300: Loss = 0.187 Acc = 1.00
+Epoch 179 / 300: Loss = 0.184 Acc = 1.00
+Epoch 180 / 300: Loss = 0.181 Acc = 1.00
+Epoch 181 / 300: Loss = 0.178 Acc = 1.00
+Epoch 182 / 300: Loss = 0.175 Acc = 1.00
+Epoch 183 / 300: Loss = 0.172 Acc = 1.00
+Epoch 184 / 300: Loss = 0.169 Acc = 1.00
+Epoch 185 / 300: Loss = 0.166 Acc = 1.00
+Epoch 186 / 300: Loss = 0.164 Acc = 1.00
+Epoch 187 / 300: Loss = 0.161 Acc = 1.00
+Epoch 188 / 300: Loss = 0.158 Acc = 1.00
+Epoch 189 / 300: Loss = 0.156 Acc = 1.00
+Epoch 190 / 300: Loss = 0.153 Acc = 1.00
+Epoch 191 / 300: Loss = 0.151 Acc = 1.00
+Epoch 192 / 300: Loss = 0.148 Acc = 1.00
+Epoch 193 / 300: Loss = 0.146 Acc = 1.00
+Epoch 194 / 300: Loss = 0.144 Acc = 1.00
+Epoch 195 / 300: Loss = 0.142 Acc = 1.00
+Epoch 196 / 300: Loss = 0.139 Acc = 1.00
+Epoch 197 / 300: Loss = 0.137 Acc = 1.00
+Epoch 198 / 300: Loss = 0.135 Acc = 1.00
+Epoch 199 / 300: Loss = 0.133 Acc = 1.00
+Epoch 200 / 300: Loss = 0.131 Acc = 1.00
+Epoch 201 / 300: Loss = 0.129 Acc = 1.00
+Epoch 202 / 300: Loss = 0.127 Acc = 1.00
+Epoch 203 / 300: Loss = 0.125 Acc = 1.00
+Epoch 204 / 300: Loss = 0.123 Acc = 1.00
+Epoch 205 / 300: Loss = 0.122 Acc = 1.00
+Epoch 206 / 300: Loss = 0.120 Acc = 1.00
+Epoch 207 / 300: Loss = 0.118 Acc = 1.00
+Epoch 208 / 300: Loss = 0.116 Acc = 1.00
+Epoch 209 / 300: Loss = 0.115 Acc = 1.00
+Epoch 210 / 300: Loss = 0.113 Acc = 1.00
+Epoch 211 / 300: Loss = 0.111 Acc = 1.00
+Epoch 212 / 300: Loss = 0.110 Acc = 1.00
+Epoch 213 / 300: Loss = 0.108 Acc = 1.00
+Epoch 214 / 300: Loss = 0.107 Acc = 1.00
+Epoch 215 / 300: Loss = 0.105 Acc = 1.00
+Epoch 216 / 300: Loss = 0.104 Acc = 1.00
+Epoch 217 / 300: Loss = 0.102 Acc = 1.00
+Epoch 218 / 300: Loss = 0.101 Acc = 1.00
+Epoch 219 / 300: Loss = 0.100 Acc = 1.00
+Epoch 220 / 300: Loss = 0.098 Acc = 1.00
+Epoch 221 / 300: Loss = 0.097 Acc = 1.00
+Epoch 222 / 300: Loss = 0.096 Acc = 1.00
+Epoch 223 / 300: Loss = 0.094 Acc = 1.00
+Epoch 224 / 300: Loss = 0.093 Acc = 1.00
+Epoch 225 / 300: Loss = 0.092 Acc = 1.00
+Epoch 226 / 300: Loss = 0.091 Acc = 1.00
+Epoch 227 / 300: Loss = 0.090 Acc = 1.00
+Epoch 228 / 300: Loss = 0.089 Acc = 1.00
+Epoch 229 / 300: Loss = 0.087 Acc = 1.00
+Epoch 230 / 300: Loss = 0.086 Acc = 1.00
+Epoch 231 / 300: Loss = 0.085 Acc = 1.00
+Epoch 232 / 300: Loss = 0.084 Acc = 1.00
+Epoch 233 / 300: Loss = 0.083 Acc = 1.00
+Epoch 234 / 300: Loss = 0.082 Acc = 1.00
+Epoch 235 / 300: Loss = 0.081 Acc = 1.00
+Epoch 236 / 300: Loss = 0.080 Acc = 1.00
+Epoch 237 / 300: Loss = 0.079 Acc = 1.00
+Epoch 238 / 300: Loss = 0.078 Acc = 1.00
+Epoch 239 / 300: Loss = 0.077 Acc = 1.00
+Epoch 240 / 300: Loss = 0.076 Acc = 1.00
+Epoch 241 / 300: Loss = 0.076 Acc = 1.00
+Epoch 242 / 300: Loss = 0.075 Acc = 1.00
+Epoch 243 / 300: Loss = 0.074 Acc = 1.00
+Epoch 244 / 300: Loss = 0.073 Acc = 1.00
+Epoch 245 / 300: Loss = 0.072 Acc = 1.00
+Epoch 246 / 300: Loss = 0.071 Acc = 1.00
+Epoch 247 / 300: Loss = 0.071 Acc = 1.00
+Epoch 248 / 300: Loss = 0.070 Acc = 1.00
+Epoch 249 / 300: Loss = 0.069 Acc = 1.00
+Epoch 250 / 300: Loss = 0.068 Acc = 1.00
+Epoch 251 / 300: Loss = 0.067 Acc = 1.00
+Epoch 252 / 300: Loss = 0.067 Acc = 1.00
+Epoch 253 / 300: Loss = 0.066 Acc = 1.00
+Epoch 254 / 300: Loss = 0.065 Acc = 1.00
+Epoch 255 / 300: Loss = 0.065 Acc = 1.00
+Epoch 256 / 300: Loss = 0.064 Acc = 1.00
+Epoch 257 / 300: Loss = 0.063 Acc = 1.00
+Epoch 258 / 300: Loss = 0.063 Acc = 1.00
+Epoch 259 / 300: Loss = 0.062 Acc = 1.00
+Epoch 260 / 300: Loss = 0.061 Acc = 1.00
+Epoch 261 / 300: Loss = 0.061 Acc = 1.00
+Epoch 262 / 300: Loss = 0.060 Acc = 1.00
+Epoch 263 / 300: Loss = 0.059 Acc = 1.00
+Epoch 264 / 300: Loss = 0.059 Acc = 1.00
+Epoch 265 / 300: Loss = 0.058 Acc = 1.00
+Epoch 266 / 300: Loss = 0.058 Acc = 1.00
+Epoch 267 / 300: Loss = 0.057 Acc = 1.00
+Epoch 268 / 300: Loss = 0.057 Acc = 1.00
+Epoch 269 / 300: Loss = 0.056 Acc = 1.00
+Epoch 270 / 300: Loss = 0.055 Acc = 1.00
+Epoch 271 / 300: Loss = 0.055 Acc = 1.00
+Epoch 272 / 300: Loss = 0.054 Acc = 1.00
+Epoch 273 / 300: Loss = 0.054 Acc = 1.00
+Epoch 274 / 300: Loss = 0.053 Acc = 1.00
+Epoch 275 / 300: Loss = 0.053 Acc = 1.00
+Epoch 276 / 300: Loss = 0.052 Acc = 1.00
+Epoch 277 / 300: Loss = 0.052 Acc = 1.00
+Epoch 278 / 300: Loss = 0.051 Acc = 1.00
+Epoch 279 / 300: Loss = 0.051 Acc = 1.00
+Epoch 280 / 300: Loss = 0.050 Acc = 1.00
+Epoch 281 / 300: Loss = 0.050 Acc = 1.00
+Epoch 282 / 300: Loss = 0.050 Acc = 1.00
+Epoch 283 / 300: Loss = 0.049 Acc = 1.00
+Epoch 284 / 300: Loss = 0.049 Acc = 1.00
+Epoch 285 / 300: Loss = 0.048 Acc = 1.00
+Epoch 286 / 300: Loss = 0.048 Acc = 1.00
+Epoch 287 / 300: Loss = 0.047 Acc = 1.00
+Epoch 288 / 300: Loss = 0.047 Acc = 1.00
+Epoch 289 / 300: Loss = 0.047 Acc = 1.00
+Epoch 290 / 300: Loss = 0.046 Acc = 1.00
+Epoch 291 / 300: Loss = 0.046 Acc = 1.00
+Epoch 292 / 300: Loss = 0.045 Acc = 1.00
+Epoch 293 / 300: Loss = 0.045 Acc = 1.00
+Epoch 294 / 300: Loss = 0.045 Acc = 1.00
+Epoch 295 / 300: Loss = 0.044 Acc = 1.00
+Epoch 296 / 300: Loss = 0.044 Acc = 1.00
+Epoch 297 / 300: Loss = 0.044 Acc = 1.00
+Epoch 298 / 300: Loss = 0.043 Acc = 1.00
+Epoch 299 / 300: Loss = 0.043 Acc = 1.00
+Epoch 300 / 300: Loss = 0.043 Acc = 1.00
+Sentence:  [&#39;The&#39;, &#39;dog&#39;, &#39;ate&#39;, &#39;the&#39;, &#39;apple&#39;]
+Labels:    [&#39;DET&#39;, &#39;NN&#39;, &#39;V&#39;, &#39;DET&#39;, &#39;NN&#39;]
+Predicted: [&#39;DET&#39;, &#39;NN&#39;, &#39;V&#39;, &#39;DET&#39;, &#39;NN&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_qlstm_tagger_18_1.png" src="../_images/tutorials_qlstm_tagger_18_1.png" />
+</div>
+</div>
+<p>In case you want to try with a different backend simulator you could also install <code class="docutils literal notranslate"><span class="pre">pennylane-qiskit</span></code> and play around with <code class="docutils literal notranslate"><span class="pre">qiskit.aer</span></code> or <code class="docutils literal notranslate"><span class="pre">qiskit.qasm</span></code>. Be aware that it’s going to be way slower because of qiskit simulators.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qsvc.html" class="btn btn-neutral float-right" title="Hybrid Quantum Support Vector Machine Classifier Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encodings &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quantum Neural Networks" href="qlearnkit.nn.html" />
+    <link rel="prev" title="Datasets" href="qlearnkit.datasets.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qlearnkit.html">Qlearnkit Module API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.html">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.circuits.html">Circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.datasets.html">Datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Encodings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.encodings.amplitude_encoding">Amplitude Encoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.encodings.angle_encoding">Angle Encoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.encodings.basis_encoding">Basis Encoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.encodings.encoding_map">Encoding Map</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.nn.html">Quantum Neural Networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qlearnkit.html">Qlearnkit</a></li>
+      <li class="breadcrumb-item active">Encodings</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/apidoc/qlearnkit.encodings.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="encodings">
+<h1>Encodings<a class="headerlink" href="#encodings" title="Permalink to this headline"></a></h1>
+<section id="module-qlearnkit.encodings.amplitude_encoding">
+<span id="amplitude-encoding"></span><h2>Amplitude Encoding<a class="headerlink" href="#module-qlearnkit.encodings.amplitude_encoding" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AmplitudeEncoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/amplitude_encoding.html#AmplitudeEncoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></code></a></p>
+<p>Amplitude Encoding map</p>
+<p>Creates a generic Encoding Map for classical data
+of size <cite>n_features</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_features</strong> – number of features (default: 2)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding.construct_circuit">
+<span class="sig-name descname"><span class="pre">construct_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/amplitude_encoding.html#AmplitudeEncoding.construct_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding.construct_circuit" title="Permalink to this definition"></a></dt>
+<dd><p>Constructs circuit for amplitude encoding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – 1D classical data vector to be encoded
+must satisfy len(x) == num_features</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding.state_vector">
+<span class="sig-name descname"><span class="pre">state_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/amplitude_encoding.html#AmplitudeEncoding.state_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.amplitude_encoding.AmplitudeEncoding.state_vector" title="Permalink to this definition"></a></dt>
+<dd><p>The encoding of a state via amplitude encoding operates
+as follows:
+given a quantum state <span class="math notranslate nohighlight">\(\psi\)</span>, it processes the data
+such that</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the classical data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(np.array) encoded quantum state</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.encodings.angle_encoding">
+<span id="angle-encoding"></span><h2>Angle Encoding<a class="headerlink" href="#module-qlearnkit.encodings.angle_encoding" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.encodings.angle_encoding.AngleEncoding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AngleEncoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5707963267948966</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/angle_encoding.html#AngleEncoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.angle_encoding.AngleEncoding" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></code></a></p>
+<p>Angle Encoding algorithm. Assumes data is feature-normalized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rotation</strong> – the direction
+admitted values: X, Y, Z</p></li>
+<li><p><strong>scaling</strong> – scaling factor for normalized input data.
+The default scaling <span class="math notranslate nohighlight">\(\pi/2\)</span> does
+not induce a relative phase difference.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.angle_encoding.AngleEncoding.construct_circuit">
+<span class="sig-name descname"><span class="pre">construct_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/angle_encoding.html#AngleEncoding.construct_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.angle_encoding.AngleEncoding.construct_circuit" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.array</em>) – The input data to encode</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The circuit that encodes x.
+Assumes data is feature-normalized.
+Assumes every element in x is in [0, 1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.angle_encoding.AngleEncoding.state_vector">
+<span class="sig-name descname"><span class="pre">state_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/angle_encoding.html#AngleEncoding.state_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.angle_encoding.AngleEncoding.state_vector" title="Permalink to this definition"></a></dt>
+<dd><p>The encoding of a state via angle encoding, operating
+a rotation around the <code class="docutils literal notranslate"><span class="pre">rotation</span></code> axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.array</em>) – The input data to encode</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The state vector representation of x after angle encoding</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.encodings.basis_encoding">
+<span id="basis-encoding"></span><h2>Basis Encoding<a class="headerlink" href="#module-qlearnkit.encodings.basis_encoding" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.encodings.basis_encoding.BasisEncoding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BasisEncoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/basis_encoding.html#BasisEncoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.basis_encoding.BasisEncoding" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qlearnkit.encodings.encoding_map.EncodingMap" title="qlearnkit.encodings.encoding_map.EncodingMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.encodings.encoding_map.EncodingMap</span></code></a></p>
+<p>Initializes Basis Encoding Map</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.basis_encoding.BasisEncoding.construct_circuit">
+<span class="sig-name descname"><span class="pre">construct_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/basis_encoding.html#BasisEncoding.construct_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.basis_encoding.BasisEncoding.construct_circuit" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves the quantum circuit encoding via
+Basis Encoding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – the data vector to encode</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the quantum encoding circuit</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All data values must be either 1s or 0s</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.encodings.encoding_map">
+<span id="encoding-map"></span><h2>Encoding Map<a class="headerlink" href="#module-qlearnkit.encodings.encoding_map" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.encodings.encoding_map.EncodingMap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EncodingMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/encoding_map.html#EncodingMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.encoding_map.EncodingMap" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract Base class for qlearnkit encoding maps</p>
+<p>Creates a generic Encoding Map for classical data
+of size <cite>n_features</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_features</strong> – number of features (default: 2)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.encodings.encoding_map.EncodingMap.construct_circuit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">construct_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/encodings/encoding_map.html#EncodingMap.construct_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.encodings.encoding_map.EncodingMap.construct_circuit" title="Permalink to this definition"></a></dt>
+<dd><p>construct and return quantum circuit encoding data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.encodings.encoding_map.EncodingMap.num_qubits">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_qubits</span></span><a class="headerlink" href="#qlearnkit.encodings.encoding_map.EncodingMap.num_qubits" title="Permalink to this definition"></a></dt>
+<dd><p>getter for number of qubits</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.encodings.encoding_map.EncodingMap.num_features">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_features</span></span><a class="headerlink" href="#qlearnkit.encodings.encoding_map.EncodingMap.num_features" title="Permalink to this definition"></a></dt>
+<dd><p>getter for number of features</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qlearnkit.datasets.html" class="btn btn-neutral float-left" title="Datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qlearnkit.nn.html" class="btn btn-neutral float-right" title="Quantum Neural Networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

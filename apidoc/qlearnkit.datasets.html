@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datasets &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Encodings" href="qlearnkit.encodings.html" />
+    <link rel="prev" title="Circuits" href="qlearnkit.circuits.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qlearnkit.html">Qlearnkit Module API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.html">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.circuits.html">Circuits</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.datasets.dataset_helper">Dataset Helper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.datasets.breast_cancer">Breast Cancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.datasets.iris">Iris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.datasets.wine">Wine</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.encodings.html">Encodings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.nn.html">Quantum Neural Networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qlearnkit.html">Qlearnkit</a></li>
+      <li class="breadcrumb-item active">Datasets</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/apidoc/qlearnkit.datasets.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="datasets">
+<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline"></a></h1>
+<section id="module-qlearnkit.datasets.dataset_helper">
+<span id="dataset-helper"></span><h2>Dataset Helper<a class="headerlink" href="#module-qlearnkit.datasets.dataset_helper" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.dataset_helper.features_labels_from_data">
+<span class="sig-name descname"><span class="pre">features_labels_from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bunch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/dataset_helper.html#features_labels_from_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.dataset_helper.features_labels_from_data" title="Permalink to this definition"></a></dt>
+<dd><p>This script splits a dataset according to the required train size, test size and
+number of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – raw data from dataset</p></li>
+<li><p><strong>y</strong> – labels from dataset</p></li>
+<li><p><strong>test_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the proportion
+of the dataset to include in the test split. If int, represents the
+absolute number of test samples. If None, the value is set to the
+complement of the train size. If <code class="docutils literal notranslate"><span class="pre">train_size</span></code> is also None, it will
+be set to 0.25.</p></li>
+<li><p><strong>train_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set to the complement of the test size.</p></li>
+<li><p><strong>n_features</strong> – number of desired features</p></li>
+<li><p><strong>use_pca</strong> – whether to use PCA for dimensionality reduction or not
+default False</p></li>
+<li><p><strong>return_bunch</strong> – whether to return a <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.Bunch</span></code>
+(similar to a dictionary) or not</p></li>
+<li><p><strong>Returns</strong> – Preprocessed dataset as available in sklearn</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.dataset_helper.pca_reduce">
+<span class="sig-name descname"><span class="pre">pca_reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/dataset_helper.html#pca_reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.dataset_helper.pca_reduce" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.dataset_helper.label_to_class_name">
+<span class="sig-name descname"><span class="pre">label_to_class_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/dataset_helper.html#label_to_class_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.dataset_helper.label_to_class_name" title="Permalink to this definition"></a></dt>
+<dd><p>Helper converts labels (numeric) to class name (string)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicted_labels</strong> (<em>numpy.ndarray</em>) – Nx1 array</p></li>
+<li><p><strong>classes</strong> (<em>dict or list</em>) – a mapping form label (numeric) to class name (str)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of predicted class names of each datum</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sepal length (cm)&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="s1">&#39;sepal width (cm)&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="s1">&#39;petal length (cm)&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="s1">&#39;petal width (cm)&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">label_to_class_name</span><span class="p">(</span><span class="n">predicted_labels</span><span class="p">,</span> <span class="n">classes</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.datasets.breast_cancer">
+<span id="breast-cancer"></span><h2>Breast Cancer<a class="headerlink" href="#module-qlearnkit.datasets.breast_cancer" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.breast_cancer.load_breast_cancer">
+<span class="sig-name descname"><span class="pre">load_breast_cancer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bunch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/breast_cancer.html#load_breast_cancer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.breast_cancer.load_breast_cancer" title="Permalink to this definition"></a></dt>
+<dd><p>This script loads breast cancer dataset from sklearn and splits it according to
+the required train size, test size and number of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the proportion
+of the dataset to include in the test split. If int, represents the
+absolute number of test samples. If None, the value is set to the
+complement of the train size. If <code class="docutils literal notranslate"><span class="pre">train_size</span></code> is also None, it will
+be set to 0.25.</p></li>
+<li><p><strong>train_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set to the complement of the test size.</p></li>
+<li><p><strong>n_features</strong> – number of desired features</p></li>
+<li><p><strong>use_pca</strong> – whether to use PCA for dimensionality reduction or not
+default False</p></li>
+<li><p><strong>return_bunch</strong> – whether to return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Bunch</span></code>
+(similar to a dictionary) or not</p></li>
+<li><p><strong>Returns</strong> – Breast Cancer dataset as available in sklearn</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.datasets.iris">
+<span id="iris"></span><h2>Iris<a class="headerlink" href="#module-qlearnkit.datasets.iris" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.iris.load_iris">
+<span class="sig-name descname"><span class="pre">load_iris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bunch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/iris.html#load_iris"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.iris.load_iris" title="Permalink to this definition"></a></dt>
+<dd><p>This script loads iris dataset from sklearn and splits it according to
+the required train size, test size and number of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the proportion
+of the dataset to include in the test split. If int, represents the
+absolute number of test samples. If None, the value is set to the
+complement of the train size. If <code class="docutils literal notranslate"><span class="pre">train_size</span></code> is also None, it will
+be set to 0.25.</p></li>
+<li><p><strong>train_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set to the complement of the test size.</p></li>
+<li><p><strong>n_features</strong> – number of desired features</p></li>
+<li><p><strong>use_pca</strong> – whether to use PCA for dimensionality reduction or not
+default False</p></li>
+<li><p><strong>return_bunch</strong> – whether to return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Bunch</span></code>
+(similar to a dictionary) or not</p></li>
+<li><p><strong>Returns</strong> – Iris dataset as available in sklearn</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.datasets.wine">
+<span id="wine"></span><h2>Wine<a class="headerlink" href="#module-qlearnkit.datasets.wine" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qlearnkit.datasets.wine.load_wine">
+<span class="sig-name descname"><span class="pre">load_wine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bunch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/datasets/wine.html#load_wine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.datasets.wine.load_wine" title="Permalink to this definition"></a></dt>
+<dd><p>This script loads wine dataset from sklearn and splits it according to
+the required train size, test size and number of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the proportion
+of the dataset to include in the test split. If int, represents the
+absolute number of test samples. If None, the value is set to the
+complement of the train size. If <code class="docutils literal notranslate"><span class="pre">train_size</span></code> is also None, it will
+be set to 0.25.</p></li>
+<li><p><strong>train_size</strong> – float or int, default=None
+If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set to the complement of the test size.</p></li>
+<li><p><strong>n_features</strong> – number of desired features</p></li>
+<li><p><strong>use_pca</strong> – whether to use PCA for dimensionality reduction or not
+default False</p></li>
+<li><p><strong>return_bunch</strong> – whether to return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Bunch</span></code>
+(similar to a dictionary) or not</p></li>
+<li><p><strong>Returns</strong> – Wine dataset as available in sklearn</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qlearnkit.circuits.html" class="btn btn-neutral float-left" title="Circuits" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qlearnkit.encodings.html" class="btn btn-neutral float-right" title="Encodings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

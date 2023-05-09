@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithms &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quantum K-Means" href="qlearnkit.algorithms.qkmeans.html" />
+    <link rel="prev" title="Qlearnkit" href="qlearnkit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qlearnkit.html">Qlearnkit Module API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html">Quantum K-Means</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.algorithms.qknn.html">Quantum K-Nearest Neighbours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html">Quantum Support Vector Classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.algorithms.kernel_method_mixin">Kernel Method Mixin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.algorithms.quantum_estimator">Quantum Estimator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.circuits.html">Circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.encodings.html">Encodings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.nn.html">Quantum Neural Networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qlearnkit.html">Qlearnkit</a></li>
+      <li class="breadcrumb-item active">Algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/apidoc/qlearnkit.algorithms.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="algorithms">
+<h1>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html">Quantum K-Means</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.qkmeans">QKMeans Algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.qkmeans_circuit">QKMeans Circuit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qkmeans.html#module-qlearnkit.algorithms.qkmeans.centroid_initialization">Initializations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qknn.html">Quantum K-Nearest Neighbours</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_base">Quantum KNN Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_classifier">Quantum KNeighbours Classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.qknn.html#module-qlearnkit.algorithms.qknn.qknn_regressor">Quantum KNeighbours Regressor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qlearnkit.algorithms.qsvm.html">Quantum Support Vector Classifier</a></li>
+</ul>
+</div>
+<section id="module-qlearnkit.algorithms.kernel_method_mixin">
+<span id="kernel-method-mixin"></span><h2>Kernel Method Mixin<a class="headerlink" href="#module-qlearnkit.algorithms.kernel_method_mixin" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">KernelMethodMixin</span></span><a class="reference internal" href="../_modules/qlearnkit/algorithms/kernel_method_mixin.html#KernelMethodMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.kernel_method_mixin.KernelMethodMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin class for kernel methods such as SVM and Ridge.
+Exploits quantum parallelization to efficiently compute
+kernel matrices for train and test data.</p>
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.algorithms.quantum_estimator">
+<span id="quantum-estimator"></span><h2>Quantum Estimator<a class="headerlink" href="#module-qlearnkit.algorithms.quantum_estimator" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QuantumEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantum_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding_map</strong> – Map to classical data to quantum states.
+This class does not impose any constraint on it. It
+can either be a custom encoding map or a qiskit FeatureMap</p></li>
+<li><p><strong>quantum_instance</strong> – The quantum instance to set. Can be a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumInstance</span></code> or a <code class="xref py py-class docutils literal notranslate"><span class="pre">Backend</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the model using X as training dataset
+and y as training labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> – training dataset</p></li>
+<li><p><strong>y_train</strong> – training labels</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.predict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predicts the labels associated to the
+unclassified data X_test</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X_test</strong> – the unclassified data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the labels associated to X_test</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.quantum_instance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantum_instance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">qiskit.utils.quantum_instance.QuantumInstance</span></em><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.quantum_instance" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the quantum instance to evaluate the circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumInstance</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.encoding_map">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encoding_map</span></span><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.encoding_map" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the Encoding Map</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qcircuits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.execute" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the given quantum circuit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qcircuits</strong> – a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code> or a list of</p></li>
+<li><p><strong>this type to be executed</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the execution results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.algorithms.quantum_estimator.QuantumEstimator.score">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/algorithms/quantum_estimator.html#QuantumEstimator.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.algorithms.quantum_estimator.QuantumEstimator.score" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a score of this model given samples and true values for the samples.
+In case of classification, this value should correspond to mean accuracy,
+in case of regression, the coefficient of determination <span class="math notranslate nohighlight">\(R^2\)</span> of the prediction.
+In case of clustering, the <cite>y</cite> parameter is typically ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – array-like of shape (n_samples, n_features)</p></li>
+<li><p><strong>y</strong> – array-like of labels of shape (n_samples,)</p></li>
+<li><p><strong>sample_weight</strong> – array-like of shape (n_samples,), default=None
+The weights for each observation in X. If None, all observations
+are assigned equal weight.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a float score of the model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qlearnkit.html" class="btn btn-neutral float-left" title="Qlearnkit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qlearnkit.algorithms.qkmeans.html" class="btn btn-neutral float-right" title="Quantum K-Means" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

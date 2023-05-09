@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qlearnkit.nn.quanv &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/qlearnkit.html">Qlearnkit Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qlearnkit.nn.quanv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qlearnkit.nn.quanv</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">qlearnkit.optionals</span> <span class="k">as</span> <span class="nn">_optionals</span>
+
+<span class="k">if</span> <span class="n">_optionals</span><span class="o">.</span><span class="n">HAS_PENNYLANE</span><span class="p">:</span>
+    <span class="c1"># then qlearnkit has been installed</span>
+    <span class="c1"># with the &#39;pennylane&#39; option (or the env</span>
+    <span class="c1"># already has both pennylane and torch)</span>
+    <span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+
+    <span class="kn">from</span> <span class="nn">pennylane.templates</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">AngleEmbedding</span><span class="p">,</span>
+        <span class="n">BasicEntanglerLayers</span>
+    <span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">.qml_mixin</span> <span class="kn">import</span> <span class="n">QmlMixin</span>
+
+    <span class="kn">import</span> <span class="nn">torch</span>
+    <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+    <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">Module</span>
+    <span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="kn">import</span> <span class="n">unfold</span>
+
+    <span class="kn">from</span> <span class="nn">pennylane.qnn</span> <span class="kn">import</span> <span class="n">TorchLayer</span> <span class="k">as</span> <span class="n">TorchConnector</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+
+    <span class="c1"># allows importing the module, but</span>
+    <span class="c1"># the instantiation will raise an Exception</span>
+    <span class="n">Module</span> <span class="o">=</span> <span class="n">Mock</span>
+    <span class="n">Tensor</span> <span class="o">=</span> <span class="n">Mock</span>
+
+
+<div class="viewcode-block" id="Quanv2DLayer"><a class="viewcode-back" href="../../../apidoc/qlearnkit.nn.html#qlearnkit.nn.quanv.Quanv2DLayer">[docs]</a><span class="nd">@_optionals</span><span class="o">.</span><span class="n">HAS_PENNYLANE</span><span class="o">.</span><span class="n">require_in_instance</span>
+<span class="k">class</span> <span class="nc">Quanv2DLayer</span><span class="p">(</span><span class="n">Module</span><span class="p">,</span> <span class="n">QmlMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Quantum Convolution Layer for Pytorch Hybrid Architectures</span>
+
+<span class="sd">    **References:**</span>
+
+<span class="sd">    [1] Henderson et al.,</span>
+<span class="sd">        `Quanvolutional Neural Networks: Powering Image Recognition with Quantum Circuits &lt;https://arxiv.org/pdf/1904.04767.pdf&gt;`_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_qubits:</span>
+<span class="sd">            int, The number of qubits of the quantum node.</span>
+<span class="sd">            Default: 4.</span>
+
+<span class="sd">        kernel_size:</span>
+<span class="sd">            Size of the convolutional kernel.</span>
+<span class="sd">            Default: (2,2).</span>
+
+<span class="sd">        stride:</span>
+<span class="sd">            Stride of the convolution.</span>
+<span class="sd">            Default: 1</span>
+
+<span class="sd">        out_channels:</span>
+<span class="sd">             Number of channels produced by the quanvolution.</span>
+<span class="sd">             Default: 4.</span>
+
+<span class="sd">        n_layers:</span>
+<span class="sd">            int, the number of layers of the variational</span>
+<span class="sd">            quantum circuit.</span>
+<span class="sd">            Default: 1.</span>
+
+<span class="sd">        device:</span>
+<span class="sd">            Can be a string representing the device name</span>
+<span class="sd">            or a valid :class:`~pennylane.Device` having</span>
+<span class="sd">            ``n_qubits`` wires.</span>
+<span class="sd">            Default &#39;default.qubit&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">n_qubits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                 <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">qml</span><span class="o">.</span><span class="n">Device</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;default.qubit&#39;</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Quanv2DLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">=</span> <span class="n">kernel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">=</span> <span class="n">stride</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
+        <span class="c1"># calls the device setter</span>
+        <span class="c1"># and makes sure the param</span>
+        <span class="c1"># is legit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">=</span> <span class="n">n_qubits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">=</span> <span class="n">n_layers</span>
+
+        <span class="c1"># create the quantum node</span>
+        <span class="n">weight_shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">n_layers</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qnode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_qnode</span><span class="p">(</span><span class="n">weight_shapes</span><span class="o">=</span><span class="n">weight_shapes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Quanv2DLayer.quanvolve"><a class="viewcode-back" href="../../../apidoc/qlearnkit.nn.html#qlearnkit.nn.quanv.Quanv2DLayer.quanvolve">[docs]</a>    <span class="k">def</span> <span class="nf">quanvolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies a single channel 2D quantum convolution (quanvolution)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs:</span>
+<span class="sd">                one channel input batch</span>
+<span class="sd">            in_channels:</span>
+<span class="sd">                number of channel in the original input image</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_patches</span> <span class="o">=</span> <span class="n">unfold</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">input_patches</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">input_patches</span> <span class="o">=</span> <span class="n">input_patches</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">convolved_patches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_patches</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">h_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">w_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">out_shape</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">//</span> <span class="n">in_channels</span><span class="p">,</span>
+            <span class="n">h_out</span><span class="p">,</span>
+            <span class="n">w_out</span>
+        <span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">convolved_patches</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">out_shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_qnode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight_shapes</span><span class="p">):</span>
+        <span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_qnode</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+            <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">))</span>
+            <span class="n">BasicEntanglerLayers</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">qml</span><span class="o">.</span><span class="n">expval</span><span class="p">(</span><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">TorchConnector</span><span class="p">(</span><span class="n">_qnode</span><span class="p">,</span> <span class="n">weight_shapes</span><span class="o">=</span><span class="n">weight_shapes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Quanv2DLayer.forward"><a class="viewcode-back" href="../../../apidoc/qlearnkit.nn.html#qlearnkit.nn.quanv.Quanv2DLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the quantum convolution operation for the forward pass</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs: :class:`~torch.Tensor`,</span>
+<span class="sd">            input to be forwarded through the layer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Array containing model&#39;s prediction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># unstack the different channels, apply convolutions, restack together</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">quanvolve</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">in_channels</span><span class="o">=</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)],</span>
+            <span class="c1"># cat second arg</span>
+            <span class="mi">1</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

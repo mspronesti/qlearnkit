@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Neural Networks &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorials" href="../tutorials/index.html" />
+    <link rel="prev" title="Encodings" href="qlearnkit.encodings.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qlearnkit.html">Qlearnkit Module API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.algorithms.html">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.circuits.html">Circuits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qlearnkit.encodings.html">Encodings</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quantum Neural Networks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.nn.qae">Quantum Autoencoder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.nn.qml_mixin">QML Mixin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.nn.qrnn">Quantum LSTM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-qlearnkit.nn.quanv">Quanvolutional Layer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qlearnkit.html">Qlearnkit</a></li>
+      <li class="breadcrumb-item active">Quantum Neural Networks</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/mspronesti/qlearnkit/blob/master/docs/apidoc/qlearnkit.nn.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quantum-neural-networks">
+<h1>Quantum Neural Networks<a class="headerlink" href="#quantum-neural-networks" title="Permalink to this headline"></a></h1>
+<section id="module-qlearnkit.nn.qae">
+<span id="quantum-autoencoder"></span><h2>Quantum Autoencoder<a class="headerlink" href="#module-qlearnkit.nn.qae" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.nn.qae.QuantumAutoEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QuantumAutoEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_aux_qubits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_latent_qubits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default.qubit'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/qae.html#QuantumAutoEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.qae.QuantumAutoEncoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <a class="reference internal" href="#qlearnkit.nn.qml_mixin.QmlMixin" title="qlearnkit.nn.qml_mixin.QmlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.nn.qml_mixin.QmlMixin</span></code></a></p>
+<p>Hybrid Quantum AutoEncoder, miming pytorch’s API and exploiting
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TorchLayer</span></code>.</p>
+<p><strong>References:</strong></p>
+<dl class="simple">
+<dt>[1] Romero et al.,</dt><dd><p><a class="reference external" href="https://arxiv.org/abs/1612.02806">Quantum autoencoders for efficient compression of quantum data</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_qubits</strong> – int, the actual number of qubits used in the
+training. It’s the <cite>n</cite> of the paper formalism.</p></li>
+<li><p><strong>n_aux_qubits</strong> – int, the number of auxiliary qubits, used as
+ancillas in the swap test.</p></li>
+<li><p><strong>n_latent_qubits</strong> – int, the number of qubits that can be discarded
+during the encoding.</p></li>
+<li><p><strong>device</strong> – Can be a string representing the device name
+or a valid <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> having
+<code class="docutils literal notranslate"><span class="pre">n_qubits</span></code> wires</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.nn.qae.QuantumAutoEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/qae.html#QuantumAutoEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.qae.QuantumAutoEncoder.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward propagation pass of the Neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>,</p></li>
+<li><p><strong>input to be forwarded through the autoencoder</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing model’s prediction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qlearnkit.nn.qae.QuantumAutoEncoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qlearnkit.nn.qae.QuantumAutoEncoder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.nn.qml_mixin">
+<span id="qml-mixin"></span><h2>QML Mixin<a class="headerlink" href="#module-qlearnkit.nn.qml_mixin" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.nn.qml_mixin.QmlMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QmlMixin</span></span><a class="reference internal" href="../_modules/qlearnkit/nn/qml_mixin.html#QmlMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.qml_mixin.QmlMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin for models built on top of Pennylane (QML)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.nn.qml_mixin.QmlMixin.device">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pennylane._device.Device</span></em><a class="headerlink" href="#qlearnkit.nn.qml_mixin.QmlMixin.device" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qlearnkit.nn.qml_mixin.QmlMixin.n_qubits">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_qubits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qlearnkit.nn.qml_mixin.QmlMixin.n_qubits" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.nn.qrnn">
+<span id="quantum-lstm"></span><h2>Quantum LSTM<a class="headerlink" href="#module-qlearnkit.nn.qrnn" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.nn.qrnn.QLongShortTermMemory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QLongShortTermMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_qubits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default.qubit'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/qrnn.html#QLongShortTermMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.qrnn.QLongShortTermMemory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <a class="reference internal" href="#qlearnkit.nn.qml_mixin.QmlMixin" title="qlearnkit.nn.qml_mixin.QmlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.nn.qml_mixin.QmlMixin</span></code></a></p>
+<p>Hybrid Quantum Long Short Term Memory, miming pytorch’s API and exploiting
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TorchLayer</span></code>.</p>
+<p>Applies a multi-layer long short-term memory (LSTM) RNN to an input
+sequence.</p>
+<p>For each element in the input sequence, each layer computes the following
+function:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}{ll} \\
+    i_t = \sigma(W_{ii} x_t + b_{ii} + W_{hi} h_{t-1} + b_{hi}) \\
+    f_t = \sigma(W_{if} x_t + b_{if} + W_{hf} h_{t-1} + b_{hf}) \\
+    g_t = \tanh(W_{ig} x_t + b_{ig} + W_{hg} h_{t-1} + b_{hg}) \\
+    o_t = \sigma(W_{io} x_t + b_{io} + W_{ho} h_{t-1} + b_{ho}) \\
+    c_t = f_t \odot c_{t-1} + i_t \odot g_t \\
+    h_t = o_t \odot \tanh(c_t) \\
+\end{array}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(h_t\)</span> is the hidden state at time <cite>t</cite>, <span class="math notranslate nohighlight">\(c_t\)</span> is the cell
+state at time <cite>t</cite>, <span class="math notranslate nohighlight">\(x_t\)</span> is the input at time <cite>t</cite>, <span class="math notranslate nohighlight">\(h_{t-1}\)</span>
+is the hidden state of the layer at time <cite>t-1</cite> or the initial hidden
+state at time <cite>0</cite>, and <span class="math notranslate nohighlight">\(i_t\)</span>, <span class="math notranslate nohighlight">\(f_t\)</span>, <span class="math notranslate nohighlight">\(g_t\)</span>,
+<span class="math notranslate nohighlight">\(o_t\)</span> are the input, forget, cell, and output gates, respectively.
+<span class="math notranslate nohighlight">\(\sigma\)</span> is the sigmoid function, and <span class="math notranslate nohighlight">\(\odot\)</span> is the Hadamard product.</p>
+<p><strong>References:</strong></p>
+<dl class="simple">
+<dt>[1] Chen et al.,</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/2009.01783.pdf">Quantum Long Short-Term Memory</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_size</strong> – the number of expected features in the input x</p></li>
+<li><p><strong>hidden_size</strong> – the number of features in the hidden state h</p></li>
+<li><p><strong>n_layers</strong> – the number of recurrent layers</p></li>
+<li><p><strong>n_qubits</strong> – the number of qubits</p></li>
+<li><p><strong>batch_first</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the input and output tensors are provided
+as (batch, seq, feature) instead of (seq, batch, length)</p></li>
+<li><p><strong>device</strong> – Can be a string representing the device name
+or a valid <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> having
+<code class="docutils literal notranslate"><span class="pre">n_qubits</span></code> wires</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.nn.qrnn.QLongShortTermMemory.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/qrnn.html#QLongShortTermMemory.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.qrnn.QLongShortTermMemory.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Forward propagation pass of the Recurrent Neural network using a LSTM cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – the input at time <span class="math notranslate nohighlight">\(t\)</span></p></li>
+<li><p><strong>hx</strong> – Tensor containing the hidden state
+<span class="math notranslate nohighlight">\(h(t)\)</span> and the cell state <span class="math notranslate nohighlight">\(c(t)\)</span> at time <span class="math notranslate nohighlight">\(t\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the hidden sequence at time <span class="math notranslate nohighlight">\(t+1\)</span> and the new couple
+<span class="math notranslate nohighlight">\(h(t+1)\)</span>, <span class="math notranslate nohighlight">\(c(t+1)\)</span>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qlearnkit.nn.qrnn.QLongShortTermMemory.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qlearnkit.nn.qrnn.QLongShortTermMemory.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qlearnkit.nn.quanv">
+<span id="quanvolutional-layer"></span><h2>Quanvolutional Layer<a class="headerlink" href="#module-qlearnkit.nn.quanv" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qlearnkit.nn.quanv.Quanv2DLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Quanv2DLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_qubits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(2,</span> <span class="pre">2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default.qubit'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/quanv.html#Quanv2DLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.quanv.Quanv2DLayer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <a class="reference internal" href="#qlearnkit.nn.qml_mixin.QmlMixin" title="qlearnkit.nn.qml_mixin.QmlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">qlearnkit.nn.qml_mixin.QmlMixin</span></code></a></p>
+<p>Quantum Convolution Layer for Pytorch Hybrid Architectures</p>
+<p><strong>References:</strong></p>
+<dl class="simple">
+<dt>[1] Henderson et al.,</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/1904.04767.pdf">Quanvolutional Neural Networks: Powering Image Recognition with Quantum Circuits</a></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_qubits</strong> – int, The number of qubits of the quantum node.
+Default: 4.</p></li>
+<li><p><strong>kernel_size</strong> – Size of the convolutional kernel.
+Default: (2,2).</p></li>
+<li><p><strong>stride</strong> – Stride of the convolution.
+Default: 1</p></li>
+<li><p><strong>out_channels</strong> – Number of channels produced by the quanvolution.
+Default: 4.</p></li>
+<li><p><strong>n_layers</strong> – int, the number of layers of the variational
+quantum circuit.
+Default: 1.</p></li>
+<li><p><strong>device</strong> – Can be a string representing the device name
+or a valid <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> having
+<code class="docutils literal notranslate"><span class="pre">n_qubits</span></code> wires.
+Default ‘default.qubit’</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.nn.quanv.Quanv2DLayer.quanvolve">
+<span class="sig-name descname"><span class="pre">quanvolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/quanv.html#Quanv2DLayer.quanvolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.quanv.Quanv2DLayer.quanvolve" title="Permalink to this definition"></a></dt>
+<dd><p>Applies a single channel 2D quantum convolution (quanvolution)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> – one channel input batch</p></li>
+<li><p><strong>in_channels</strong> – number of channel in the original input image</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qlearnkit.nn.quanv.Quanv2DLayer.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qlearnkit.nn.quanv.Quanv2DLayer.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qlearnkit.nn.quanv.Quanv2DLayer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qlearnkit/nn/quanv.html#Quanv2DLayer.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qlearnkit.nn.quanv.Quanv2DLayer.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Applies the quantum convolution operation for the forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>,</p></li>
+<li><p><strong>input to be forwarded through the layer.</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing model’s prediction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qlearnkit.encodings.html" class="btn btn-neutral float-left" title="Encodings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials/index.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

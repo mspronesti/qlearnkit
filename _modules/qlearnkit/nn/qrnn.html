@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qlearnkit.nn.qrnn &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/qlearnkit.html">Qlearnkit Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qlearnkit.nn.qrnn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qlearnkit.nn.qrnn</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">qlearnkit.optionals</span> <span class="k">as</span> <span class="nn">_optionals</span>
+
+<span class="k">if</span> <span class="n">_optionals</span><span class="o">.</span><span class="n">HAS_PENNYLANE</span><span class="p">:</span>
+    <span class="c1"># then qlearnkit has been installed</span>
+    <span class="c1"># with the &#39;pennylane&#39; option (or the env</span>
+    <span class="c1"># already has both pennylane and torch)</span>
+    <span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+    <span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">PauliZ</span>
+    <span class="kn">from</span> <span class="nn">pennylane.templates</span> <span class="kn">import</span> <span class="n">AngleEmbedding</span>
+    <span class="kn">from</span> <span class="nn">pennylane.qnn</span> <span class="kn">import</span> <span class="n">TorchLayer</span> <span class="k">as</span> <span class="n">TorchConnector</span>
+
+    <span class="kn">import</span> <span class="nn">torch</span>
+    <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+    <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">Module</span>
+    <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
+
+    <span class="kn">from</span> <span class="nn">.qml_mixin</span> <span class="kn">import</span> <span class="n">QmlMixin</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+
+    <span class="c1"># allows importing the module, but</span>
+    <span class="c1"># the instantiation will raise an Exception</span>
+    <span class="n">Module</span> <span class="o">=</span> <span class="n">Mock</span>
+    <span class="n">Tensor</span> <span class="o">=</span> <span class="n">Mock</span>
+
+
+<div class="viewcode-block" id="QLongShortTermMemory"><a class="viewcode-back" href="../../../apidoc/qlearnkit.nn.html#qlearnkit.nn.qrnn.QLongShortTermMemory">[docs]</a><span class="nd">@_optionals</span><span class="o">.</span><span class="n">HAS_PENNYLANE</span><span class="o">.</span><span class="n">require_in_instance</span>
+<span class="k">class</span> <span class="nc">QLongShortTermMemory</span><span class="p">(</span><span class="n">Module</span><span class="p">,</span> <span class="n">QmlMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hybrid Quantum Long Short Term Memory, miming pytorch&#39;s API and exploiting</span>
+<span class="sd">    :class:`~pennylane.qnn.TorchLayer`.</span>
+
+<span class="sd">    Applies a multi-layer long short-term memory (LSTM) RNN to an input</span>
+<span class="sd">    sequence.</span>
+
+<span class="sd">    For each element in the input sequence, each layer computes the following</span>
+<span class="sd">    function:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{array}{ll} \\</span>
+<span class="sd">            i_t = \sigma(W_{ii} x_t + b_{ii} + W_{hi} h_{t-1} + b_{hi}) \\</span>
+<span class="sd">            f_t = \sigma(W_{if} x_t + b_{if} + W_{hf} h_{t-1} + b_{hf}) \\</span>
+<span class="sd">            g_t = \tanh(W_{ig} x_t + b_{ig} + W_{hg} h_{t-1} + b_{hg}) \\</span>
+<span class="sd">            o_t = \sigma(W_{io} x_t + b_{io} + W_{ho} h_{t-1} + b_{ho}) \\</span>
+<span class="sd">            c_t = f_t \odot c_{t-1} + i_t \odot g_t \\</span>
+<span class="sd">            h_t = o_t \odot \tanh(c_t) \\</span>
+<span class="sd">        \end{array}</span>
+
+<span class="sd">    where :math:`h_t` is the hidden state at time `t`, :math:`c_t` is the cell</span>
+<span class="sd">    state at time `t`, :math:`x_t` is the input at time `t`, :math:`h_{t-1}`</span>
+<span class="sd">    is the hidden state of the layer at time `t-1` or the initial hidden</span>
+<span class="sd">    state at time `0`, and :math:`i_t`, :math:`f_t`, :math:`g_t`,</span>
+<span class="sd">    :math:`o_t` are the input, forget, cell, and output gates, respectively.</span>
+<span class="sd">    :math:`\sigma` is the sigmoid function, and :math:`\odot` is the Hadamard product.</span>
+
+<span class="sd">    **References:**</span>
+
+<span class="sd">    [1] Chen et al.,</span>
+<span class="sd">        `Quantum Long Short-Term Memory &lt;https://arxiv.org/pdf/2009.01783.pdf&gt;`_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_size:</span>
+<span class="sd">            the number of expected features in the input x</span>
+<span class="sd">        hidden_size:</span>
+<span class="sd">            the number of features in the hidden state h</span>
+<span class="sd">        n_layers:</span>
+<span class="sd">            the number of recurrent layers</span>
+<span class="sd">        n_qubits:</span>
+<span class="sd">            the number of qubits</span>
+<span class="sd">        batch_first:</span>
+<span class="sd">            if ``True``, then the input and output tensors are provided</span>
+<span class="sd">            as (batch, seq, feature) instead of (seq, batch, length)</span>
+<span class="sd">        device:</span>
+<span class="sd">            Can be a string representing the device name</span>
+<span class="sd">            or a valid :class:`~pennylane.Device` having</span>
+<span class="sd">            ``n_qubits`` wires</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">n_qubits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">batch_first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">qml</span><span class="o">.</span><span class="n">Device</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;default.qubit&#39;</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QLongShortTermMemory</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">input_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">=</span> <span class="n">n_qubits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">=</span> <span class="n">n_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_first</span> <span class="o">=</span> <span class="n">batch_first</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_qml_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># classical layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clayer_in</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_size</span> <span class="o">+</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clayer_out</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
+
+        <span class="c1"># quantum layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_construct_quantum_layers</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_construct_vqc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs the variational quantum circuit</span>
+<span class="sd">        as described in https://arxiv.org/pdf/2009.01783.pdf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wires</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">))</span>
+        <span class="c1"># Encoding layer:</span>
+        <span class="c1"># first apply Hadamard</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">wires</span><span class="p">:</span>
+            <span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="c1"># then apply an Angle embedding, which encodes the features</span>
+        <span class="c1"># by using the specified rotation operation (Y and Z here)</span>
+        <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+        <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">inputs</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+
+        <span class="c1"># Variational layer(s):</span>
+        <span class="c1"># encoding layer of CNOTs followed by a qubit</span>
+        <span class="c1"># rotation determined by the learned weights via GD</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span><span class="p">):</span>
+            <span class="c1"># entangling layer of CNOTs</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wires</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># if only 2 qubits, then</span>
+                <span class="c1"># only 1 C-NOT is needed</span>
+                <span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">wires</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">wires</span><span class="p">:</span>
+                    <span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">w</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="k">else</span> <span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># &quot;weights&quot; have shape (num_layers, num_qubits, 3)</span>
+            <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+            <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+            <span class="n">AngleEmbedding</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+
+        <span class="c1"># Measurement Layer</span>
+        <span class="c1"># Retrieve expectation values in the Z basis</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">qml</span><span class="o">.</span><span class="n">expval</span><span class="p">(</span><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">w</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">wires</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_construct_quantum_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">layer_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;forget&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">QNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_construct_vqc</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+                              <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+            <span class="n">weight_shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="p">[</span><span class="n">layer_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">TorchConnector</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">weight_shapes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QLongShortTermMemory.forward"><a class="viewcode-back" href="../../../apidoc/qlearnkit.nn.html#qlearnkit.nn.qrnn.QLongShortTermMemory.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">hx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward propagation pass of the Recurrent Neural network using a LSTM cell</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input: the input at time :math:`t`</span>
+<span class="sd">            hx: Tensor containing the hidden state</span>
+<span class="sd">                    :math:`h(t)` and the cell state :math:`c(t)` at time :math:`t`</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            the hidden sequence at time :math:`t+1` and the new couple</span>
+<span class="sd">            :math:`h(t+1)`, :math:`c(t+1)`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_first</span><span class="p">:</span>
+            <span class="n">batch</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seq</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="n">hidden_seq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">hx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">h_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>  <span class="c1"># hidden state (output)</span>
+            <span class="n">c_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>  <span class="c1"># cell state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">h_t</span><span class="p">,</span> <span class="n">c_t</span> <span class="o">=</span> <span class="n">hx</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+            <span class="c1"># get features from the t-th element,</span>
+            <span class="c1"># for all batch entries</span>
+            <span class="n">x_t</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:,</span> <span class="n">t</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c1"># concatenate input and hidden state</span>
+            <span class="n">v_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">h_t</span><span class="p">,</span> <span class="n">x_t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># match qubit dimension</span>
+            <span class="n">y_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clayer_in</span><span class="p">(</span><span class="n">v_t</span><span class="p">)</span>
+
+            <span class="c1"># for each time step `t` we compute the forget, input, update and output gates</span>
+            <span class="c1"># using 3 sigmoid layers and a hyperbolic tangent layer.</span>
+            <span class="c1"># forget</span>
+            <span class="n">f_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clayer_out</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="p">[</span><span class="s1">&#39;forget&#39;</span><span class="p">](</span><span class="n">y_t</span><span class="p">)))</span>
+            <span class="c1"># input</span>
+            <span class="n">i_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clayer_out</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">](</span><span class="n">y_t</span><span class="p">)))</span>
+            <span class="c1"># update</span>
+            <span class="n">g_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clayer_out</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="p">[</span><span class="s1">&#39;update&#39;</span><span class="p">](</span><span class="n">y_t</span><span class="p">)))</span>
+            <span class="c1"># output</span>
+            <span class="n">o_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clayer_out</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">](</span><span class="n">y_t</span><span class="p">)))</span>
+
+            <span class="c1"># eventually, the hidden state and the cell state are evaluated</span>
+            <span class="c1"># (see RNN architecture)</span>
+            <span class="n">c_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_t</span> <span class="o">*</span> <span class="n">c_t</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">i_t</span> <span class="o">*</span> <span class="n">g_t</span><span class="p">)</span>
+            <span class="n">h_t</span> <span class="o">=</span> <span class="n">o_t</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">c_t</span><span class="p">)</span>
+
+            <span class="n">hidden_seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># update hidden seq</span>
+        <span class="n">hidden_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">hidden_seq</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># hidden_seq = hidden_seq.transpose(0, 1).contiguous()</span>
+        <span class="k">return</span> <span class="n">hidden_seq</span><span class="p">,</span> <span class="p">(</span><span class="n">h_t</span><span class="p">,</span> <span class="n">c_t</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;QLongShortTermMemory(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_size</span><span class="si">}</span><span class="s2">, &quot;</span> \
+               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_layers</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

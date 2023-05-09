@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qlearnkit.algorithms.qkmeans.qkmeans_circuit &mdash; qlearnkit 0.2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/jupyter-sphinx.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/thebelab.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/style.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/theme_override.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/thebelab-helper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            qlearnkit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apidoc/qlearnkit.html">Qlearnkit Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">qlearnkit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qlearnkit.algorithms.qkmeans.qkmeans_circuit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qlearnkit.algorithms.qkmeans.qkmeans_circuit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">QuantumRegister</span><span class="p">,</span> <span class="n">ClassicalRegister</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_map_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    We map data feature values to :math:`\theta` and :math:`\phi` values using</span>
+<span class="sd">    the following eqaution:</span>
+
+<span class="sd">    .. math:: \phi = (x + 1) \frac{\pi}{2}</span>
+
+<span class="sd">    where :math:`\phi` is the phase and :math:`\theta` the angle</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">_map_features</span><span class="p">(</span><span class="n">input_point</span><span class="p">,</span>
+                  <span class="n">centroids</span><span class="p">,</span>
+                  <span class="n">n_centroids</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Map the input point and the centroids to :math:`\theta` and :math:`\phi` values</span>
+<span class="sd">    via the :func:`_map_function` method.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_point:</span>
+<span class="sd">            Input point to map.</span>
+<span class="sd">        centroids:</span>
+<span class="sd">            Array of points to map.</span>
+<span class="sd">        n_centroids:</span>
+<span class="sd">            Number of centroids.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple containing input point and centroids mapped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phi_centroids_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">theta_centroids_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">phi_input</span> <span class="o">=</span> <span class="n">_map_function</span><span class="p">(</span><span class="n">input_point</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">theta_input</span> <span class="o">=</span> <span class="n">_map_function</span><span class="p">(</span><span class="n">input_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_centroids</span><span class="p">):</span>
+        <span class="n">phi_centroids_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_map_function</span><span class="p">(</span><span class="n">centroids</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">theta_centroids_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_map_function</span><span class="p">(</span><span class="n">centroids</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">phi_input</span><span class="p">,</span> <span class="n">theta_input</span><span class="p">,</span> <span class="n">phi_centroids_list</span><span class="p">,</span> <span class="n">theta_centroids_list</span>
+
+
+<div class="viewcode-block" id="construct_circuit"><a class="viewcode-back" href="../../../../apidoc/qlearnkit.algorithms.qkmeans.html#qlearnkit.algorithms.qkmeans.qkmeans_circuit.construct_circuit">[docs]</a><span class="k">def</span> <span class="nf">construct_circuit</span><span class="p">(</span><span class="n">input_point</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                      <span class="n">centroids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                      <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a Hadamard to the ancillary qubit and our mapped data points.</span>
+<span class="sd">    Encode data points using U3 gate.</span>
+<span class="sd">    Perform controlled swap to entangle the state with the ancillary qubit</span>
+<span class="sd">    Apply another Hadamard gate to the ancillary qubit.</span>
+<span class="sd">    .. parsed-literal::</span>
+
+<span class="sd">                    ┌───┐                   ┌───┐</span>
+<span class="sd">            |0anc&gt;: ┤ H ├────────────■──────┤ H ├────────M</span>
+<span class="sd">                    └───┘            |      └───┘</span>
+<span class="sd">                    ┌───┐   ┌────┐   |</span>
+<span class="sd">            |0&gt;: ───┤ H ├───┤ U3 ├───X──────────</span>
+<span class="sd">                    └───┘   └────┘   |</span>
+<span class="sd">                    ┌───┐   ┌────┐   |</span>
+<span class="sd">            |0&gt;: ───┤ H ├───┤ U3 ├───X──────────</span>
+<span class="sd">                    └───┘   └────┘</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_point:</span>
+<span class="sd">            Input point from which calculate the distance.</span>
+<span class="sd">        centroids:</span>
+<span class="sd">            Array of points representing the centroids to calculate </span>
+<span class="sd">            the distance to</span>
+<span class="sd">        k:</span>
+<span class="sd">            Number of centroids</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The quantum circuit created</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phi_input</span><span class="p">,</span> <span class="n">theta_input</span><span class="p">,</span> <span class="n">phi_centroids_list</span><span class="p">,</span> <span class="n">theta_centroids_list</span> <span class="o">=</span> \
+        <span class="n">_map_features</span><span class="p">(</span><span class="n">input_point</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="c1"># We need 3 quantum registers, of size k one for a data point (input),</span>
+    <span class="c1"># one for each centroid and one for each ancillary</span>
+    <span class="n">qreg_input</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;qreg_input&#39;</span><span class="p">)</span>
+    <span class="n">qreg_centroid</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;qreg_centroid&#39;</span><span class="p">)</span>
+    <span class="n">qreg_psi</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;qreg_psi&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create a k bit ClassicalRegister to hold the result</span>
+    <span class="c1"># of the measurements</span>
+    <span class="n">creg</span> <span class="o">=</span> <span class="n">ClassicalRegister</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;creg&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create the quantum circuit containing our registers</span>
+    <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">qreg_input</span><span class="p">,</span> <span class="n">qreg_centroid</span><span class="p">,</span> <span class="n">qreg_psi</span><span class="p">,</span> <span class="n">creg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;qc&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="c1"># Apply Hadamard</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">qreg_psi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">qreg_input</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">qreg_centroid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Encode new point and centroid</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">u</span><span class="p">(</span><span class="n">theta_input</span><span class="p">,</span> <span class="n">phi_input</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">qreg_input</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">u</span><span class="p">(</span><span class="n">theta_centroids_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">phi_centroids_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">qreg_centroid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Perform controlled swap</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">cswap</span><span class="p">(</span><span class="n">qreg_psi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">qreg_input</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">qreg_centroid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Apply second Hadamard to ancillary</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">qreg_psi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># Measure ancillary</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">qreg_psi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">creg</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">qc</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Massimiliano Pronesti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
